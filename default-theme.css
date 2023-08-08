@@ -23,3 +23,8 @@ body.testResults {
   height: 100%;
   font-family: monospace;
 }
+
+canvas {
+    position: absolute;
+    display: block;
+}
