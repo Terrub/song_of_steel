@@ -20,15 +20,15 @@ export class CanvasRenderer {
 
   drawPixel(x, y, color) {
     this.gLib.fillStyle = color;
-    this.gLib.fillRect(x, y, 1, 1);
+    this.gLib.fillRect(x, this.height - y, 1, 1);
   }
 
   drawLine(x1, y1, x2, y2, color, lineWidth = 1) {
     this.gLib.lineWidth = lineWidth;
     this.gLib.strokeStyle = color;
     this.gLib.beginPath();
-    this.gLib.moveTo(x1, y1);
-    this.gLib.lineTo(x2, y2);
+    this.gLib.moveTo(x1, this.height - y1);
+    this.gLib.lineTo(x2, this.height - y2);
     this.gLib.stroke();
   }
 
@@ -43,14 +43,14 @@ export class CanvasRenderer {
 
   drawRect(x, y, x2, y2, color) {
     this.gLib.fillStyle = color;
-    this.gLib.fillRect(x, y, x2, y2);
+    this.gLib.fillRect(x, this.height - y, x2, -y2);
   }
 
   strokeRect(x, y, w, h, color, strokeWidth = 1) {
     this.gLib.beginPath();
     this.gLib.lineWidth = strokeWidth;
     this.gLib.strokeStyle = color;
-    this.gLib.strokeRect(x, y, w, h);
+    this.gLib.strokeRect(x, this.height - y, w, -h);
     // this.gLib.rect(x, y, w, h);
     // this.gLib.stroke();
   }
@@ -65,7 +65,7 @@ export class CanvasRenderer {
   }
 
   clearRect(x, y, w, h) {
-    this.gLib.clearRect(x, y, w, h);
+    this.gLib.clearRect(x, this.height - y, w, -h);
   }
 
   measureTextWidth(text, font) {
@@ -96,6 +96,6 @@ export class CanvasRenderer {
       this.gLib.fillStyle = color;
     }
 
-    this.gLib.fillText(text, x, y);
+    this.gLib.fillText(text, x, this.height - y);
   };
 }
