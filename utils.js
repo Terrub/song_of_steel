@@ -192,6 +192,11 @@ export class Utils {
     throw new Error(error);
   }
 
+  static reportUsageError(error) {
+    // For now just report the error normally;
+    Utils.reportError(error);
+  }
+
   static onlyProceedIf(statement, check) {
     if (Utils.attempt(check, [statement]) !== true) {
       Utils.reportError("A checkpoint failed, check the stack for more info.");
@@ -220,7 +225,7 @@ export class Utils {
     return Math.random() * (pMax - pMin) + pMin;
   }
 
-  static generateRandomNumber(pMax, pMin) {
+  static generateRandomInt(pMax, pMin) {
     let max = pMax;
     let min = pMin;
 
@@ -233,17 +238,5 @@ export class Utils {
     const randomNumber = Math.floor(Math.random() * (max - min) + min);
 
     return randomNumber;
-  }
-
-  static reportUsageError(error) {
-    // For now just report the error normally;
-    Utils.reportError(error);
-  }
-
-  static isInstanceOf(parentClass, childClass) {
-    return Object.prototype.isPrototypeOf.call(
-      parentClass.prototype,
-      childClass
-    );
   }
 }
