@@ -65,6 +65,43 @@ export class Utils {
     return Array.isArray(value);
   }
 
+  static isInstanceOf(parentClass, childClass) {
+    return Object.prototype.isPrototypeOf.call(
+      parentClass.prototype,
+      childClass
+    );
+  }
+
+  static floor(value) {
+    if (!Utils.isNumber(value)) {
+      throw new TypeError(
+        `Provided value should be Number, '${typeof value}' given.`
+      );
+    }
+
+    return Math.floor(value);
+  }
+
+  static ceil(value) {
+    if (!Utils.isNumber(value)) {
+      throw new TypeError(
+        `Provided value should be Number, '${typeof value}' given.`
+      );
+    }
+
+    return Math.ceil(value);
+  }
+
+  static round(value) {
+    if (!Utils.isNumber(value)) {
+      throw new TypeError(
+        `Provided value should be Number, '${typeof value}' given.`
+      );
+    }
+
+    return Math.round(value);
+  }
+
   static constrain(value, lowerBound, upperBound) {
     return Math.max(lowerBound, Math.min(upperBound, value));
   }
