@@ -68,10 +68,7 @@ export class Utils {
   }
 
   static isInstanceOf(parentClass, childClass) {
-    return Object.prototype.isPrototypeOf.call(
-      parentClass.prototype,
-      childClass
-    );
+    return childClass instanceof parentClass;
   }
 
   static floor(value) {
