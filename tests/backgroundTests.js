@@ -15,7 +15,7 @@ backgroundTests.addTest(
   "instantiating without CanvasRenderer should throw ParamTypeError",
   () => {
     testRunner.assertThrowsExpectedError(ParamTypeError);
-    new Background;
+    new Background();
   }
 );
 
