@@ -2,6 +2,8 @@
     no-bitwise: ["error", { "allow": ["|", "^"] }]
  */
 
+import { ParamTypeError } from "./errors/paramTypeError.js";
+
 export class Utils {
   static isUndefined(value) {
     // NOTE 1: value being a reference to something.
@@ -74,9 +76,7 @@ export class Utils {
 
   static floor(value) {
     if (!Utils.isNumber(value)) {
-      throw new TypeError(
-        `Provided value should be Number, '${typeof value}' given.`
-      );
+      throw new ParamTypeError(Number, value);
     }
 
     return Math.floor(value);
@@ -84,9 +84,7 @@ export class Utils {
 
   static ceil(value) {
     if (!Utils.isNumber(value)) {
-      throw new TypeError(
-        `Provided value should be Number, '${typeof value}' given.`
-      );
+      throw new ParamTypeError(Number, value);
     }
 
     return Math.ceil(value);
