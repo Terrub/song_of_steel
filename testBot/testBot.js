@@ -106,13 +106,13 @@ export class TestBot {
       }
 
       if (TestBot.TEST_ERROR === this.result) {
-        console.log(`"${test.name}" caused the following unexpected error:`);
+        console.log(`"${suite.name} ${test.name}" caused the following unexpected error:`);
         console.error(caughtError);
       }
 
       if (TestBot.TEST_FAILED === this.result) {
         console.log(
-          `"${test.name}" failed:\n\tExpected:\n\t\t`,
+          `"${suite.name} ${test.name}" failed:\n\tExpected:\n\t\t`,
           this.expected,
           "\n\tActual:\n\t\t",
           this.actual

@@ -9,7 +9,7 @@ const testRunner = new TestBot(resultRenderer);
 
 const assertEqualsTest = testRunner.createSuite("Tests assertStrictlyEquals");
 assertEqualsTest.addTest(
-  "Test assert strictly equals succeeding shows green",
+  "succeeding shows green",
   () => {
     const expected = "foo";
     const actual = "foo";
@@ -19,7 +19,7 @@ assertEqualsTest.addTest(
 );
 
 assertEqualsTest.addTest(
-  "Test assert strictly equals failing shows red",
+  "failing shows red",
   () => {
     const expected = "foo";
     const actual = "bar";
@@ -29,7 +29,7 @@ assertEqualsTest.addTest(
 );
 
 assertEqualsTest.addTest(
-  "Test assert strictly equals encounters error shows orange",
+  "encounters error shows orange",
   () => {
     throw new Error("This should cause an error and show orange in TestBot.");
   }
@@ -39,7 +39,7 @@ const assertObjectDeepCompareTest = testRunner.createSuite(
   "Tests assertDeepCompareObjects"
 );
 assertObjectDeepCompareTest.addTest(
-  "Test assert deep compare of same objects shows green",
+  "of same objects shows green",
   () => {
     const expected = {
       name: "deep compared object 1",
@@ -57,7 +57,7 @@ assertObjectDeepCompareTest.addTest(
 );
 
 assertObjectDeepCompareTest.addTest(
-  "Test assert deep compare of different objects shows red",
+  "of different objects shows red",
   () => {
     const expected = {
       name: "deep compared object 2",
@@ -75,7 +75,7 @@ assertObjectDeepCompareTest.addTest(
 );
 
 assertObjectDeepCompareTest.addTest(
-  "Test assert deep compare encounters error shows orange",
+  "encounters error shows orange",
   () => {
     throw new Error("This should cause an error and show orange in TestBot.");
   }
@@ -84,20 +84,20 @@ assertObjectDeepCompareTest.addTest(
 const assertErrorTest = testRunner.createSuite(
   "Tests assertThrowsExpectedError"
 );
-assertErrorTest.addTest("Test assert expected error thrown shows green", () => {
+assertErrorTest.addTest("shows green when expected error is thrown", () => {
   testRunner.assertThrowsExpectedError(TypeError);
 
-  throw new TypeError("This error should be expected and show up green.");
+  throw new TypeError("This error should not show up in console but show up green in tests.");
 });
 
-assertErrorTest.addTest("Test assert unexpected error thrown shows red", () => {
+assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
   testRunner.assertThrowsExpectedError(RangeError);
 
-  throw new TypeError("This error should not be expected and show up red.");
+  throw new TypeError("This error should show up in console but show up red in tests.");
 });
 
 const assertRangeTest = testRunner.createSuite("Tests assertInRange");
-assertRangeTest.addTest("Test assertInRange shows green", () => {
+assertRangeTest.addTest("shows green when value in given range", () => {
   const actual = 0.1;
   const expectedMin = 0.0;
   const expectedMax = 0.2;
@@ -106,7 +106,7 @@ assertRangeTest.addTest("Test assertInRange shows green", () => {
 });
 
 assertRangeTest.addTest(
-  "Test assertInRange shows red when value less than min",
+  "shows red when value less than provided minimum",
   () => {
     const actual = 0.1;
     const expectedMin = 0.2;
@@ -117,7 +117,7 @@ assertRangeTest.addTest(
 );
 
 assertRangeTest.addTest(
-  "Test assertInRange shows red when value greater than max",
+  "shows red when value greater than provided maximum",
   () => {
     const actual = 0.2;
     const expectedMin = 0.0;
@@ -128,7 +128,7 @@ assertRangeTest.addTest(
 );
 
 assertRangeTest.addTest(
-  "Test assertInRange throws error when value is NaN",
+  "throws error when given value is not a Number",
   () => {
     const actual = "";
     const expectedMin = 1.0;
@@ -143,35 +143,35 @@ const assertGreaterThanTests = testRunner.createSuite(
 );
 
 assertGreaterThanTests.addTest(
-  "Test assertGreaterThan shows green when provided value greater than expected value",
+  "shows green when given value greater than expected value",
   () => {
     testRunner.assertGreaterThan(1, 2);
   }
 );
 
 assertGreaterThanTests.addTest(
-  "Test assertGreaterThan shows red when provided value not greater than expected value",
+  "shows red when given value not greater than expected value",
   () => {
     testRunner.assertGreaterThan(2, 1);
   }
 );
 
 assertGreaterThanTests.addTest(
-  "Test assertGreaterThan shows red when provided value is exactly same as expected value",
+  "shows red when given value is exactly same as expected value",
   () => {
     testRunner.assertGreaterThan(1, 1);
   }
 );
 
 assertGreaterThanTests.addTest(
-  "Test assertGreaterThan throws TypeError provided expected value is not a number",
+  "throws TypeError when provided expected value is not a number",
   () => {
     testRunner.assertGreaterThan("", 1);
   }
 );
 
 assertGreaterThanTests.addTest(
-  "Test assertGreaterThan throws TypeError when provided actual value is not a number",
+  "throws TypeError when given actual value is not a number",
   () => {
     testRunner.assertGreaterThan(1, "");
   }
@@ -180,35 +180,35 @@ assertGreaterThanTests.addTest(
 const assertLessThanTests = testRunner.createSuite("Tests assertLessThan");
 
 assertLessThanTests.addTest(
-  "Test assertLessThan shows green when provided value less than expected value",
+  "shows green when given value less than expected value",
   () => {
     testRunner.assertLessThan(2, 1);
   }
 );
 
 assertLessThanTests.addTest(
-  "Test assertLessThan shows red when provided value not less than expected value",
+  "shows red when given value not less than expected value",
   () => {
     testRunner.assertLessThan(1, 2);
   }
 );
 
 assertLessThanTests.addTest(
-  "Test assertLessThan shows red when provided value is exactly same as expected value",
+  "shows red when given value is exactly same as expected value",
   () => {
     testRunner.assertLessThan(1, 1);
   }
 );
 
 assertLessThanTests.addTest(
-  "Test assertLessThan throws TypeError provided expected value is not a number",
+  "throws TypeError when provided expected value is not a number",
   () => {
     testRunner.assertLessThan("", 1);
   }
 );
 
 assertLessThanTests.addTest(
-  "Test assertLessThan throws TypeError when provided actual value is not a number",
+  "throws TypeError when given actual value is not a number",
   () => {
     testRunner.assertLessThan(1, "");
   }
