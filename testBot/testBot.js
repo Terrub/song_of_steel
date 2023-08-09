@@ -85,7 +85,7 @@ export class TestBot {
           this.result = TestBot.TEST_SUCCEEDED;
         } else {
           this.result = TestBot.TEST_FAILED;
-          this.expected = this.expectedError.prototype.name;
+          this.expected = this.expectedError.name;
           this.actual = caughtError.name;
         }
       }
@@ -101,7 +101,7 @@ export class TestBot {
         Utils.isDefined(this.expectedError) &&
         Utils.isUndefined(caughtError)
       ) {
-        this.expected = this.expectedError.prototype.name;
+        this.expected = this.expectedError.name;
         this.result = TestBot.TEST_FAILED;
       }
 
