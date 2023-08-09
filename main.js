@@ -1,13 +1,14 @@
 import { Utils } from "./utils.js";
 import { CanvasRenderer } from "./components/canvasRenderer.js";
+import { Backdrop } from "./components/backdrop.js";
 
 const gameWidth = window.innerWidth;
 const gameHeight = Utils.floor(gameWidth * 0.5636160714285714);
 
-const farBackgroundCanvas = document.createElement("canvas");
-farBackgroundCanvas.id = "farBackgroundCanvas";
-farBackgroundCanvas.width = gameWidth;
-farBackgroundCanvas.height = gameHeight;
+const backdropCanvas = document.createElement("canvas");
+backdropCanvas.id = "backdropCanvas";
+backdropCanvas.width = gameWidth;
+backdropCanvas.height = gameHeight;
 
 const backgroundCanvas = document.createElement("canvas");
 backgroundCanvas.id = "backgroundCanvas";
@@ -30,7 +31,7 @@ foregroundCanvas.width = gameWidth;
 foregroundCanvas.height = gameHeight;
 
 const content = document.createElement("div");
-content.appendChild(farBackgroundCanvas);
+content.appendChild(backdropCanvas);
 content.appendChild(backgroundCanvas);
 content.appendChild(wallsCanvas);
 content.appendChild(mainCanvas);
@@ -38,13 +39,13 @@ content.appendChild(foregroundCanvas);
 
 document.body.appendChild(content);
 
-const farBackgroundCanvasRenderer = new CanvasRenderer(farBackgroundCanvas);
+const backdrop = new Backdrop(new CanvasRenderer(backdropCanvas));
 const backgroundCanvasRenderer = new CanvasRenderer(backgroundCanvas);
 const wallsCanvasRenderer = new CanvasRenderer(wallsCanvas);
 const mainCanvasRenderer = new CanvasRenderer(mainCanvas);
 const foregroundCanvasRenderer = new CanvasRenderer(foregroundCanvas);
 
-farBackgroundCanvasRenderer.fill("#888");
+backdrop.setSolidColor("#888");
 
 backgroundCanvasRenderer.drawRect(0, 0, gameWidth, 150, "#555");
 
