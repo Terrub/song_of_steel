@@ -12,7 +12,7 @@ const testRunner = new TestBot(resultRenderer);
 const backdropTests = testRunner.createSuite("Tests Backdrop");
 
 backdropTests.addTest(
-  "Instantiating without CanvasRenderer should throw ParamTypeError",
+  "instantiating without CanvasRenderer should throw ParamTypeError",
   () => {
     testRunner.assertThrowsExpectedError(ParamTypeError);
     new Backdrop();
