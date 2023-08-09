@@ -3,5 +3,6 @@ export class ParamTypeError extends TypeError {
     super(
       `Given parameter should be of type ${intendedClass.name}, '${typeof actualClass}' given.`
     );
+    this.name = "ParamTypeError";
   }
 }
