@@ -15,7 +15,7 @@ wallTests.addTest(
   "instantiating without CanvasRenderer should throw ParamTypeError",
   () => {
     testRunner.assertThrowsExpectedError(ParamTypeError);
-    new Wall;
+    new Wall();
   }
 );
 
