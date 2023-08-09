@@ -96,6 +96,10 @@ assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
   throw new TypeError("This error should show up in console but show up red in tests.");
 });
 
+assertErrorTest.addTest("shows red when no error is thrown", () => {
+  testRunner.assertThrowsExpectedError(TypeError);
+});
+
 const assertRangeTest = testRunner.createSuite("Tests assertInRange");
 assertRangeTest.addTest("shows green when value in given range", () => {
   const actual = 0.1;
