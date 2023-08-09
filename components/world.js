@@ -15,6 +15,10 @@ export class World {
     this.#renderer = canvasRenderer;
   }
 
+  clear() {
+    this.#renderer.clear();
+  }
+
   setSolidColor(color) {
     this.#renderer.fill(color);
   }
@@ -43,7 +47,21 @@ export class World {
       this.#renderer.height - this.#floorHeight + y,
       30,
       -100,
-      "#933"
+      "#393"
     );
+  }
+
+  drawSword(x, y, theta) {
+    this.#renderer.save();
+    this.#renderer.translate(x, this.#renderer.height - (this.#floorHeight + y + 85));
+    this.#renderer.rotate(theta);
+    this.#renderer.drawRect(
+      45,
+      -9,
+      110,
+      18,
+      "#933",
+    )
+    this.#renderer.restore();
   }
 }

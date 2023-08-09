@@ -18,6 +18,22 @@ export class CanvasRenderer {
     return this.canvas.clientHeight;
   }
 
+  save() {
+    this.gLib.save();
+  }
+
+  restore() {
+    this.gLib.restore();
+  }
+
+  rotate(value) {
+    this.gLib.rotate(value);
+  }
+
+  translate(x, y) {
+    this.gLib.translate(x, y);
+  }
+
   drawPixel(x, y, color) {
     this.gLib.fillStyle = color;
     this.gLib.fillRect(x, y, 1, 1);
