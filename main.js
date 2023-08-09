@@ -4,6 +4,7 @@ import { Backdrop } from "./components/backdrop.js";
 import { Background } from "./components/background.js";
 import { Wall } from "./components/wall.js";
 import { World } from "./components/world.js";
+import { Foreground } from "./components/foreground.js";
 
 const gameWidth = window.innerWidth;
 const gameHeight = Utils.floor(gameWidth * 0.5636160714285714);
@@ -46,7 +47,7 @@ const backdrop = new Backdrop(new CanvasRenderer(backdropCanvas));
 const background = new Background(new CanvasRenderer(backgroundCanvas))
 const wall = new Wall(new CanvasRenderer(wallsCanvas));
 const world = new World(new CanvasRenderer(mainCanvas));
-const foregroundCanvasRenderer = new CanvasRenderer(foregroundCanvas);
+const foreground = new Foreground(new CanvasRenderer(foregroundCanvas));
 
 backdrop.setSolidColor("#888");
 background.drawFloor(150, "#555");
@@ -57,6 +58,6 @@ wall.drawPost(860, 15, 300, "#222");
 world.drawFloor("#111", 70);
 world.drawPlayer(300, 0);
 
-foregroundCanvasRenderer.drawRect(-20, 0, 45, gameHeight, "#000")
-foregroundCanvasRenderer.drawRect(400, 0, 20, gameHeight, "#000");
-foregroundCanvasRenderer.drawRect(890, 0, 45, gameHeight, "#000");
+foreground.drawPost(-20, 45, gameHeight, "#000");
+foreground.drawPost(400, 20, gameHeight, "#000");
+foreground.drawPost(890, 45, gameHeight, "#000");
