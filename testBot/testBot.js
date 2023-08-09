@@ -42,6 +42,22 @@ export class TestBot {
     return new DivResultsRenderer(container);
   }
 
+  static createMock(targetClass) {
+    const mockedClass = {};
+
+    const mockingSuccessful = Reflect.setPrototypeOf(
+      mockedClass,
+      targetClass.prototype
+    );
+
+    if (!mockingSuccessful) {
+      // TODO: Failing to mock a target class should have it's own specific error
+      throw new Error(`CRITICAL: TestBot Failed to mock '${targetClass.name}'`);
+    }
+
+    return mockedClass;
+  }
+
   createSuite(testSuiteName) {
     const newSuite = new Suite(testSuiteName);
     this.testSuites.push(newSuite);
