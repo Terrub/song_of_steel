@@ -41,27 +41,23 @@ export class World {
     );
   }
 
-  drawPlayer(x, y) {
-    this.#renderer.drawRect(
-      x - 15,
-      this.#renderer.height - this.#floorHeight + y,
-      30,
-      -100,
-      "#393"
-    );
+  drawRect(x, y, w, h, c) {
+    this.#renderer.drawRect(x, this.#renderer.height - y, w, -h, c);
   }
 
-  drawSword(x, y, theta) {
-    this.#renderer.save();
-    this.#renderer.translate(x, this.#renderer.height - (this.#floorHeight + y + 85));
-    this.#renderer.rotate(theta);
-    this.#renderer.drawRect(
-      45,
-      -9,
-      110,
-      18,
-      "#933",
-    )
-    this.#renderer.restore();
+  drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH) {
+    // this.#renderer.drawRect(sX, sY, sW, sH, "rgba(255, 0, 0, 0.2");
+    this.#renderer.drawRect(dX, this.#renderer.height - this.#floorHeight - dY, dW, -dH, "rgba(0, 255, 0, 0.2");
+    this.#renderer.drawImage(
+      image,
+      sX,
+      sY,
+      sW,
+      sH,
+      dX,
+      this.#renderer.height - this.#floorHeight - dY,
+      dW,
+      -dH
+    );
   }
 }
