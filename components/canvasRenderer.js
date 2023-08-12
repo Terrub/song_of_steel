@@ -84,6 +84,10 @@ export class CanvasRenderer {
     this.gLib.clearRect(x, y, w, h);
   }
 
+  drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH) {
+    this.gLib.drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH);
+  }
+
   measureTextWidth(text, font) {
     let oldFont;
     let result;
