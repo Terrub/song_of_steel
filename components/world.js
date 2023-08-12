@@ -47,7 +47,7 @@ export class World {
 
   drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH) {
     // this.#renderer.drawRect(sX, sY, sW, sH, "rgba(255, 0, 0, 0.2");
-    this.#renderer.drawRect(dX, this.#renderer.height - this.#floorHeight - dY, dW, -dH, "rgba(0, 255, 0, 0.2");
+    // this.#renderer.drawRect(dX, this.#renderer.height - this.#floorHeight - dY, dW, -dH, "rgba(0, 255, 0, 0.2");
     this.#renderer.drawImage(
       image,
       sX,

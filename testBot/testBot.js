@@ -106,7 +106,9 @@ export class TestBot {
       }
 
       if (TestBot.TEST_ERROR === this.result) {
-        console.log(`"${suite.name} ${test.name}" caused the following unexpected error:`);
+        console.log(
+          `"${suite.name} ${test.name}" caused the following unexpected error:`
+        );
         console.error(caughtError);
       }
 
@@ -117,6 +119,9 @@ export class TestBot {
           "\n\tActual:\n\t\t",
           this.actual
         );
+        if (Utils.isDefined(caughtError)) {
+          console.error(caughtError);
+        }
       }
 
       this.resultRenderer.addResult(

@@ -2,7 +2,7 @@
     no-bitwise: ["error", { "allow": ["|", "^"] }]
  */
 
-import { ParamTypeError } from "./errors/paramTypeError.js";
+import { ParamTypeError } from "./errors/typeErrors/paramTypeError.js";
 
 export class Utils {
   static isUndefined(value) {
