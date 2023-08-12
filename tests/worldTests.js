@@ -1,5 +1,5 @@
 import { TestBot } from "../testBot/testBot.js";
-import { ParamTypeError } from "../errors/paramTypeError.js";
+import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
 import { CanvasRenderer } from "../components/canvasRenderer.js";
 import { World } from "../components/world.js";
 
@@ -12,9 +12,9 @@ const testRunner = new TestBot(resultRenderer);
 const worldTests = testRunner.createSuite("Tests world");
 
 worldTests.addTest(
-  "instantiating without CanvasRenderer should throw ParamTypeError",
+  "instantiating without CanvasRenderer should throw CanvasRendererTypeError",
   () => {
-    testRunner.assertThrowsExpectedError(ParamTypeError);
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
     new World();
   }
 );

@@ -1,7 +1,7 @@
 import { TestBot } from "../testBot/testBot.js";
-import { ParamTypeError } from "../errors/paramTypeError.js";
 import { CanvasRenderer } from "../components/canvasRenderer.js";
 import { Wall } from "../components/wall.js";
+import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -14,7 +14,7 @@ const wallTests = testRunner.createSuite("Tests wall");
 wallTests.addTest(
   "instantiating without CanvasRenderer should throw ParamTypeError",
   () => {
-    testRunner.assertThrowsExpectedError(ParamTypeError);
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
     new Wall();
   }
 );

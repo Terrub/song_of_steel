@@ -1,13 +1,13 @@
 import { Utils } from "../utils.js";
 import { CanvasRenderer } from "./canvasRenderer.js";
-import { ParamTypeError } from "../errors/paramTypeError.js";
+import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
 
 export class Wall {
   #renderer;
 
   constructor(canvasRenderer) {
     if (!Utils.isInstanceOf(CanvasRenderer, canvasRenderer)) {
-      throw new ParamTypeError(CanvasRenderer, canvasRenderer);
+      throw new CanvasRendererTypeError(canvasRenderer);
     }
 
     this.#renderer = canvasRenderer;

@@ -1,6 +1,6 @@
 import { Backdrop } from "../components/backdrop.js";
 import { CanvasRenderer } from "../components/canvasRenderer.js";
-import { ParamTypeError } from "../errors/paramTypeError.js";
+import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js"
 import { TestBot } from "../testBot/testBot.js";
 
 const resultsContainer = document.createElement("div");
@@ -12,9 +12,9 @@ const testRunner = new TestBot(resultRenderer);
 const backdropTests = testRunner.createSuite("Tests Backdrop");
 
 backdropTests.addTest(
-  "instantiating without CanvasRenderer should throw ParamTypeError",
+  "instantiating without CanvasRenderer should throw CanvasRendererTypeError",
   () => {
-    testRunner.assertThrowsExpectedError(ParamTypeError);
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
     new Backdrop();
   }
 );
