@@ -110,14 +110,14 @@ spriteTests.addTest("foo", () => {
 
   const expectedParams = {
     image: image,
-    sX: 50,
-    sY: 50,
-    sW: 100,
-    sH: 100,
-    dX: 100,
-    dY: 0,
-    dW: 100,
-    dH: 100,
+    sX: 50, // 50px into frame on X axis
+    sY: 50, // 50px into frame on Y axis
+    sW: 100, // 100px width
+    sH: 100, // 100px height
+    dX: 50, // half selected width left of outputPosition X => sW / 2 + outputPosition.x
+    dY: 0, // just outputPosition.y
+    dW: 100, // selection width * scale
+    dH: 100, // selection height * scale
   };
 
   testRunner.assertDeepCompareObjects(expectedParams, actualParams);
