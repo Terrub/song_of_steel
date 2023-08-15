@@ -1,3 +1,4 @@
+import { CanvasTypeError } from "../errors/typeErrors/canvasTypeError.js";
 import { Utils } from "../utils.js";
 
 export class CanvasRenderer {
@@ -6,16 +7,20 @@ export class CanvasRenderer {
   glib;
 
   constructor(canvas) {
+    if (!Utils.isInstanceOf(HTMLCanvasElement, canvas)) {
+      throw new CanvasTypeError("canvas", canvas);
+    }
+
     this.canvas = canvas;
     this.gLib = canvas.getContext("2d");
   }
 
   get width() {
-    return this.canvas.clientWidth;
+    return this.canvas.width;
   }
 
   get height() {
-    return this.canvas.clientHeight;
+    return this.canvas.height;
   }
 
   save() {
@@ -31,20 +36,20 @@ export class CanvasRenderer {
   }
 
   translate(x, y) {
-    this.gLib.translate(x, y);
+    this.gLib.translate(x, -y);
   }
 
   drawPixel(x, y, color) {
     this.gLib.fillStyle = color;
-    this.gLib.fillRect(x, y, 1, 1);
+    this.gLib.fillRect(x, this.height - y, 1, 1);
   }
 
   drawLine(x1, y1, x2, y2, color, lineWidth = 1) {
     this.gLib.lineWidth = lineWidth;
     this.gLib.strokeStyle = color;
     this.gLib.beginPath();
-    this.gLib.moveTo(x1, y1);
-    this.gLib.lineTo(x2, y2);
+    this.gLib.moveTo(x1, this.height - y1);
+    this.gLib.lineTo(x2, this.height - y2);
     this.gLib.stroke();
   }
 
@@ -52,14 +57,14 @@ export class CanvasRenderer {
     this.gLib.lineWidth = lineWidth;
     this.gLib.strokeStyle = color;
     this.gLib.beginPath();
-    this.gLib.moveTo(xS, yS);
-    this.gLib.bezierCurveTo(x0, y0, x1, y1, xE, yE);
+    this.gLib.moveTo(xS, this.height - yS);
+    this.gLib.bezierCurveTo(x0, this.height - y0, x1, this.height - y1, xE, this.height - yE);
     this.gLib.stroke();
   }
 
   drawRect(x, y, x2, y2, color) {
     this.gLib.fillStyle = color;
-    this.gLib.fillRect(x, y, x2, y2);
+    this.gLib.fillRect(x, this.height - y, x2, -y2);
   }
 
   strokeRect(x, y, w, h, color, strokeWidth = 1) {
@@ -81,11 +86,11 @@ export class CanvasRenderer {
   }
 
   clearRect(x, y, w, h) {
-    this.gLib.clearRect(x, y, w, h);
+    this.gLib.clearRect(x, this.height - y, w, -h);
   }
 
   drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH) {
-    this.gLib.drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH);
+    this.gLib.drawImage(image, sX, sY, sW, sH, dX, this.height - dY, dW, -dH);
   }
 
   measureTextWidth(text, font) {
@@ -116,6 +121,6 @@ export class CanvasRenderer {
       this.gLib.fillStyle = color;
     }
 
-    this.gLib.fillText(text, x, y);
+    this.gLib.fillText(text, x, this.height - y);
   };
 }

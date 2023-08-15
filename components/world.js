@@ -1,63 +1,80 @@
 import { Utils } from "../utils.js";
 import { CanvasRenderer } from "./canvasRenderer.js";
 import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
+import { NumberTypeError } from "../errors/typeErrors/numberTypeError.js";
 
 export class World {
-  #renderer;
+  #backdrop;
+  #background;
+  #wall;
+  #interactables;
+  #foreground;
+  #floorHeight = 0;
 
-  #floorHeight = 70;
+  constructor(width, height, backdrop, background, wall, interactables, foreground) {
+    this.width = width;
+    this.height = height;
 
-  constructor(canvasRenderer) {
-    if (!Utils.isInstanceOf(CanvasRenderer, canvasRenderer)) {
-      throw new CanvasRendererTypeError(canvasRenderer);
+    if (!Utils.isInstanceOf(CanvasRenderer, backdrop)) {
+      throw new CanvasRendererTypeError("backDrop", backdrop);
+    }
+    this.#backdrop = backdrop;
+
+    if (!Utils.isInstanceOf(CanvasRenderer, background)) {
+      throw new CanvasRendererTypeError("backGround", background);
+    }
+    this.#background = background;
+
+    if (!Utils.isInstanceOf(CanvasRenderer, wall)) {
+      throw new CanvasRendererTypeError("wall", wall);
+    }
+    this.#wall = wall;
+
+    if (!Utils.isInstanceOf(CanvasRenderer, interactables)) {
+      throw new CanvasRendererTypeError("interactables", interactables);
+    }
+    this.#interactables = interactables;
+
+    if (!Utils.isInstanceOf(CanvasRenderer, foreground)) {
+      throw new CanvasRendererTypeError("foreground", foreground);
+    }
+    this.#foreground = foreground;
+  }
+
+  setFloor(height) {
+    if (!Utils.isNumber(height)) {
+      throw new NumberTypeError('height', height);
     }
 
-    this.#renderer = canvasRenderer;
+    this.#floorHeight = Utils.constrain(height, 0, this.height);
   }
 
-  clear() {
-    this.#renderer.clear();
-  }
+  draw(numTics) {
+    this.#interactables.clear();
 
-  setSolidColor(color) {
-    this.#renderer.fill(color);
-  }
+    this.#backdrop.fill("#888");
 
-  drawFloor(color, height = undefined) {
-    if (Utils.isDefined(height)) {
-      if (!Utils.isNumber(height)) {
-        throw new ParamTypeError(Number, height);
-      }
+    this.#background.drawRect(0, 0, this.width, 150, "#555");
 
-      this.#floorHeight = Utils.constrain(height, 0, this.#renderer.height);
+    let wallWidth = 8;
+    for (let i = 100; i < this.width; i += 350) {
+      wallWidth = wallWidth === 8 ? 15 : 8;
+      this.#wall.drawRect(i, 0, wallWidth, 300, "#222");
     }
 
-    this.#renderer.drawRect(
-      0,
-      this.#renderer.height,
-      this.#renderer.width,
-      -this.#floorHeight,
-      color
-    );
+    this.#interactables.drawRect(0, 0, this.width, this.#floorHeight, "#111");
+
+    let foregroundWidth = 20;
+    for (let i = -20; i < this.width; i += 400) {
+      foregroundWidth = foregroundWidth === 45 ? 20 : 45;
+      this.#foreground.drawRect(i, 0, foregroundWidth, 500, "#000");
+    }
   }
 
-  drawRect(x, y, w, h, c) {
-    this.#renderer.drawRect(x, this.#renderer.height - y, w, -h, c);
-  }
-
-  drawImage(image, sX, sY, sW, sH, dX, dY, dW, dH) {
-    // this.#renderer.drawRect(sX, sY, sW, sH, "rgba(255, 0, 0, 0.2");
-    // this.#renderer.drawRect(dX, this.#renderer.height - this.#floorHeight - dY, dW, -dH, "rgba(0, 255, 0, 0.2");
-    this.#renderer.drawImage(
-      image,
-      sX,
-      sY,
-      sW,
-      sH,
-      dX,
-      this.#renderer.height - this.#floorHeight - dY,
-      dW,
-      -dH
-    );
+  drawPlayer(player, playerPosition, numTics) {
+    this.#interactables.save();
+    this.#interactables.translate(0, this.#floorHeight);
+    player.draw(this.#interactables, playerPosition, numTics);
+    this.#interactables.restore();
   }
 }

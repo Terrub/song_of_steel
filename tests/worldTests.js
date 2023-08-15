@@ -2,6 +2,7 @@ import { TestBot } from "../testBot/testBot.js";
 import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
 import { CanvasRenderer } from "../components/canvasRenderer.js";
 import { World } from "../components/world.js";
+import { NumberTypeError } from "../errors/typeErrors/numberTypeError.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -12,73 +13,136 @@ const testRunner = new TestBot(resultRenderer);
 const worldTests = testRunner.createSuite("Tests world");
 
 worldTests.addTest(
-  "instantiating without CanvasRenderer should throw CanvasRendererTypeError",
+  "instantiating without backdrop<CanvasRenderer> should throw CanvasRendererTypeError",
   () => {
     testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
-    new World();
+
+    const width = 100;
+    const height = 100;
+
+    new World(
+      width,
+      height,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    );
   }
 );
 
 worldTests.addTest(
-  "has method setSolidColor that calls fill on renderer",
+  "instantiating without background<CanvasRenderer> should throw CanvasRendererTypeError",
   () => {
-    let actualColor;
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
+    const canvas = document.createElement("canvas");
 
-    const mockRenderer = TestBot.createMock(CanvasRenderer);
-    mockRenderer.fill = (color) => {
-      actualColor = color;
-    };
+    const width = 100;
+    const height = 100;
+    const backdrop = new CanvasRenderer(canvas);
 
-    const world = new World(mockRenderer);
-    world.setSolidColor("#000");
-
-    testRunner.assertStrictlyEquals("#000", actualColor);
+    new World(
+      width,
+      height,
+      backdrop,
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    );
   }
 );
 
-worldTests.addTest("has method clear that calls clear on renderer", () => {
-  let actual;
+worldTests.addTest(
+  "instantiating without wall<CanvasRenderer> should throw CanvasRendererTypeError",
+  () => {
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
+    const canvas = document.createElement("canvas");
 
-  const mockRenderer = TestBot.createMock(CanvasRenderer);
-  mockRenderer.clear = () => {
-    actual = true;
-  };
+    const width = 100;
+    const height = 100;
+    const backdrop = new CanvasRenderer(canvas);
+    const background = new CanvasRenderer(canvas);
 
-  const world = new World(mockRenderer);
-  world.clear();
-
-  testRunner.assertStrictlyEquals(true, actual);
-});
+    new World(
+      width,
+      height,
+      backdrop,
+      background,
+      undefined,
+      undefined,
+      undefined
+    );
+  }
+);
 
 worldTests.addTest(
-  "has method drawFloor which calls renderer drawRect with inverted height and given color",
+  "instantiating without interactables<CanvasRenderer> should throw CanvasRendererTypeError",
   () => {
-    let actual;
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
+    const canvas = document.createElement("canvas");
 
-    const mockRenderer = TestBot.createMock(CanvasRenderer);
-    mockRenderer.canvas = { clientWidth: 160, clientHeight: 100 };
-    mockRenderer.drawRect = (x, y, w, h, c) => {
-      actual = {
-        startX: x,
-        startY: y,
-        width: w,
-        height: h,
-        color: c,
-      };
-    };
+    const width = 100;
+    const height = 100;
+    const backdrop = new CanvasRenderer(canvas);
+    const background = new CanvasRenderer(canvas);
+    const wall = new CanvasRenderer(canvas);
 
-    const world = new World(mockRenderer);
-    world.drawFloor("#000", 25);
+    new World(width, height, backdrop, background, wall, undefined, undefined);
+  }
+);
 
-    const expected = {
-      startX: 0,
-      startY: 100,
-      width: 160,
-      height: -25,
-      color: "#000",
-    };
+worldTests.addTest(
+  "instantiating without foreground<CanvasRenderer> should throw CanvasRendererTypeError",
+  () => {
+    testRunner.assertThrowsExpectedError(CanvasRendererTypeError);
+    const canvas = document.createElement("canvas");
 
-    testRunner.assertDeepCompareObjects(expected, actual);
+    const width = 100;
+    const height = 100;
+    const backdrop = new CanvasRenderer(canvas);
+    const background = new CanvasRenderer(canvas);
+    const wall = new CanvasRenderer(canvas);
+    const interactables = new CanvasRenderer(canvas);
+
+    new World(
+      width,
+      height,
+      backdrop,
+      background,
+      wall,
+      interactables,
+      undefined
+    );
+  }
+);
+
+worldTests.addTest(
+  "setFloor method throws NumberTypeError when given non-number",
+  () => {
+    testRunner.assertThrowsExpectedError(NumberTypeError);
+    const canvas = document.createElement("canvas");
+
+    const width = 100;
+    const height = 100;
+    const backdrop = new CanvasRenderer(canvas);
+    const background = new CanvasRenderer(canvas);
+    const wall = new CanvasRenderer(canvas);
+    const interactables = new CanvasRenderer(canvas);
+    const foreground = new CanvasRenderer(canvas);
+
+    const world = new World(
+      width,
+      height,
+      backdrop,
+      background,
+      wall,
+      interactables,
+      foreground
+    );
+
+    world.setFloor();
   }
 );
 
