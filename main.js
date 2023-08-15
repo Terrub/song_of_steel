@@ -1,10 +1,6 @@
 import { Utils } from "./utils.js";
 import { CanvasRenderer } from "./components/canvasRenderer.js";
-import { Backdrop } from "./components/backdrop.js";
-import { Background } from "./components/background.js";
-import { Wall } from "./components/wall.js";
 import { World } from "./components/world.js";
-import { Foreground } from "./components/foreground.js";
 import { createMainloop } from "./components/mainloop.js";
 import { AnimatedSprite } from "./components/animatedSprite.js";
 import { Character } from "./components/character.js";
@@ -70,6 +66,24 @@ content.appendChild(foregroundCanvas);
 
 document.body.appendChild(content);
 
+const backdrop = new CanvasRenderer(backdropCanvas);
+const background = new CanvasRenderer(backgroundCanvas);
+const wall = new CanvasRenderer(wallsCanvas);
+const interactables = new CanvasRenderer(mainCanvas);
+const foreground = new CanvasRenderer(foregroundCanvas);
+
+const world = new World(
+  gameWidth,
+  gameHeight,
+  backdrop,
+  background,
+  wall,
+  interactables,
+  foreground
+);
+
+world.setFloor(70);
+
 const tyMsgContainer = document.createElement("div");
 tyMsgContainer.style.position = "absolute";
 tyMsgContainer.style.padding = "10px";
@@ -82,12 +96,6 @@ assetLink.href = "https://luizmelo.itch.io/hero-knight";
 assetLink.innerText = "https://luizmelo.itch.io/hero-knight";
 tyMsgContainer.append(tyMsg, assetLink);
 document.body.appendChild(tyMsgContainer);
-
-const backdrop = new Backdrop(new CanvasRenderer(backdropCanvas));
-const background = new Background(new CanvasRenderer(backgroundCanvas));
-const wall = new Wall(new CanvasRenderer(wallsCanvas));
-const world = new World(new CanvasRenderer(mainCanvas));
-const foreground = new Foreground(new CanvasRenderer(foregroundCanvas));
 
 const playerScale = 3;
 const playerPosition = new Vector(250, 0);
@@ -329,23 +337,8 @@ function resolveGameState() {
 
 function renderGame() {
   numTics += 1;
-
-  world.clear();
-
-  backdrop.setSolidColor("#888");
-  background.drawFloor(150, "#555");
-
-  wall.drawPost(100, 15, 300, "#222");
-  wall.drawPost(480, 8, 300, "#222");
-  wall.drawPost(860, 15, 300, "#222");
-
-  world.drawFloor("#111", 70);
-
-  player.draw(world, playerPosition, numTics);
-
-  foreground.drawPost(-20, 45, gameHeight, "#000");
-  foreground.drawPost(400, 20, gameHeight, "#000");
-  foreground.drawPost(890, 45, gameHeight, "#000");
+  world.draw(numTics);
+  world.drawPlayer(player, playerPosition, numTics);
 }
 
 function gameTic() {
