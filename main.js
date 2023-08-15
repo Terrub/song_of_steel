@@ -2,10 +2,8 @@ import { Utils } from "./utils.js";
 import { CanvasRenderer } from "./components/canvasRenderer.js";
 import { World } from "./components/world.js";
 import { createMainloop } from "./components/mainloop.js";
-import { AnimatedSprite } from "./components/animatedSprite.js";
-import { Character } from "./components/character.js";
 import { Vector } from "./components/vector.js";
-import { Sprite } from "./components/sprite.js";
+import { StickFigure } from "./components/stickFigure.js";
 
 /**
  * What do I need to separate game from browser?
@@ -84,151 +82,12 @@ const world = new World(
 
 world.setFloor(70);
 
-const tyMsgContainer = document.createElement("div");
-tyMsgContainer.style.position = "absolute";
-tyMsgContainer.style.padding = "10px";
-tyMsgContainer.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
-const tyMsg = document.createElement("span");
-tyMsg.style.display = "block";
-tyMsg.innerText = "Animated Sprite belongs to LuizMelo";
-const assetLink = document.createElement("a");
-assetLink.href = "https://luizmelo.itch.io/hero-knight";
-assetLink.innerText = "https://luizmelo.itch.io/hero-knight";
-tyMsgContainer.append(tyMsg, assetLink);
-document.body.appendChild(tyMsgContainer);
-
 const playerScale = 3;
 const playerPosition = new Vector(250, 0);
 const playerDimensions = new Vector(50, 55);
 const playerInitialVelocity = new Vector(0, 0);
-const playerIdleImage = new Image();
-playerIdleImage.src = "./sprites/seraphine/idle.png";
-const playerIdleFrameDimensions = new Vector(180, 180);
-const playerIdleDimensions = new Vector(50, 54);
-const playerIdleOffset = new Vector(72, 60);
-const playerIdleSprite = new Sprite(
-  playerIdleImage,
-  playerIdleFrameDimensions,
-  playerIdleDimensions,
-  playerIdleOffset,
-  playerScale
-);
-const playerIdleAnimation = new AnimatedSprite(
-  playerIdleSprite,
-  11,
-  ticsPerFrame
-);
 
-const playerRunImage = new Image();
-playerRunImage.src = "./sprites/seraphine/run.png";
-const playerRunFrameDimensions = new Vector(180, 180);
-const playerRunDimensions = new Vector(50, 58);
-const playerRunOffset = new Vector(70, 56);
-const playerRunSprite = new Sprite(
-  playerRunImage,
-  playerRunFrameDimensions,
-  playerRunDimensions,
-  playerRunOffset,
-  playerScale
-);
-const playerRunAnimation = new AnimatedSprite(playerRunSprite, 8, ticsPerFrame);
-
-const playerJumpImage = new Image();
-playerJumpImage.src = "./sprites/seraphine/jump.png";
-const playerJumpFrameDimensions = new Vector(180, 180);
-const playerJumpDimensions = new Vector(50, 60);
-const playerJumpOffset = new Vector(70, 56);
-const playerJumpSprite = new Sprite(
-  playerJumpImage,
-  playerJumpFrameDimensions,
-  playerJumpDimensions,
-  playerJumpOffset,
-  playerScale
-);
-const playerJumpAnimation = new AnimatedSprite(
-  playerJumpSprite,
-  3,
-  ticsPerFrame
-);
-
-const playerFallImage = new Image();
-playerFallImage.src = "./sprites/seraphine/fall.png";
-const playerFallFrameDimensions = new Vector(180, 180);
-const playerFallDimensions = new Vector(50, 68);
-const playerFallOffset = new Vector(70, 47);
-const playerFallSprite = new Sprite(
-  playerFallImage,
-  playerFallFrameDimensions,
-  playerFallDimensions,
-  playerFallOffset,
-  playerScale
-);
-const playerFallAnimation = new AnimatedSprite(
-  playerFallSprite,
-  3,
-  ticsPerFrame
-);
-
-function resetAttack() {
-  player.resetAttacks();
-}
-
-const playerAttackLeftImage = new Image();
-playerAttackLeftImage.src = "./sprites/seraphine/attack1.png";
-const playerAttackLeftFrameDimensions = new Vector(180, 180);
-const playerAttackLeftDimensions = new Vector(77, 70);
-const playerAttackLeftOffset = new Vector(55, 43);
-const playerAttackLeftSprite = new Sprite(
-  playerAttackLeftImage,
-  playerAttackLeftFrameDimensions,
-  playerAttackLeftDimensions,
-  playerAttackLeftOffset,
-  playerScale
-);
-
-const playerAttackLeftAnimation = new AnimatedSprite(
-  playerAttackLeftSprite,
-  7,
-  ticsPerFrame,
-  false,
-  resetAttack
-);
-
-const playerAttackRightImage = new Image();
-playerAttackRightImage.src = "./sprites/seraphine/attack2.png";
-const playerAttackRightFrameDimensions = new Vector(180, 180);
-const playerAttackRightDimensions = new Vector(135, 100);
-const playerAttackRightOffset = new Vector(42, 14);
-const playerAttackRightSprite = new Sprite(
-  playerAttackRightImage,
-  playerAttackRightFrameDimensions,
-  playerAttackRightDimensions,
-  playerAttackRightOffset,
-  playerScale
-);
-
-const playerAttackRightAnimation = new AnimatedSprite(
-  playerAttackRightSprite,
-  7,
-  ticsPerFrame,
-  false,
-  resetAttack
-);
-
-const playerSprites = {
-  // idle: playerFallAnimation,
-  idle: playerIdleAnimation,
-  run: playerRunAnimation,
-  jump: playerJumpAnimation,
-  fall: playerFallAnimation,
-  attack1: playerAttackLeftAnimation,
-  attack2: playerAttackRightAnimation,
-};
-const player = new Character(
-  playerDimensions,
-  playerInitialVelocity,
-  playerSprites
-);
+const player = new StickFigure(playerInitialVelocity);
 
 let playerMoveLeftBtnDown = false;
 let playerMoveRightBtnDown = false;
