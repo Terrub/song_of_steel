@@ -147,6 +147,14 @@ export class TestBot {
       expected === actual ? TestBot.TEST_SUCCEEDED : TestBot.TEST_FAILED;
   }
 
+  assertStrictlyNotEquals(expected, actual) {
+
+    this.expected = expected;
+    this.actual = actual;
+    this.result =
+      expected !== actual ? TestBot.TEST_SUCCEEDED : TestBot.TEST_FAILED;
+  }
+
   assertThrowsExpectedError(expectedError) {
     this.expectedError = expectedError;
   }

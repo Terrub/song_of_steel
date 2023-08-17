@@ -8,78 +8,82 @@ const resultRenderer = TestBot.renderResultsInDiv(resultsContainer);
 const testRunner = new TestBot(resultRenderer);
 
 const assertEqualsTest = testRunner.createSuite("Tests assertStrictlyEquals");
-assertEqualsTest.addTest(
-  "succeeding shows green",
-  () => {
-    const expected = "foo";
-    const actual = "foo";
+assertEqualsTest.addTest("succeeding shows green", () => {
+  const expected = "foo";
+  const actual = "foo";
 
-    testRunner.assertStrictlyEquals(expected, actual);
-  }
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+assertEqualsTest.addTest("failing shows red", () => {
+  const expected = "foo";
+  const actual = "bar";
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+assertEqualsTest.addTest("encountering an error shows orange", () => {
+  throw new Error("This should cause an error and show orange in TestBot.");
+});
+
+const assertStrictlyNotEqualsTests = testRunner.createSuite(
+  "Tests assertStrictlyNotEquals"
 );
 
-assertEqualsTest.addTest(
-  "failing shows red",
-  () => {
-    const expected = "foo";
-    const actual = "bar";
+assertStrictlyNotEqualsTests.addTest("succeeding shows green", () => {
+  const expected = "foo";
+  const actual = "bar";
 
-    testRunner.assertStrictlyEquals(expected, actual);
-  }
-);
+  testRunner.assertStrictlyNotEquals(expected, actual);
+});
 
-assertEqualsTest.addTest(
-  "encounters error shows orange",
-  () => {
-    throw new Error("This should cause an error and show orange in TestBot.");
-  }
-);
+assertStrictlyNotEqualsTests.addTest("failing shows red", () => {
+  const expected = "foo";
+  const actual = "foo";
+
+  testRunner.assertStrictlyNotEquals(expected, actual);
+});
+
+assertStrictlyNotEqualsTests.addTest("encountering an error shows orange", () => {
+  throw new Error("This should cause an error and show orange in TestBot.");
+});
 
 const assertObjectDeepCompareTest = testRunner.createSuite(
   "Tests assertDeepCompareObjects"
 );
-assertObjectDeepCompareTest.addTest(
-  "of same objects shows green",
-  () => {
-    const expected = {
-      name: "deep compared object 1",
-      id: 1,
-      values: ["a", "b", "c"],
-    };
-    const actual = {
-      id: 1,
-      name: "deep compared object 1",
-      values: ["a", "b", "c"],
-    };
+assertObjectDeepCompareTest.addTest("of same objects shows green", () => {
+  const expected = {
+    name: "deep compared object 1",
+    id: 1,
+    values: ["a", "b", "c"],
+  };
+  const actual = {
+    id: 1,
+    name: "deep compared object 1",
+    values: ["a", "b", "c"],
+  };
 
-    testRunner.assertDeepCompareObjects(expected, actual);
-  }
-);
+  testRunner.assertDeepCompareObjects(expected, actual);
+});
 
-assertObjectDeepCompareTest.addTest(
-  "of different objects shows red",
-  () => {
-    const expected = {
-      name: "deep compared object 2",
-      id: 2,
-      values: ["a", "b", "c"],
-    };
-    const actual = {
-      name: "deep compared object 2",
-      id: 2,
-      values: [1, 2, 3],
-    };
+assertObjectDeepCompareTest.addTest("of different objects shows red", () => {
+  const expected = {
+    name: "deep compared object 2",
+    id: 2,
+    values: ["a", "b", "c"],
+  };
+  const actual = {
+    name: "deep compared object 2",
+    id: 2,
+    values: [1, 2, 3],
+  };
 
-    testRunner.assertDeepCompareObjects(expected, actual);
-  }
-);
+  testRunner.assertDeepCompareObjects(expected, actual);
+});
 
-assertObjectDeepCompareTest.addTest(
-  "encounters error shows orange",
-  () => {
-    throw new Error("This should cause an error and show orange in TestBot.");
-  }
-);
+assertObjectDeepCompareTest.addTest("encounters error shows orange", () => {
+  throw new Error("This should cause an error and show orange in TestBot.");
+});
 
 const assertErrorTest = testRunner.createSuite(
   "Tests assertThrowsExpectedError"
