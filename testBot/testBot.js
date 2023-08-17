@@ -167,6 +167,14 @@ export class TestBot {
       : TestBot.TEST_FAILED;
   }
 
+  assertNotDeepCompareObjects(object1, object2) {
+    this.expected = object1;
+    this.actual = object2;
+    this.result = !Utils.objectEquals(object1, object2)
+      ? TestBot.TEST_SUCCEEDED
+      : TestBot.TEST_FAILED;
+  }
+
   assertInRange(min, actual, max) {
     if (!Utils.isNumber(actual)) {
       throw new TypeError(

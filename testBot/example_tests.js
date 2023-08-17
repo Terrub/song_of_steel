@@ -81,9 +81,49 @@ assertObjectDeepCompareTest.addTest("of different objects shows red", () => {
   testRunner.assertDeepCompareObjects(expected, actual);
 });
 
-assertObjectDeepCompareTest.addTest("encounters error shows orange", () => {
-  throw new Error("This should cause an error and show orange in TestBot.");
+
+const assertNotObjectDeepCompareTest = testRunner.createSuite(
+  "Tests assertNotDeepCompareObjects"
+);
+assertNotObjectDeepCompareTest.addTest(
+  "of different objects shows green",
+  () => {
+    const expected = {
+      name: "deep compared object 2",
+      id: 2,
+      values: ["a", "b", "c"],
+    };
+    const actual = {
+      name: "deep compared object 2",
+      id: 2,
+      values: [1, 2, 3],
+    };
+
+    testRunner.assertNotDeepCompareObjects(expected, actual);
+  }
+);
+
+assertNotObjectDeepCompareTest.addTest("of same objects shows red", () => {
+  const expected = {
+    name: "deep compared object 1",
+    id: 1,
+    values: ["a", "b", "c"],
+  };
+  const actual = {
+    id: 1,
+    name: "deep compared object 1",
+    values: ["a", "b", "c"],
+  };
+
+  testRunner.assertNotDeepCompareObjects(expected, actual);
 });
+
+assertNotObjectDeepCompareTest.addTest(
+  "shows orange when encountering an error",
+  () => {
+    throw new Error("This should cause an error and show orange in TestBot.");
+  }
+);
 
 const assertErrorTest = testRunner.createSuite(
   "Tests assertThrowsExpectedError"
