@@ -67,6 +67,21 @@ export class CanvasRenderer {
     this.gLib.fillRect(x, this.height - y, x2, -y2);
   }
 
+  drawCircle(x, y, r, c) {
+    this.gLib.fillStyle = c;
+    this.gLib.beginPath();
+    this.gLib.arc(x, this.height - y, r, 0, 2 * Math.PI);
+    this.gLib.fill();
+  }
+
+  strokeCircle(x, y, r, c) {
+    this.gLib.strokeStyle = c;
+    this.gLib.lineWidth = 1;
+    this.gLib.beginPath();
+    this.gLib.arc(x, this.height - y, r, 0, 2 * Math.PI);
+    this.gLib.stroke();
+  }
+
   strokeRect(x, y, w, h, color, strokeWidth = 1) {
     this.gLib.beginPath();
     this.gLib.lineWidth = strokeWidth;
