@@ -22,7 +22,7 @@ assertEqualsTest.addTest("failing shows red", () => {
   testRunner.assertStrictlyEquals(expected, actual);
 });
 
-assertEqualsTest.addTest("encountering an error shows orange", () => {
+assertEqualsTest.addTest("shows orange when encountering an error", () => {
   throw new Error("This should cause an error and show orange in TestBot.");
 });
 
@@ -44,9 +44,12 @@ assertStrictlyNotEqualsTests.addTest("failing shows red", () => {
   testRunner.assertStrictlyNotEquals(expected, actual);
 });
 
-assertStrictlyNotEqualsTests.addTest("encountering an error shows orange", () => {
-  throw new Error("This should cause an error and show orange in TestBot.");
-});
+assertStrictlyNotEqualsTests.addTest(
+  "shows orange when encountering an error",
+  () => {
+    throw new Error("This should cause an error and show orange in TestBot.");
+  }
+);
 
 const assertObjectDeepCompareTest = testRunner.createSuite(
   "Tests assertDeepCompareObjects"
@@ -81,6 +84,12 @@ assertObjectDeepCompareTest.addTest("of different objects shows red", () => {
   testRunner.assertDeepCompareObjects(expected, actual);
 });
 
+assertObjectDeepCompareTest.addTest(
+  "shows orange when encountering an error",
+  () => {
+    throw new Error("This should cause an error and show orange in TestBot.");
+  }
+);
 
 const assertNotObjectDeepCompareTest = testRunner.createSuite(
   "Tests assertNotDeepCompareObjects"
@@ -131,13 +140,17 @@ const assertErrorTest = testRunner.createSuite(
 assertErrorTest.addTest("shows green when expected error is thrown", () => {
   testRunner.assertThrowsExpectedError(TypeError);
 
-  throw new TypeError("This error should not show up in console but show up green in tests.");
+  throw new TypeError(
+    "This error should not show up in console but show up green in tests."
+  );
 });
 
 assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
   testRunner.assertThrowsExpectedError(RangeError);
 
-  throw new TypeError("This error should show up in console but show up red in tests.");
+  throw new TypeError(
+    "This error should show up in console but show up red in tests."
+  );
 });
 
 assertErrorTest.addTest("shows red when no error is thrown", () => {
@@ -175,16 +188,13 @@ assertRangeTest.addTest(
   }
 );
 
-assertRangeTest.addTest(
-  "throws error when given value is not a Number",
-  () => {
-    const actual = "";
-    const expectedMin = 1.0;
-    const expectedMax = 10.0;
+assertRangeTest.addTest("throws error when given value is not a Number", () => {
+  const actual = "";
+  const expectedMin = 1.0;
+  const expectedMax = 10.0;
 
-    testRunner.assertInRange(expectedMin, actual, expectedMax);
-  }
-);
+  testRunner.assertInRange(expectedMin, actual, expectedMax);
+});
 
 const assertGreaterThanTests = testRunner.createSuite(
   "Tests assertGreaterThan"

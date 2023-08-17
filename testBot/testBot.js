@@ -148,7 +148,6 @@ export class TestBot {
   }
 
   assertStrictlyNotEquals(expected, actual) {
-
     this.expected = expected;
     this.actual = actual;
     this.result =
@@ -159,10 +158,10 @@ export class TestBot {
     this.expectedError = expectedError;
   }
 
-  assertDeepCompareObjects(expected, actual) {
-    this.expected = expected;
-    this.actual = actual;
-    this.result = Utils.objectEquals(expected, actual)
+  assertDeepCompareObjects(object1, object2) {
+    this.expected = object1;
+    this.actual = object2;
+    this.result = Utils.objectEquals(object1, object2)
       ? TestBot.TEST_SUCCEEDED
       : TestBot.TEST_FAILED;
   }
