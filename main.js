@@ -73,10 +73,10 @@ const foreground = new CanvasRenderer(foregroundCanvas);
 const world = new World(
   gameWidth,
   gameHeight,
+  interactables,
   backdrop,
   background,
   wall,
-  interactables,
   foreground
 );
 

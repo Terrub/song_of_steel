@@ -8,34 +8,57 @@ export class World {
   #background;
   #wall;
   #interactables;
+  #debugLayer;
   #foreground;
   #floorHeight = 0;
 
-  constructor(width, height, backdrop, background, wall, interactables, foreground) {
+  debug = true;
+  // debug = false;
+
+  constructor(
+    width,
+    height,
+    interactables,
+    backdrop = null,
+    background = null,
+    wall = null,
+    foreground = null
+  ) {
     this.width = width;
     this.height = height;
-
-    if (!Utils.isInstanceOf(CanvasRenderer, backdrop)) {
-      throw new CanvasRendererTypeError("backDrop", backdrop);
-    }
-    this.#backdrop = backdrop;
-
-    if (!Utils.isInstanceOf(CanvasRenderer, background)) {
-      throw new CanvasRendererTypeError("backGround", background);
-    }
-    this.#background = background;
-
-    if (!Utils.isInstanceOf(CanvasRenderer, wall)) {
-      throw new CanvasRendererTypeError("wall", wall);
-    }
-    this.#wall = wall;
 
     if (!Utils.isInstanceOf(CanvasRenderer, interactables)) {
       throw new CanvasRendererTypeError("interactables", interactables);
     }
     this.#interactables = interactables;
+    // TODO: Add a separate debug render layer
+    this.#debugLayer = interactables;
 
-    if (!Utils.isInstanceOf(CanvasRenderer, foreground)) {
+    if (
+      !Utils.isNull(backdrop) &&
+      !Utils.isInstanceOf(CanvasRenderer, backdrop)
+    ) {
+      throw new CanvasRendererTypeError("backDrop", backdrop);
+    }
+    this.#backdrop = backdrop;
+
+    if (
+      !Utils.isNull(backdrop) &&
+      !Utils.isInstanceOf(CanvasRenderer, background)
+    ) {
+      throw new CanvasRendererTypeError("backGround", background);
+    }
+    this.#background = background;
+
+    if (!Utils.isNull(backdrop) && !Utils.isInstanceOf(CanvasRenderer, wall)) {
+      throw new CanvasRendererTypeError("wall", wall);
+    }
+    this.#wall = wall;
+
+    if (
+      !Utils.isNull(backdrop) &&
+      !Utils.isInstanceOf(CanvasRenderer, foreground)
+    ) {
       throw new CanvasRendererTypeError("foreground", foreground);
     }
     this.#foreground = foreground;
@@ -43,7 +66,7 @@ export class World {
 
   setFloor(height) {
     if (!Utils.isNumber(height)) {
-      throw new NumberTypeError('height', height);
+      throw new NumberTypeError("height", height);
     }
 
     this.#floorHeight = Utils.constrain(height, 0, this.height);
