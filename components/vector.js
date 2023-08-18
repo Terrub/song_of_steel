@@ -56,7 +56,7 @@ export class Vector {
   }
 
   static length(v) {
-    return Math.sqrt(v.x * v.x + v.y * v.y);
+    return Math.hypot(v.x, v.y);
   }
 
   static setPolar(v, angle, mag) {
@@ -73,6 +73,11 @@ export class Vector {
     const v1Norm = Vector.normalise(vector1);
     const v2Norm = Vector.normalise(vector2);
     return Vector.isApproximate(v1Norm.dotProduct(v2Norm), 1);
+  }
+
+  copyFrom(v) {
+    this.x = v.x;
+    this.y = v.y;
   }
 
   add(v2) {

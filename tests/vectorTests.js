@@ -241,7 +241,7 @@ vectorTests.addTest(
 );
 
 vectorTests.addTest("normalise will cause its magnitude to be 1", () => {
-  const vector = new Vector(10, -1);
+  const vector = new Vector(5, 5);
   vector.normalise();
   const actual = vector.length();
   const expected = 1;
@@ -252,7 +252,7 @@ vectorTests.addTest("normalise will cause its magnitude to be 1", () => {
 vectorTests.addTest(
   "normalise is an approximation and magnitude may not always be strictly equal to 1",
   () => {
-    const vector = new Vector(5, 5);
+    const vector = new Vector(10, -1);
     vector.normalise();
     const actual = vector.length();
     const expected = 0.9999999999999999;
