@@ -43,20 +43,20 @@ export class World {
     this.#backdrop = backdrop;
 
     if (
-      !Utils.isNull(backdrop) &&
+      !Utils.isNull(background) &&
       !Utils.isInstanceOf(CanvasRenderer, background)
     ) {
       throw new CanvasRendererTypeError("backGround", background);
     }
     this.#background = background;
 
-    if (!Utils.isNull(backdrop) && !Utils.isInstanceOf(CanvasRenderer, wall)) {
+    if (!Utils.isNull(wall) && !Utils.isInstanceOf(CanvasRenderer, wall)) {
       throw new CanvasRendererTypeError("wall", wall);
     }
     this.#wall = wall;
 
     if (
-      !Utils.isNull(backdrop) &&
+      !Utils.isNull(foreground) &&
       !Utils.isInstanceOf(CanvasRenderer, foreground)
     ) {
       throw new CanvasRendererTypeError("foreground", foreground);
