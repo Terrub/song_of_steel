@@ -275,7 +275,7 @@ export class World {
     // OK that works! we have bones, resolved and well and even animated them!
     // Time to solve some Inverse Kinematics!
     // TODO implement IKSolver here
-    this.solveIK(bones);
+    this.solveIK(bones, this.#boneVectors);
     // Once all bones have been resolved and placed, we simply just draw them here.
     // Though we should loop over the resolved bones, not the originals!
     for (const boneName in bones) {
@@ -321,7 +321,7 @@ export class World {
     }
   }
 
-  solveIK(bones) {
+  solveIK(bones, boneVectors) {
     const limbs = [
       {
         endEffector: StickFigure.BONE_RIGHT_FOOT,
@@ -351,11 +351,11 @@ export class World {
 
     for (const limb of limbs) {
       IKSolver.global(
-        this.#boneVectors[limb.joint],
+        boneVectors[limb.joint],
         bones[limb.joint].point.length(),
         bones[limb.endEffector].point.length(),
-        this.#boneVectors[limb.endEffector],
-        this.#boneVectors[limb.base],
+        boneVectors[limb.endEffector],
+        boneVectors[limb.base],
         limb.dir,
       );
     }
