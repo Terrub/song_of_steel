@@ -165,7 +165,7 @@ export class World {
     const leftHip = this.#boneVectors[StickFigure.BONE_LEFT_HIP];
     const leftFoot = this.#boneVectors[StickFigure.BONE_LEFT_FOOT];
 
-    const b = bones[StickFigure.BONE_PELVIS].point.y;
+    const b = this.#boneVectors[StickFigure.BONE_PELVIS].y - this.#floorHeight - position.y;
     const l1 = bones[StickFigure.BONE_LEFT_KNEE].point.length();
     const l2 = bones[StickFigure.BONE_LEFT_FOOT].point.length();
     const c = l1 + l2;
