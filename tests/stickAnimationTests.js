@@ -58,7 +58,7 @@ stickAnimationTests.addTest(
 
     anim.resolve(currentTic, boneVectors);
 
-    const expected = [new Vector(-5, 0), new Vector(-4, 5)];
+    const expected = [new Vector(-5, 0), new Vector(6, 5)];
     const actual = [boneVectors.boneA, boneVectors.boneB];
 
     testRunner.assertDeepCompareObjects(expected, actual);
@@ -89,7 +89,7 @@ stickAnimationTests.addTest(
 
     anim.resolve(currentTic, boneVectors);
 
-    const expected = [new Vector(-5, 0), new Vector(-4, 5)];
+    const expected = [new Vector(-5, 0), new Vector(6, 5)];
     const actual = [boneVectors.boneA, boneVectors.boneB];
 
     testRunner.assertDeepCompareObjects(expected, actual);

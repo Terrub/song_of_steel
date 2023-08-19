@@ -22,6 +22,8 @@ export class World {
   #foreground;
   /** @type {Number} */
   #floorHeight = 0;
+  /** @type {Number} */
+  #playerPosition;
   #boneVectors = {};
 
   /** @type {Boolean} */
@@ -120,22 +122,20 @@ export class World {
     }
   }
 
-  #getResolvedBoneVector(boneName, /** @type {Bone} */ node, tree) {
-    /** @type {Vector} */
-    let v;
-
-    if (!Utils.isNull(node.connection)) {
-      v = this.#getResolvedBoneVector(boneName, tree[node.connection], tree);
+  #getResolvedBoneVector(
+    /** @type {Vector}*/ v,
+    /** @type {String}*/ boneName,
+    /** @type {Bone} */ node,
+    tree
+  ) {
+    if (Utils.isNull(node.parent)) {
+      // This should be the pelvis bone.
+      v.add(this.#boneVectors[boneName]);
     } else {
-      v = this.#boneVectors[boneName];
-      // reset the bone
-      v.x = 0;
-      v.y = 0;
+      this.#getResolvedBoneVector(v, node.parent, tree[node.parent], tree);
+
+      v.add(this.#boneVectors[boneName]);
     }
-
-    v.add(node.point);
-
-    return v;
   }
 
   #debugDrawBoneColours(bones) {
@@ -165,7 +165,10 @@ export class World {
     const leftHip = this.#boneVectors[StickFigure.BONE_LEFT_HIP];
     const leftFoot = this.#boneVectors[StickFigure.BONE_LEFT_FOOT];
 
-    const b = this.#boneVectors[StickFigure.BONE_PELVIS].y - this.#floorHeight - position.y;
+    const b =
+      this.#boneVectors[StickFigure.BONE_PELVIS].y -
+      this.#floorHeight -
+      position.y;
     const l1 = bones[StickFigure.BONE_LEFT_KNEE].point.length();
     const l2 = bones[StickFigure.BONE_LEFT_FOOT].point.length();
     const c = l1 + l2;
@@ -241,6 +244,23 @@ export class World {
     return bc[boneName];
   }
 
+  #resetBoneVectors(bones, boneVectors) {
+    for (const boneName in bones) {
+      boneVectors[boneName].x = bones[boneName].point.x;
+      boneVectors[boneName].y = bones[boneName].point.y;
+    }
+  }
+
+  #forwardKinematics(/** @type {Bone} */ base) {
+    for (const child of base.children) {
+      this.#boneVectors[child.name].add(this.#boneVectors[base.name]);
+
+      if (child.children.length > 0) {
+        this.#forwardKinematics(child);
+      }
+    }
+  }
+
   draw(numTics) {
     this.#interactables.clear();
     this.#interactables.drawRect(0, 0, this.width, this.#floorHeight, "#111");
@@ -252,44 +272,45 @@ export class World {
     /** @type {Number} */ numTics
   ) {
     const bones = player.bones;
-    const position = playerPosition;
+    this.#playerPosition = playerPosition;
     let color = "red";
     const thickness = 6;
 
-    // Do the resolving here for all the bones
-    // We can even exit out early if we've already done any of the bones in the three
-    for (const boneName in bones) {
-      const bone = bones[boneName];
-      const resolvedBone = this.#getResolvedBoneVector(boneName, bone, bones);
+    // Reset bonevectors to t-pose
+    this.#resetBoneVectors(bones, this.#boneVectors);
 
-      // TODO Consider adding playerPosition and floor height to #getResolvedBoneVector?
-      resolvedBone.add(playerPosition);
-      resolvedBone.y += this.#floorHeight;
-    }
-
-    // Once the bones have been resolved from T-pose, we can simply apply all the animation frame
-    // vectors to this set of bones, so we don't alter the originals, just working with our
-    // internal set that we reset every frame anyway.
     player.animateBoneVectors(numTics, this.#boneVectors);
 
-    // OK that works! we have bones, resolved and well and even animated them!
-    // Time to solve some Inverse Kinematics!
-    // TODO implement IKSolver here
+    this.#boneVectors[StickFigure.BONE_PELVIS].add(playerPosition);
+    this.#boneVectors[StickFigure.BONE_PELVIS].y += this.#floorHeight;
+    this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
+
+    // plant feet on the floor
+    this.#boneVectors[StickFigure.BONE_LEFT_FOOT].y = playerPosition.y + this.#floorHeight;
+    this.#boneVectors[StickFigure.BONE_RIGHT_FOOT].y = playerPosition.y + this.#floorHeight;
+
     this.solveIK(bones, this.#boneVectors);
-    // Once all bones have been resolved and placed, we simply just draw them here.
-    // Though we should loop over the resolved bones, not the originals!
+
+    this.#drawBoneVectors(bones, this.#boneVectors, color, thickness);
+
+    if (this.debug === true) {
+      this.#debugRenderInfo(player, playerPosition, numTics);
+    }
+  }
+
+  #drawBoneVectors(bones, boneVectors, color, thickness) {
     for (const boneName in bones) {
       /** @type {Bone} */
       const bone = bones[boneName];
 
-      if (Utils.isNull(bone.connection)) {
+      if (Utils.isNull(bone.parent)) {
         continue;
       }
 
       /** @type {Vector} */
-      const boneVector = this.#boneVectors[boneName];
+      const boneVector = boneVectors[boneName];
       /** @type {Vector} */
-      const parentVector = this.#boneVectors[bone.connection];
+      const parentVector = boneVectors[bone.parent.name];
 
       if (this.debug) {
         color = this.#debugGetColorForBone(boneName);
@@ -315,10 +336,6 @@ export class World {
         thickness
       );
     }
-
-    if (this.debug === true) {
-      this.#debugRenderInfo(player, position, numTics);
-    }
   }
 
   solveIK(bones, boneVectors) {
@@ -327,25 +344,25 @@ export class World {
         endEffector: StickFigure.BONE_RIGHT_FOOT,
         joint: StickFigure.BONE_RIGHT_KNEE,
         base: StickFigure.BONE_RIGHT_HIP,
-        dir: 1
+        dir: 1,
       },
       {
         endEffector: StickFigure.BONE_LEFT_FOOT,
         joint: StickFigure.BONE_LEFT_KNEE,
         base: StickFigure.BONE_LEFT_HIP,
-        dir: 1
+        dir: 1,
       },
       {
         endEffector: StickFigure.BONE_RIGHT_HAND,
         joint: StickFigure.BONE_RIGHT_ELBOW,
         base: StickFigure.BONE_RIGHT_SHOULDER,
-        dir: -1
+        dir: -1,
       },
       {
         endEffector: StickFigure.BONE_LEFT_HAND,
         joint: StickFigure.BONE_LEFT_ELBOW,
         base: StickFigure.BONE_LEFT_SHOULDER,
-        dir: -1
+        dir: -1,
       },
     ];
 
@@ -356,7 +373,7 @@ export class World {
         bones[limb.endEffector].point.length(),
         boneVectors[limb.endEffector],
         boneVectors[limb.base],
-        limb.dir,
+        limb.dir
       );
     }
   }

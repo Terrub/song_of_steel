@@ -56,8 +56,8 @@ export class StickAnimation {
       const boneN0 = currentFrame.bonesVectors[boneName];
       const boneN1 = nextFrame.bonesVectors[boneName];
 
-      const newX = Lerp.calc(boneN0.x, boneN1.x, Lerp.smootheStep(dt));
-      const newY = Lerp.calc(boneN0.y, boneN1.y, Lerp.smootheStep(dt));
+      const newX = Lerp.calc(boneN0.x, boneN1.x, Lerp.linear(dt));
+      const newY = Lerp.calc(boneN0.y, boneN1.y, Lerp.linear(dt));
 
       boneVectors[boneName].x += newX;
       boneVectors[boneName].y += newY;
