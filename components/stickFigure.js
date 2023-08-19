@@ -39,28 +39,58 @@ export class StickFigure {
       30,
       StickFigure.BONE_PELVIS
     );
-    this.bones[StickFigure.BONE_LEFT_HIP] = Bone.fromPos(
-      -11,
-      2,
-      StickFigure.BONE_PELVIS
+    this.bones[StickFigure.BONE_HEAD] = Bone.fromPolar(
+      0.5 * Math.PI,
+      16,
+      StickFigure.BONE_NECK
     );
     this.bones[StickFigure.BONE_RIGHT_HIP] = Bone.fromPos(
       11,
       2,
       StickFigure.BONE_PELVIS
     );
-    this.bones[StickFigure.BONE_HEAD] = Bone.fromPolar(
-      0.5 * Math.PI,
-      16,
-      StickFigure.BONE_NECK
+    this.bones[StickFigure.BONE_RIGHT_KNEE] = Bone.fromPolar(
+      1.5 * Math.PI,
+      21,
+      StickFigure.BONE_RIGHT_HIP
     );
-    this.bones[StickFigure.BONE_LEFT_SHOULDER] = Bone.fromPolar(
-      Math.PI,
-      10,
-      StickFigure.BONE_NECK
+    this.bones[StickFigure.BONE_RIGHT_FOOT] = Bone.fromPolar(
+      1.5 * Math.PI,
+      23,
+      StickFigure.BONE_RIGHT_KNEE
+    );
+    this.bones[StickFigure.BONE_LEFT_HIP] = Bone.fromPos(
+      -11,
+      2,
+      StickFigure.BONE_PELVIS
+    );
+    this.bones[StickFigure.BONE_LEFT_KNEE] = Bone.fromPolar(
+      1.5 * Math.PI,
+      21,
+      StickFigure.BONE_LEFT_HIP
+    );
+    this.bones[StickFigure.BONE_LEFT_FOOT] = Bone.fromPolar(
+      1.5 * Math.PI,
+      23,
+      StickFigure.BONE_LEFT_KNEE
     );
     this.bones[StickFigure.BONE_RIGHT_SHOULDER] = Bone.fromPolar(
       0,
+      10,
+      StickFigure.BONE_NECK
+    );
+    this.bones[StickFigure.BONE_RIGHT_ELBOW] = Bone.fromPolar(
+      0,
+      20,
+      StickFigure.BONE_RIGHT_SHOULDER
+    );
+    this.bones[StickFigure.BONE_RIGHT_HAND] = Bone.fromPolar(
+      0,
+      18,
+      StickFigure.BONE_RIGHT_ELBOW
+    );
+    this.bones[StickFigure.BONE_LEFT_SHOULDER] = Bone.fromPolar(
+      Math.PI,
       10,
       StickFigure.BONE_NECK
     );
@@ -69,40 +99,10 @@ export class StickFigure {
       20,
       StickFigure.BONE_LEFT_SHOULDER
     );
-    this.bones[StickFigure.BONE_RIGHT_ELBOW] = Bone.fromPolar(
-      0,
-      20,
-      StickFigure.BONE_RIGHT_SHOULDER
-    );
     this.bones[StickFigure.BONE_LEFT_HAND] = Bone.fromPolar(
       Math.PI,
       18,
       StickFigure.BONE_LEFT_ELBOW
-    );
-    this.bones[StickFigure.BONE_RIGHT_HAND] = Bone.fromPolar(
-      0,
-      18,
-      StickFigure.BONE_RIGHT_ELBOW
-    );
-    this.bones[StickFigure.BONE_LEFT_KNEE] = Bone.fromPolar(
-      1.5 * Math.PI,
-      21,
-      StickFigure.BONE_LEFT_HIP
-    );
-    this.bones[StickFigure.BONE_RIGHT_KNEE] = Bone.fromPolar(
-      1.5 * Math.PI,
-      21,
-      StickFigure.BONE_RIGHT_HIP
-    );
-    this.bones[StickFigure.BONE_LEFT_FOOT] = Bone.fromPolar(
-      1.5 * Math.PI,
-      23,
-      StickFigure.BONE_LEFT_KNEE
-    );
-    this.bones[StickFigure.BONE_RIGHT_FOOT] = Bone.fromPolar(
-      1.5 * Math.PI,
-      23,
-      StickFigure.BONE_RIGHT_KNEE
     );
   }
 
