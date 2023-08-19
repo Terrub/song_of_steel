@@ -3,8 +3,7 @@ import { Utils } from "../utils.js";
 
 export class CanvasRenderer {
   canvas;
-
-  glib;
+  gLib;
 
   constructor(canvas) {
     if (!Utils.isInstanceOf(HTMLCanvasElement, canvas)) {
