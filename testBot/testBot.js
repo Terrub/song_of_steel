@@ -51,7 +51,7 @@ export class TestBot {
     );
 
     if (!mockingSuccessful) {
-      // TODO: Failing to mock a target class should have it's own specific error
+      // TODO Failing to mock a target class should have it's own specific error
       throw new Error(`CRITICAL: TestBot Failed to mock '${targetClass.name}'`);
     }
 

@@ -10,7 +10,7 @@
  * We'll see. This Maths is ... _slightly_ beyond my grasp.
  */
 
-// TODO: Add tests for SecondOrderDynamics
+// TODO Add tests for SecondOrderDynamics class, if we can... X_X
 export class SecondOrderDynamics {
   #xp = 0; // Previous x component
   #y = 0; // the to be calculated y component

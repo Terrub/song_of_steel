@@ -205,6 +205,9 @@ function gameTic() {
   renderGame();
 }
 
+world.setup();
+world.loadPlayer(player);
+
 const mainLoop = createMainloop(gameTic);
 mainLoop.setDebug(true);
 

@@ -18,11 +18,8 @@ stickFigureTests.addTest("has velocity vector", () => {
   testRunner.assertStrictlyEquals(true, player.velocity instanceof Vector);
 });
 
-stickFigureTests.addTest("has draw method", () => {
-  const playerVelocity = new Vector(0, 0);
-  const player = new StickFigure(playerVelocity);
-
-  testRunner.assertStrictlyEquals(true, Utils.isFunction(player.draw));
-})
+// player contains the bones needed for animation
+// player has animations for given set of 'actions'
+// player transformes bones based on given action and current number of game tics
 
 testRunner.run();

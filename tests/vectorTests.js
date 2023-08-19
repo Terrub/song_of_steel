@@ -2,7 +2,7 @@ import { TestBot } from "../testBot/testBot.js";
 import { Vector } from "../components/vector.js";
 import { Utils } from "../utils.js";
 
-// TODO: Lots of Vector tests are object based, needs static/non-destructive versions as well.
+// TODO Lots of Vector tests are object based, needs static/non-destructive versions as well.
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
 

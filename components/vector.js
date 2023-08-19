@@ -1,15 +1,19 @@
 // Thanks https://radzion.com/blog/linear-algebra/vectors
 
-// TODO: Adds tests for Vector
 export class Vector {
   static EPSILON = 0.00000001;
 
-  constructor(x, y) {
+  constructor(/** @type {Number} */ x, /** @type {Number} */ y) {
     this.x = x;
     this.y = y;
   }
 
-  static getShortestTorusDeltaVector(v1, v2, w, h) {
+  static getShortestTorusDeltaVector(
+    /** @type {Vector} */ v1,
+    /** @type {Vector} */ v2,
+    /** @type {Number} */ w,
+    /** @type {Number} */ h
+  ) {
     const cvx = v2.x - v1.x;
     const cvy = v2.y - v1.y;
     const tvx = ((v2.x + w * 0.5) % w) - ((v1.x + w * 0.5) % w);
@@ -22,7 +26,12 @@ export class Vector {
     return new Vector(cvx, cvy);
   }
 
-  static getWrappedDistance(v1, v2, w, h) {
+  static getWrappedDistance(
+    /** @type {Vector} */ v1,
+    /** @type {Vector} */ v2,
+    /** @type {Number} */ w,
+    /** @type {Number} */ h
+  ) {
     const dX = Math.abs(v1.x - v2.x);
     const dY = Math.abs(v1.y - v2.y);
     const lH = Math.min(dX, w - dX);
@@ -31,74 +40,81 @@ export class Vector {
     return Math.hypot(lH, lV);
   }
 
-  static add(v1, v2) {
+  static add(/** @type {Vector} */ v1, /** @type {Vector} */ v2) {
     return new Vector(v1.x + v2.x, v1.y + v2.y);
   }
 
-  static subtract(v1, v2) {
+  static subtract(/** @type {Vector} */ v1, /** @type {Vector} */ v2) {
     return new Vector(v1.x - v2.x, v1.y - v2.y);
   }
 
-  static scale(vector, value) {
+  static scale(/** @type {Vector} */ vector, /** @type {Number} */ value) {
     return new Vector(vector.x * value, vector.y * value);
   }
 
-  static fromPolar(angle, magnitude) {
+  static fromPolar(
+    /** @type {Number} */ angle,
+    /** @type {Number} */ magnitude
+  ) {
     return new Vector(Math.cos(angle), Math.sin(angle)).scale(magnitude);
   }
 
-  static normalise(v) {
+  static normalise(/** @type {Vector} */ v) {
     return new Vector(v.x, v.y).normalise();
   }
 
-  static angle(v) {
+  static angle(/** @type {Vector} */ v) {
     return Math.atan2(v.y, v.x);
   }
 
-  static length(v) {
+  static length(/** @type {Vector} */ v) {
     return Math.hypot(v.x, v.y);
   }
 
-  static setPolar(v, angle, mag) {
+  static setPolar(
+    /** @type {Vector} */ v,
+    /** @type {Number} */ angle,
+    /** @type {Number} */ mag
+  ) {
     v.x = Math.cos(angle);
     v.y = Math.sin(angle);
     v.scale(mag);
   }
 
-  static isApproximate(val1, val2) {
+  static isApproximate(/** @type {Number} */ val1, /** @type {Number} */ val2) {
     return Math.abs(val1 - val2) < Vector.EPSILON;
   }
 
-  static equal(vector1, vector2) {
+  static equal(/** @type {Vector} */ vector1, /** @type {Vector} */ vector2) {
     const v1Norm = Vector.normalise(vector1);
     const v2Norm = Vector.normalise(vector2);
     return Vector.isApproximate(v1Norm.dotProduct(v2Norm), 1);
   }
 
-  copyFrom(v) {
+  copyFrom(/** @type {Vector} */ v) {
     this.x = v.x;
     this.y = v.y;
   }
 
-  add(v2) {
-    this.x += v2.x;
-    this.y += v2.y;
+  add(/** @type {Vector} */ v) {
+    this.x += v.x;
+    this.y += v.y;
 
     return this;
   }
 
-  subtract(v2) {
-    this.x -= v2.x;
-    this.y -= v2.y;
+  subtract(/** @type {Vector} */ v) {
+    this.x -= v.x;
+    this.y -= v.y;
 
     return this;
   }
 
-  dotProduct(v2) {
-    return this.x * v2.x + this.y * v2.y;
+  dotProduct(/** @type {Vector} */ v) {
+    return this.x * v.x + this.y * v.y;
   }
 
-  scale(value) {
+  scale(/** @type {Number} */ value) {
     this.x *= value;
     this.y *= value;
 
@@ -122,7 +138,7 @@ export class Vector {
     return this.scale(1 / this.length());
   }
 
-  limit(value) {
+  limit(/** @type {Number} */ value) {
     if (value * value < this.x * this.x + this.y * this.y) {
       this.normalise().scale(value);
     }

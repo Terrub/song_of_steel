@@ -1,6 +1,6 @@
 import { Utils } from "../utils.js";
 
-// TODO: See if we can turn this into a class after all.
+// TODO See if we can turn this into a class after all.
 /*
   Currently I cannot turn this into a class simply, as the tic function passed to the window's
   requestAnimationFrame is assigned to some internal magic variable or something. This means

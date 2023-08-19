@@ -30,6 +30,10 @@ export class CanvasRenderer {
     this.gLib.restore();
   }
 
+  reset() {
+    this.gLib.reset();
+  }
+
   rotate(value) {
     this.gLib.rotate(value);
   }
@@ -57,7 +61,14 @@ export class CanvasRenderer {
     this.gLib.strokeStyle = color;
     this.gLib.beginPath();
     this.gLib.moveTo(xS, this.height - yS);
-    this.gLib.bezierCurveTo(x0, this.height - y0, x1, this.height - y1, xE, this.height - yE);
+    this.gLib.bezierCurveTo(
+      x0,
+      this.height - y0,
+      x1,
+      this.height - y1,
+      xE,
+      this.height - yE
+    );
     this.gLib.stroke();
   }
 
@@ -126,7 +137,7 @@ export class CanvasRenderer {
     return result;
   }
 
-  text = function (x, y, text, color, font) {
+  text(x, y, text, color, font) {
     if (Utils.isDefined(font)) {
       this.gLib.font = font;
     }
@@ -136,5 +147,5 @@ export class CanvasRenderer {
     }
 
     this.gLib.fillText(text, x, this.height - y);
-  };
+  }
 }

@@ -35,12 +35,7 @@ worldTests.addTest(
     const height = 100;
     const interactables = new CanvasRenderer(canvas);
 
-    new World(
-      width,
-      height,
-      interactables,
-      'not a backdrop',
-    );
+    new World(width, height, interactables, "not a backdrop");
   }
 );
 
@@ -55,13 +50,7 @@ worldTests.addTest(
     const interactables = new CanvasRenderer(canvas);
     const backdrop = new CanvasRenderer(canvas);
 
-    new World(
-      width,
-      height,
-      interactables,
-      backdrop,
-      'not a background',
-    );
+    new World(width, height, interactables, backdrop, "not a background");
   }
 );
 
@@ -77,14 +66,7 @@ worldTests.addTest(
     const backdrop = new CanvasRenderer(canvas);
     const background = new CanvasRenderer(canvas);
 
-    new World(
-      width,
-      height,
-      interactables,
-      backdrop,
-      background,
-      'not a wall',
-    );
+    new World(width, height, interactables, backdrop, background, "not a wall");
   }
 );
 
@@ -108,7 +90,7 @@ worldTests.addTest(
       backdrop,
       background,
       wall,
-      'not a foreground',
+      "not a foreground"
     );
   }
 );
@@ -121,24 +103,18 @@ worldTests.addTest(
 
     const width = 100;
     const height = 100;
-    const backdrop = new CanvasRenderer(canvas);
-    const background = new CanvasRenderer(canvas);
-    const wall = new CanvasRenderer(canvas);
     const interactables = new CanvasRenderer(canvas);
-    const foreground = new CanvasRenderer(canvas);
 
-    const world = new World(
-      width,
-      height,
-      interactables,
-      backdrop,
-      background,
-      wall,
-      foreground,
-    );
+    const world = new World(width, height, interactables);
 
     world.setFloor();
   }
 );
+
+worldTests.addTest("has a loadPlayer method available to map player bone structures", () => {});
+
+worldTests.addTest("should throw invalid player error when given a non-player object", () => {});
+
+worldTests.addTest("should throw incompatible player error when given player object contains no bones", () => {});
 
 testRunner.run();
