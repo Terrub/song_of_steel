@@ -150,60 +150,57 @@ export class World {
     }
   }
 
-  // TODO Refactor the shit out of #debugRenderInfo
-  #debugRenderInfo(player, position, numTics) {
+  #debugRenderInfo(player, position) {
     const bones = player.bones;
     const radius = 3;
     const color = "yellow";
     this.#debugDrawBoneColours(bones);
-    this.#debugDrawOrigin(position);
+    this.#debugDrawPlayerPosition(position);
 
     const pelvisPos = this.#boneVectors[StickFigure.BONE_PELVIS];
     this.#debugDrawPoint(pelvisPos);
-    const rightHip = this.#boneVectors[StickFigure.BONE_RIGHT_HIP];
-    const rightFoot = this.#boneVectors[StickFigure.BONE_RIGHT_FOOT];
-    const leftHip = this.#boneVectors[StickFigure.BONE_LEFT_HIP];
-    const leftFoot = this.#boneVectors[StickFigure.BONE_LEFT_FOOT];
 
-    const b =
-      this.#boneVectors[StickFigure.BONE_PELVIS].y -
-      this.#floorHeight -
-      position.y;
     const l1 = bones[StickFigure.BONE_LEFT_KNEE].point.length();
     const l2 = bones[StickFigure.BONE_LEFT_FOOT].point.length();
+    const b = pelvisPos.y - this.#floorHeight - position.y;
     const c = l1 + l2;
     const s = Math.sqrt(c * c - b * b);
-    this.#debugLayer.strokeCircle(
-      position.x + s,
-      this.#floorHeight + position.y,
-      radius,
-      color
+
+    this.#debugDrawEstimate(position.x + s, position.y + this.#floorHeight);
+    this.#debugDrawEstimate(position.x - s, position.y + this.#floorHeight);
+
+    this.drawIKEstimate(
+      l1,
+      l2,
+      this.#boneVectors[StickFigure.BONE_RIGHT_HIP],
+      this.#boneVectors[StickFigure.BONE_RIGHT_FOOT]
     );
-    this.#debugLayer.strokeCircle(
-      position.x - s,
-      this.#floorHeight + position.y,
-      radius,
-      color
-    );
-    const vDebugRightKnee = new Vector(0, 0);
-    IKSolver.global(vDebugRightKnee, l1, l2, rightFoot, rightHip);
-    this.#debugLayer.strokeCircle(
-      vDebugRightKnee.x,
-      vDebugRightKnee.y,
-      radius,
-      "limegreen"
-    );
-    const vDebugLeftKnee = new Vector(0, 0);
-    IKSolver.global(vDebugLeftKnee, l1, l2, leftFoot, leftHip);
-    this.#debugLayer.strokeCircle(
-      vDebugLeftKnee.x,
-      vDebugLeftKnee.y,
-      radius,
-      "limegreen"
+
+    this.drawIKEstimate(
+      l1,
+      l2,
+      this.#boneVectors[StickFigure.BONE_LEFT_HIP],
+      this.#boneVectors[StickFigure.BONE_LEFT_FOOT]
     );
   }
 
-  #debugDrawOrigin(position) {
+  drawIKEstimate(l1, l2, base, endEffector) {
+    const radius = 3;
+    const color = "limegreen";
+
+    const vector = new Vector(0, 0);
+    IKSolver.global(vector, l1, l2, endEffector, base);
+    this.#debugLayer.strokeCircle(vector.x, vector.y, radius, color);
+  }
+
+  #debugDrawEstimate(x, y) {
+    const radius = 3;
+    const color = "limegreen";
+
+    this.#debugLayer.strokeCircle(x, y, radius, color);
+  }
+
+  #debugDrawPlayerPosition(position) {
     const radius = 3;
     const color = "orange";
 
@@ -261,11 +258,53 @@ export class World {
     }
   }
 
+  #inverseKinematics(bones, boneVectors) {
+    const limbs = [
+      {
+        endEffector: StickFigure.BONE_RIGHT_FOOT,
+        joint: StickFigure.BONE_RIGHT_KNEE,
+        base: StickFigure.BONE_RIGHT_HIP,
+        dir: 1,
+      },
+      {
+        endEffector: StickFigure.BONE_LEFT_FOOT,
+        joint: StickFigure.BONE_LEFT_KNEE,
+        base: StickFigure.BONE_LEFT_HIP,
+        dir: 1,
+      },
+      {
+        endEffector: StickFigure.BONE_RIGHT_HAND,
+        joint: StickFigure.BONE_RIGHT_ELBOW,
+        base: StickFigure.BONE_RIGHT_SHOULDER,
+        dir: -1,
+      },
+      {
+        endEffector: StickFigure.BONE_LEFT_HAND,
+        joint: StickFigure.BONE_LEFT_ELBOW,
+        base: StickFigure.BONE_LEFT_SHOULDER,
+        dir: -1,
+      },
+    ];
+
+    for (const limb of limbs) {
+      IKSolver.global(
+        boneVectors[limb.joint],
+        bones[limb.joint].point.length(),
+        bones[limb.endEffector].point.length(),
+        boneVectors[limb.endEffector],
+        boneVectors[limb.base],
+        limb.dir
+      );
+    }
+  }
+
   draw(numTics) {
     this.#interactables.clear();
     this.#interactables.drawRect(0, 0, this.width, this.#floorHeight, "#111");
   }
 
+  // TODO Refactor StickFigure logic back to its own class.
+  //      Player is now hard-coupled with stickfigure.
   drawPlayer(
     /** @type {StickFigure} */ player,
     /** @type {Vector} */ playerPosition,
@@ -273,7 +312,7 @@ export class World {
   ) {
     const bones = player.bones;
     this.#playerPosition = playerPosition;
-    let color = "red";
+    const color = "red";
     const thickness = 6;
 
     // Reset bonevectors to t-pose
@@ -286,15 +325,17 @@ export class World {
     this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
 
     // plant feet on the floor
-    this.#boneVectors[StickFigure.BONE_LEFT_FOOT].y = playerPosition.y + this.#floorHeight;
-    this.#boneVectors[StickFigure.BONE_RIGHT_FOOT].y = playerPosition.y + this.#floorHeight;
+    this.#boneVectors[StickFigure.BONE_LEFT_FOOT].y =
+      playerPosition.y + this.#floorHeight;
+    this.#boneVectors[StickFigure.BONE_RIGHT_FOOT].y =
+      playerPosition.y + this.#floorHeight;
 
-    this.solveIK(bones, this.#boneVectors);
+    this.#inverseKinematics(bones, this.#boneVectors);
 
     this.#drawBoneVectors(bones, this.#boneVectors, color, thickness);
 
     if (this.debug === true) {
-      this.#debugRenderInfo(player, playerPosition, numTics);
+      this.#debugRenderInfo(player, playerPosition);
     }
   }
 
@@ -334,46 +375,6 @@ export class World {
         parentVector.y,
         color,
         thickness
-      );
-    }
-  }
-
-  solveIK(bones, boneVectors) {
-    const limbs = [
-      {
-        endEffector: StickFigure.BONE_RIGHT_FOOT,
-        joint: StickFigure.BONE_RIGHT_KNEE,
-        base: StickFigure.BONE_RIGHT_HIP,
-        dir: 1,
-      },
-      {
-        endEffector: StickFigure.BONE_LEFT_FOOT,
-        joint: StickFigure.BONE_LEFT_KNEE,
-        base: StickFigure.BONE_LEFT_HIP,
-        dir: 1,
-      },
-      {
-        endEffector: StickFigure.BONE_RIGHT_HAND,
-        joint: StickFigure.BONE_RIGHT_ELBOW,
-        base: StickFigure.BONE_RIGHT_SHOULDER,
-        dir: -1,
-      },
-      {
-        endEffector: StickFigure.BONE_LEFT_HAND,
-        joint: StickFigure.BONE_LEFT_ELBOW,
-        base: StickFigure.BONE_LEFT_SHOULDER,
-        dir: -1,
-      },
-    ];
-
-    for (const limb of limbs) {
-      IKSolver.global(
-        boneVectors[limb.joint],
-        bones[limb.joint].point.length(),
-        bones[limb.endEffector].point.length(),
-        boneVectors[limb.endEffector],
-        boneVectors[limb.base],
-        limb.dir
       );
     }
   }
