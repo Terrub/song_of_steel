@@ -1,3 +1,4 @@
+// @ts-check
 import { Utils } from "../utils.js";
 import { CanvasRenderer } from "./canvasRenderer.js";
 import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
@@ -8,22 +9,21 @@ import { Vector } from "./vector.js";
 import { Bone } from "./bone.js";
 
 export class World {
-  /** @type {CanvasRenderer} */
+  /** @type {?CanvasRenderer} */
   #backdrop;
-  /** @type {CanvasRenderer} */
+  /** @type {?CanvasRenderer} */
   #background;
-  /** @type {CanvasRenderer} */
+  /** @type {?CanvasRenderer} */
   #wall;
   /** @type {CanvasRenderer} */
   #interactables;
   /** @type {CanvasRenderer} */
   #debugLayer;
-  /** @type {CanvasRenderer} */
+  /** @type {?CanvasRenderer} */
   #foreground;
   /** @type {Number} */
   #floorHeight = 0;
-  /** @type {Number} */
-  #playerPosition;
+  /** @type {Object.<string, Vector>} */
   #boneVectors = {};
 
   /** @type {Boolean} */
@@ -33,14 +33,23 @@ export class World {
   /** @type {Number} */
   height;
 
+  /**
+   * @param {Number} width
+   * @param {Number} height
+   * @param {CanvasRenderer} interactables
+   * @param {CanvasRenderer | null} [backdrop=null]
+   * @param {CanvasRenderer | null} [background=null]
+   * @param {CanvasRenderer | null} [foreground=null]
+   * @param {CanvasRenderer | null} [wall=null]
+   */
   constructor(
-    /** @type {Number} */ width,
-    /** @type {Number} */ height,
-    /** @type {CanvasRenderer} */ interactables,
-    /** @type {CanvasRenderer} */ backdrop = null,
-    /** @type {CanvasRenderer} */ background = null,
-    /** @type {CanvasRenderer} */ wall = null,
-    /** @type {CanvasRenderer} */ foreground = null
+    width,
+    height,
+    interactables,
+    backdrop = null,
+    background = null,
+    wall = null,
+    foreground = null
   ) {
     this.width = width;
     this.height = height;
@@ -82,7 +91,11 @@ export class World {
     this.#foreground = foreground;
   }
 
-  setFloor(/** @type {Number} */ height) {
+  /**
+   * @param {Number} height
+   * @returns {void}
+   */
+  setFloor(height) {
     if (!Utils.isNumber(height)) {
       throw new NumberTypeError("height", height);
     }
@@ -90,6 +103,9 @@ export class World {
     this.#floorHeight = Utils.constrain(height, 0, this.height);
   }
 
+  /**
+   * @returns {void}
+   */
   setup() {
     if (this.#backdrop) {
       this.#backdrop.fill("#888");
@@ -116,28 +132,20 @@ export class World {
     }
   }
 
-  loadPlayer(/** @type {StickFigure} */ player) {
+  /**
+   * @param {StickFigure} player
+   * @returns {void}
+   */
+  loadPlayer(player) {
     for (const boneName in player.bones) {
       this.#boneVectors[boneName] = new Vector(0, 0);
     }
   }
 
-  #getResolvedBoneVector(
-    /** @type {Vector}*/ v,
-    /** @type {String}*/ boneName,
-    /** @type {Bone} */ node,
-    tree
-  ) {
-    if (Utils.isNull(node.parent)) {
-      // This should be the pelvis bone.
-      v.add(this.#boneVectors[boneName]);
-    } else {
-      this.#getResolvedBoneVector(v, node.parent, tree[node.parent], tree);
-
-      v.add(this.#boneVectors[boneName]);
-    }
-  }
-
+  /**
+   * @param {Object.<string, Bone>} bones
+   * @returns {void}
+   */
   #debugDrawBoneColours(bones) {
     let offsetX = 10;
     let offsetY = 10;
@@ -150,10 +158,14 @@ export class World {
     }
   }
 
+  /**
+   * @param {StickFigure} player
+   * @param {Vector} position
+   * @returns {void}
+   */
   #debugRenderInfo(player, position) {
     const bones = player.bones;
-    const radius = 3;
-    const color = "yellow";
+
     this.#debugDrawBoneColours(bones);
     this.#debugDrawPlayerPosition(position);
 
@@ -169,14 +181,14 @@ export class World {
     this.#debugDrawEstimate(position.x + s, position.y + this.#floorHeight);
     this.#debugDrawEstimate(position.x - s, position.y + this.#floorHeight);
 
-    this.drawIKEstimate(
+    this.#drawIKEstimate(
       l1,
       l2,
       this.#boneVectors[StickFigure.BONE_RIGHT_HIP],
       this.#boneVectors[StickFigure.BONE_RIGHT_FOOT]
     );
 
-    this.drawIKEstimate(
+    this.#drawIKEstimate(
       l1,
       l2,
       this.#boneVectors[StickFigure.BONE_LEFT_HIP],
@@ -184,7 +196,14 @@ export class World {
     );
   }
 
-  drawIKEstimate(l1, l2, base, endEffector) {
+  /**
+   * @param {number} l1
+   * @param {number} l2
+   * @param {Vector} base
+   * @param {Vector} endEffector
+   * @returns {void}
+   */
+  #drawIKEstimate(l1, l2, base, endEffector) {
     const radius = 3;
     const color = "limegreen";
 
@@ -193,6 +212,11 @@ export class World {
     this.#debugLayer.strokeCircle(vector.x, vector.y, radius, color);
   }
 
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @returns {void}
+   */
   #debugDrawEstimate(x, y) {
     const radius = 3;
     const color = "limegreen";
@@ -200,6 +224,10 @@ export class World {
     this.#debugLayer.strokeCircle(x, y, radius, color);
   }
 
+  /**
+   * @param {Vector} position
+   * @returns {void}
+   */
   #debugDrawPlayerPosition(position) {
     const radius = 3;
     const color = "orange";
@@ -212,6 +240,10 @@ export class World {
     );
   }
 
+  /**
+   * @param {Vector} point
+   * @returns {void}
+   */
   #debugDrawPoint(point) {
     const radius = 5;
     const color = "yellow";
@@ -219,7 +251,11 @@ export class World {
     this.#debugLayer.strokeCircle(point.x, point.y, radius, color);
   }
 
-  #debugGetColorForBone(/** @type {String} */ boneName) {
+  /**
+   * @param {string} boneName
+   * @returns {string}
+   */
+  #debugGetColorForBone(boneName) {
     const cOffset = 360 / 14;
     const bc = {};
     bc[StickFigure.BONE_HEAD] = `hsl(${0 * cOffset}, 100%, 50%)`;
@@ -241,6 +277,11 @@ export class World {
     return bc[boneName];
   }
 
+  /**
+   * @param {Object.<string, Bone>} bones
+   * @param {Object.<string, Vector>} boneVectors
+   * @returns {void}
+   */
   #resetBoneVectors(bones, boneVectors) {
     for (const boneName in bones) {
       boneVectors[boneName].x = bones[boneName].point.x;
@@ -248,7 +289,11 @@ export class World {
     }
   }
 
-  #forwardKinematics(/** @type {Bone} */ base) {
+  /**
+   * @param {Bone} base
+   * @returns {void}
+   */
+  #forwardKinematics(base) {
     for (const child of base.children) {
       this.#boneVectors[child.name].add(this.#boneVectors[base.name]);
 
@@ -258,6 +303,11 @@ export class World {
     }
   }
 
+  /**
+   * @param {Object.<string, Bone>} bones
+   * @param {Object.<string, Vector>} boneVectors
+   * @returns {void}
+   */
   #inverseKinematics(bones, boneVectors) {
     const limbs = [
       {
@@ -298,47 +348,14 @@ export class World {
     }
   }
 
-  draw(numTics) {
-    this.#interactables.clear();
-    this.#interactables.drawRect(0, 0, this.width, this.#floorHeight, "#111");
-  }
-
-  // TODO Refactor StickFigure logic back to its own class.
-  //      Player is now hard-coupled with stickfigure.
-  drawPlayer(
-    /** @type {StickFigure} */ player,
-    /** @type {Vector} */ playerPosition,
-    /** @type {Number} */ numTics
-  ) {
-    const bones = player.bones;
-    this.#playerPosition = playerPosition;
-    const color = "red";
-    const thickness = 6;
-
-    // Reset bonevectors to t-pose
-    this.#resetBoneVectors(bones, this.#boneVectors);
-
-    player.animateBoneVectors(numTics, this.#boneVectors);
-
-    this.#boneVectors[StickFigure.BONE_PELVIS].add(playerPosition);
-    this.#boneVectors[StickFigure.BONE_PELVIS].y += this.#floorHeight;
-    this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
-
-    // plant feet on the floor
-    this.#boneVectors[StickFigure.BONE_LEFT_FOOT].y =
-      playerPosition.y + this.#floorHeight;
-    this.#boneVectors[StickFigure.BONE_RIGHT_FOOT].y =
-      playerPosition.y + this.#floorHeight;
-
-    this.#inverseKinematics(bones, this.#boneVectors);
-
-    this.#drawBoneVectors(bones, this.#boneVectors, color, thickness);
-
-    if (this.debug === true) {
-      this.#debugRenderInfo(player, playerPosition);
-    }
-  }
-
+  /**
+   *
+   * @param {Object.<string, Bone>} bones
+   * @param {Object.<string, Vector>} boneVectors
+   * @param {string} color
+   * @param {number} thickness
+   * @returns {void}
+   */
   #drawBoneVectors(bones, boneVectors, color, thickness) {
     for (const boneName in bones) {
       /** @type {Bone} */
@@ -351,6 +368,7 @@ export class World {
       /** @type {Vector} */
       const boneVector = boneVectors[boneName];
       /** @type {Vector} */
+      // @ts-ignore We early exit if bone.parent is null
       const parentVector = boneVectors[bone.parent.name];
 
       if (this.debug) {
@@ -376,6 +394,65 @@ export class World {
         color,
         thickness
       );
+    }
+  }
+
+  /**
+   * @param {number} numTics
+   * @returns {void}
+   */
+  draw(numTics) {
+    this.#interactables.clear();
+    this.#interactables.drawRect(0, 0, this.width, this.#floorHeight, "#111");
+  }
+
+  // TODO Refactor StickFigure logic back to its own class.
+  //      Player is now hard-coupled with stickfigure.
+  /**
+   * @param {StickFigure} player
+   * @param {Vector} playerPosition
+   * @param {number} numTics
+   * @returns {void}
+   */
+  drawPlayer(player, playerPosition, numTics) {
+    /**
+     * Isn't this entire thing the classical back n forth draw cycle algorithm???
+     * 1) Something changes our current state.  -> Animation frame
+     * 2) Resolve properties (top-down)         -> Forward Kinematics
+     * 3) Resolve measurements (bottom-up)      -> Inverse Kinematics
+     * 4) Draw actuals (top-down)               -> Draw cycle
+     */
+    const bones = player.bones;
+    const color = "red";
+    const thickness = 6;
+
+    // clear last buffer.
+    this.#resetBoneVectors(bones, this.#boneVectors);
+
+    // 1) Add absolute property changes to bones based on animation
+    //     This introduces the changes and causes properties to be changed.
+    player.animateBoneVectors(numTics, this.#boneVectors);
+
+    // 2) Forward Kinematics resolve property changes and propegate them down the node tree
+    this.#boneVectors[StickFigure.BONE_PELVIS].add(playerPosition);
+    this.#boneVectors[StickFigure.BONE_PELVIS].y += this.#floorHeight;
+    this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
+
+    // NOTE That means this bit could be moved to the property update
+    // Keep yer feet on the grauwnd
+    const rightFoot = this.#boneVectors[StickFigure.BONE_RIGHT_FOOT];
+    rightFoot.y = Math.max(this.#floorHeight, rightFoot.y);
+    const leftFoot = this.#boneVectors[StickFigure.BONE_LEFT_FOOT];
+    leftFoot.y = Math.max(this.#floorHeight, leftFoot.y);
+
+    // 3) Inverse Kinematics resolve any measurements that have to happen in between
+    this.#inverseKinematics(bones, this.#boneVectors);
+
+    // 4) Now we just draw the whole node tree
+    this.#drawBoneVectors(bones, this.#boneVectors, color, thickness);
+
+    if (this.debug === true) {
+      this.#debugRenderInfo(player, playerPosition);
     }
   }
 }
