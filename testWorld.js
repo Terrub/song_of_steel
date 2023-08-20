@@ -51,15 +51,119 @@ const backDrop = new CanvasRenderer(backDropCanvas);
 
 const testWorld = new World(gameWidth, gameHeight, interactables, backDrop);
 
-const playerPosition = new Vector(gameWidth * 0.5, gameHeight * 0.5);
+const playerPosition = new Vector(gameWidth * 0.5, 0);
 const playerInitialVelocity = new Vector(0, 0);
 
 const player = new StickFigure(playerInitialVelocity);
 
 testWorld.debug = true;
-testWorld.setFloor(0);
+testWorld.setFloor(gameHeight * 0.5);
 testWorld.setup();
 testWorld.loadPlayer(player);
+
+let playerMoveLeftBtnDown = false;
+let playerMoveRightBtnDown = false;
+let playerSwingLeftBtnDown = false;
+let playerSwingRightBtnDown = false;
+let playerJumpBtnDown = false;
+
+function playerJump(buttonDown) {
+  playerJumpBtnDown = buttonDown;
+}
+
+function playerMoveLeft(buttonDown) {
+  playerMoveLeftBtnDown = buttonDown;
+}
+
+function playerMoveRight(buttonDown) {
+  playerMoveRightBtnDown = buttonDown;
+}
+
+function playerJabLeft(buttonDown) {
+  console.log("Jab Left");
+}
+
+function playerJabRight(buttonDown) {
+  console.log("Jab Right");
+}
+
+function playerSwingLeft(buttonDown) {
+  playerSwingLeftBtnDown = buttonDown;
+}
+
+function playerSwingRight(buttonDown) {
+  playerSwingRightBtnDown = buttonDown;
+}
+
+const keyBinds = {
+  Space: playerJump,
+  KeyA: playerMoveLeft,
+  KeyD: playerMoveRight,
+  // KeyI: playerJabLeft,
+  // KeyO: playerJabRight,
+  KeyK: playerSwingLeft,
+  KeyL: playerSwingRight,
+};
+
+function keyPressEventHandler(keyboardEvent) {
+  const eventType = keyboardEvent.type;
+  if (eventType !== EVENT_TYPE_KEYDOWN && eventType !== EVENT_TYPE_KEYUP) {
+    console.warn(
+      `Unrecognised call to keyboardEventHandler. Event type: '${eventType}'`
+    );
+    return;
+  }
+
+  const keyCode = keyboardEvent.code;
+  if (!(keyCode in keyBinds)) {
+    // console.warn(`Button press not in keybinds: '${keyCode}'`);
+    return;
+  }
+
+  keyBinds[keyCode](eventType === EVENT_TYPE_KEYDOWN);
+}
+
+document.addEventListener(EVENT_KEYDOWN, keyPressEventHandler, false);
+document.addEventListener(EVENT_KEYUP, keyPressEventHandler, false);
+
+function resolveGameState() {
+  player.velocity.x = 0;
+  if (playerPosition.y > 0) {
+    player.velocity.y -= gravity;
+  } else {
+    player.velocity.y = 0;
+  }
+
+  if (
+    playerMoveLeftBtnDown &&
+    !playerMoveRightBtnDown &&
+    playerPosition.x > 0
+  ) {
+    player.velocity.x = -playerRunSpeed;
+  }
+
+  if (
+    playerMoveRightBtnDown &&
+    !playerMoveLeftBtnDown &&
+    playerPosition.x < gameWidth
+  ) {
+    player.velocity.x = playerRunSpeed;
+  }
+
+  if (playerJumpBtnDown && playerPosition.y === 0) {
+    player.velocity.y = playerJumpHeight;
+  }
+
+  if (playerSwingLeftBtnDown && !playerSwingRightBtnDown) {
+    // player.attackLeft();
+    console.log("player.attackLeft()");
+  }
+
+  if (playerSwingRightBtnDown && !playerSwingLeftBtnDown) {
+    // player.attackRight();
+    console.log("player.attackRight()");
+  }
+}
 
 function renderGame() {
   numTics += 1;
@@ -68,6 +172,7 @@ function renderGame() {
 }
 
 function gameTic() {
+  resolveGameState();
   renderGame();
 }
 
