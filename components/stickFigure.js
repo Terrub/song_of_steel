@@ -1,3 +1,4 @@
+// @ts-check
 import { Utils } from "../utils.js";
 import { AnimationFrame } from "./animationFrame.js";
 import { Bone } from "./bone.js";
@@ -23,11 +24,15 @@ export class StickFigure {
 
   /** @type {Vector} */
   velocity;
+  /** @type {Object.<string, Bone>} */
   bones;
-
+  /** @type {Object.<string, StickAnimation>} */
   #animations;
 
-  constructor(/** @type {Vector} */ velocity) {
+  /**
+   * @param {Vector} velocity
+   */
+  constructor(velocity) {
     this.velocity = velocity;
     this.bones = {};
     this.#animations = {};
@@ -126,12 +131,19 @@ export class StickFigure {
     );
   }
 
+  /**
+   * @param {number} numTics
+   * @param {Object.<string, Vector>} boneVectors
+   * @returns {void}
+   */
   animateBoneVectors(numTics, boneVectors) {
-    /** @type {StickAnimation} */
     const animation = this.#getAnimation();
     animation.resolve(numTics, boneVectors);
   }
 
+  /**
+   * @returns {StickAnimation}
+   */
   #getIdleAnimation() {
     if (Utils.isUndefined(this.#animations["idle"])) {
       const idle = new StickAnimation();
