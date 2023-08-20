@@ -8,19 +8,19 @@ import { Vector } from "./vector.js";
 export class StickFigure {
   static BONE_HEAD = "head";
   static BONE_NECK = "neck";
-  static BONE_LEFT_SHOULDER = "leftShoulder";
   static BONE_RIGHT_SHOULDER = "rightShoulder";
-  static BONE_LEFT_ELBOW = "leftElbow";
+  static BONE_LEFT_SHOULDER = "leftShoulder";
   static BONE_RIGHT_ELBOW = "rightElbow";
-  static BONE_LEFT_HAND = "leftHand";
+  static BONE_LEFT_ELBOW = "leftElbow";
   static BONE_RIGHT_HAND = "rightHand";
+  static BONE_LEFT_HAND = "leftHand";
   static BONE_PELVIS = "pelvis";
-  static BONE_LEFT_HIP = "leftHip";
   static BONE_RIGHT_HIP = "rightHip";
-  static BONE_LEFT_KNEE = "leftKnee";
+  static BONE_LEFT_HIP = "leftHip";
   static BONE_RIGHT_KNEE = "rightKnee";
-  static BONE_LEFT_FOOT = "leftFoot";
+  static BONE_LEFT_KNEE = "leftKnee";
   static BONE_RIGHT_FOOT = "rightFoot";
+  static BONE_LEFT_FOOT = "leftFoot";
 
   /** @type {Vector} */
   velocity;
@@ -44,90 +44,89 @@ export class StickFigure {
       StickFigure.BONE_PELVIS,
       null
     );
-
-    this.bones[StickFigure.BONE_NECK] = Bone.fromPolar(
-      0.5 * Math.PI,
+    this.bones[StickFigure.BONE_NECK] = Bone.fromPos(
+      0,
       30,
       StickFigure.BONE_NECK,
       this.bones[StickFigure.BONE_PELVIS]
     );
-    this.bones[StickFigure.BONE_HEAD] = Bone.fromPolar(
-      0.5 * Math.PI,
+    this.bones[StickFigure.BONE_HEAD] = Bone.fromPos(
+      0,
       16,
       StickFigure.BONE_HEAD,
       this.bones[StickFigure.BONE_NECK]
     );
-    this.bones[StickFigure.BONE_RIGHT_HIP] = Bone.fromPos(
-      11,
-      2,
-      StickFigure.BONE_RIGHT_HIP,
-      this.bones[StickFigure.BONE_PELVIS]
-    );
-    this.bones[StickFigure.BONE_RIGHT_KNEE] = Bone.fromPolar(
-      1.5 * Math.PI,
-      21,
-      StickFigure.BONE_RIGHT_KNEE,
-      this.bones[StickFigure.BONE_RIGHT_HIP]
-    );
-    this.bones[StickFigure.BONE_RIGHT_FOOT] = Bone.fromPolar(
-      1.5 * Math.PI,
-      23,
-      StickFigure.BONE_RIGHT_FOOT,
-      this.bones[StickFigure.BONE_RIGHT_KNEE]
-    );
     this.bones[StickFigure.BONE_LEFT_HIP] = Bone.fromPos(
-      -11,
+      0,
       2,
       StickFigure.BONE_LEFT_HIP,
       this.bones[StickFigure.BONE_PELVIS]
     );
-    this.bones[StickFigure.BONE_LEFT_KNEE] = Bone.fromPolar(
-      1.5 * Math.PI,
-      21,
+    this.bones[StickFigure.BONE_LEFT_KNEE] = Bone.fromPos(
+      0,
+      -21,
       StickFigure.BONE_LEFT_KNEE,
       this.bones[StickFigure.BONE_LEFT_HIP]
     );
-    this.bones[StickFigure.BONE_LEFT_FOOT] = Bone.fromPolar(
-      1.5 * Math.PI,
-      23,
+    this.bones[StickFigure.BONE_LEFT_FOOT] = Bone.fromPos(
+      0,
+      -23,
       StickFigure.BONE_LEFT_FOOT,
       this.bones[StickFigure.BONE_LEFT_KNEE]
     );
-    this.bones[StickFigure.BONE_RIGHT_SHOULDER] = Bone.fromPolar(
+    this.bones[StickFigure.BONE_RIGHT_HIP] = Bone.fromPos(
       0,
-      10,
-      StickFigure.BONE_RIGHT_SHOULDER,
-      this.bones[StickFigure.BONE_NECK]
+      2,
+      StickFigure.BONE_RIGHT_HIP,
+      this.bones[StickFigure.BONE_PELVIS]
     );
-    this.bones[StickFigure.BONE_RIGHT_ELBOW] = Bone.fromPolar(
+    this.bones[StickFigure.BONE_RIGHT_KNEE] = Bone.fromPos(
       0,
-      20,
-      StickFigure.BONE_RIGHT_ELBOW,
-      this.bones[StickFigure.BONE_RIGHT_SHOULDER]
+      -21,
+      StickFigure.BONE_RIGHT_KNEE,
+      this.bones[StickFigure.BONE_RIGHT_HIP]
     );
-    this.bones[StickFigure.BONE_RIGHT_HAND] = Bone.fromPolar(
+    this.bones[StickFigure.BONE_RIGHT_FOOT] = Bone.fromPos(
       0,
-      18,
-      StickFigure.BONE_RIGHT_HAND,
-      this.bones[StickFigure.BONE_RIGHT_ELBOW]
+      -23,
+      StickFigure.BONE_RIGHT_FOOT,
+      this.bones[StickFigure.BONE_RIGHT_KNEE]
     );
-    this.bones[StickFigure.BONE_LEFT_SHOULDER] = Bone.fromPolar(
-      Math.PI,
-      10,
+    this.bones[StickFigure.BONE_LEFT_SHOULDER] = Bone.fromPos(
+      0,
+      0,
       StickFigure.BONE_LEFT_SHOULDER,
       this.bones[StickFigure.BONE_NECK]
     );
-    this.bones[StickFigure.BONE_LEFT_ELBOW] = Bone.fromPolar(
-      Math.PI,
-      20,
+    this.bones[StickFigure.BONE_LEFT_ELBOW] = Bone.fromPos(
+      0,
+      -18,
       StickFigure.BONE_LEFT_ELBOW,
       this.bones[StickFigure.BONE_LEFT_SHOULDER]
     );
-    this.bones[StickFigure.BONE_LEFT_HAND] = Bone.fromPolar(
-      Math.PI,
-      18,
+    this.bones[StickFigure.BONE_LEFT_HAND] = Bone.fromPos(
+      0,
+      -20,
       StickFigure.BONE_LEFT_HAND,
       this.bones[StickFigure.BONE_LEFT_ELBOW]
+    );
+    this.bones[StickFigure.BONE_RIGHT_SHOULDER] = Bone.fromPos(
+      0,
+      0,
+      StickFigure.BONE_RIGHT_SHOULDER,
+      this.bones[StickFigure.BONE_NECK]
+    );
+    this.bones[StickFigure.BONE_RIGHT_ELBOW] = Bone.fromPos(
+      0,
+      -18,
+      StickFigure.BONE_RIGHT_ELBOW,
+      this.bones[StickFigure.BONE_RIGHT_SHOULDER]
+    );
+    this.bones[StickFigure.BONE_RIGHT_HAND] = Bone.fromPos(
+      0,
+      -20,
+      StickFigure.BONE_RIGHT_HAND,
+      this.bones[StickFigure.BONE_RIGHT_ELBOW]
     );
   }
 
@@ -150,18 +149,26 @@ export class StickFigure {
 
       const brInVecs = {};
       brInVecs[StickFigure.BONE_PELVIS] = new Vector(0, -1);
-      brInVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(-5, 0);
-      brInVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(8, 0);
-      brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(35, -20);
-      brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-15, -20);
+      brInVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+      brInVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+      brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 8);
+      brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 8);
+      brInVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
+      brInVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
+      brInVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
+      brInVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
       const breathIn = new AnimationFrame(40, brInVecs);
 
       const brOutVecs = {};
       brOutVecs[StickFigure.BONE_PELVIS] = new Vector(0, -5);
-      brOutVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(-5, 0);
-      brOutVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(8, 0);
-      brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(38, -20);
-      brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-18, -20);
+      brOutVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+      brOutVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+      brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 5);
+      brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 5);
+      brOutVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
+      brOutVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
+      brOutVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
+      brOutVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
       const breathOut = new AnimationFrame(40, brOutVecs);
 
       idle.setFrameAt(0, breathIn);

@@ -184,15 +184,15 @@ export class World {
     this.#drawIKEstimate(
       l1,
       l2,
-      this.#boneVectors[StickFigure.BONE_RIGHT_HIP],
-      this.#boneVectors[StickFigure.BONE_RIGHT_FOOT]
+      this.#boneVectors[StickFigure.BONE_LEFT_HIP],
+      this.#boneVectors[StickFigure.BONE_LEFT_FOOT]
     );
 
     this.#drawIKEstimate(
       l1,
       l2,
-      this.#boneVectors[StickFigure.BONE_LEFT_HIP],
-      this.#boneVectors[StickFigure.BONE_LEFT_FOOT]
+      this.#boneVectors[StickFigure.BONE_RIGHT_HIP],
+      this.#boneVectors[StickFigure.BONE_RIGHT_FOOT]
     );
   }
 
@@ -261,18 +261,18 @@ export class World {
     bc[StickFigure.BONE_HEAD] = `hsl(${0 * cOffset}, 100%, 50%)`;
     bc[StickFigure.BONE_NECK] = `hsl(${8 * cOffset}, 100%, 50%)`;
     bc[StickFigure.BONE_PELVIS] = `hsl(${1 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_SHOULDER] = `hsl(${9 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_ELBOW] = `hsl(${2 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_HAND] = `hsl(${10 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_HIP] = `hsl(${3 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_KNEE] = `hsl(${11 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_LEFT_FOOT] = `hsl(${4 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_SHOULDER] = `hsl(${12 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_ELBOW] = `hsl(${5 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_HAND] = `hsl(${13 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_HIP] = `hsl(${6 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_KNEE] = `hsl(${14 * cOffset}, 100%, 50%)`;
-    bc[StickFigure.BONE_RIGHT_FOOT] = `hsl(${7 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_SHOULDER] = `hsl(${9 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_ELBOW] = `hsl(${2 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_HAND] = `hsl(${10 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_HIP] = `hsl(${3 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_KNEE] = `hsl(${11 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_FOOT] = `hsl(${4 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_SHOULDER] = `hsl(${12 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_ELBOW] = `hsl(${5 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_HAND] = `hsl(${13 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_HIP] = `hsl(${6 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_KNEE] = `hsl(${14 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_FOOT] = `hsl(${7 * cOffset}, 100%, 50%)`;
 
     return bc[boneName];
   }
@@ -311,22 +311,16 @@ export class World {
   #inverseKinematics(bones, boneVectors) {
     const limbs = [
       {
-        endEffector: StickFigure.BONE_RIGHT_FOOT,
-        joint: StickFigure.BONE_RIGHT_KNEE,
-        base: StickFigure.BONE_RIGHT_HIP,
-        dir: 1,
-      },
-      {
         endEffector: StickFigure.BONE_LEFT_FOOT,
         joint: StickFigure.BONE_LEFT_KNEE,
         base: StickFigure.BONE_LEFT_HIP,
         dir: 1,
       },
       {
-        endEffector: StickFigure.BONE_RIGHT_HAND,
-        joint: StickFigure.BONE_RIGHT_ELBOW,
-        base: StickFigure.BONE_RIGHT_SHOULDER,
-        dir: -1,
+        endEffector: StickFigure.BONE_RIGHT_FOOT,
+        joint: StickFigure.BONE_RIGHT_KNEE,
+        base: StickFigure.BONE_RIGHT_HIP,
+        dir: 1,
       },
       {
         endEffector: StickFigure.BONE_LEFT_HAND,
