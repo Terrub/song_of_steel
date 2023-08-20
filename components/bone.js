@@ -1,3 +1,4 @@
+// @ts-check
 import { Utils } from "../utils.js";
 import { Vector } from "./vector.js";
 
@@ -5,41 +6,50 @@ import { Vector } from "./vector.js";
 export class Bone {
   /** @type {Vector} */
   point;
-  /** @type {Bone} */
+  /** @type {?Bone} */
   parent;
   /** @type {String} */
   name;
-  /** @type {Array} */
+  /** @type {Bone[]} */
   children;
 
-  constructor(/** @type {String} */ name, /** @type {Bone} */ parent) {
-    this.parent = parent;
+  /**
+   * @param {String} name
+   * @param {?Bone} parent
+   */
+  constructor(name, parent) {
     this.name = name;
+    this.parent = parent;
     this.children = [];
 
     if (!Utils.isNull(parent)) {
+      // @ts-ignore We check for parent existing dangit...
       parent.children.push(this);
     }
   }
 
-  static fromPolar(
-    /** @type {Number} */ angle,
-    /** @type {Number} */ length,
-    /** @type {String} */ name,
-    /** @type {Bone} */ parent
-  ) {
+  /**
+   * @param {Number} angle
+   * @param {Number} length
+   * @param {String} name
+   * @param {?Bone} parent
+   * @returns {Bone}
+   */
+  static fromPolar(angle, length, name, parent) {
     const bone = new Bone(name, parent);
     bone.point = Vector.fromPolar(angle, length);
 
     return bone;
   }
 
-  static fromPos(
-    /** @type {Number} */ x,
-    /** @type {Number} */ y,
-    /** @type {String} */ name,
-    /** @type {Bone} */ parent
-  ) {
+  /**
+   * @param {Number} x
+   * @param {Number} y
+   * @param {String} name
+   * @param {?Bone} parent
+   * @returns {Bone}
+   */
+  static fromPos(x, y, name, parent) {
     const bone = new Bone(name, parent);
     bone.point = new Vector(x, y);
 
