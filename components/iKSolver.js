@@ -1,3 +1,4 @@
+// @ts-check
 import { Vector } from "./vector.js";
 
 // for (let i = 0; i <= 10; i += 1) {
@@ -7,8 +8,17 @@ import { Vector } from "./vector.js";
 // }
 
 export class IKSolver {
+  /** @type {Vector} */
   static #localPosEE = new Vector(0, 0);
 
+  /**
+   * @param {Vector} v
+   * @param {number} l1
+   * @param {number} l2
+   * @param {Vector} posEE
+   * @param {number} [dirBend=1]
+   * @returns {Vector}
+   */
   static local(v, l1, l2, posEE, dirBend = 1) {
     /**
      *      / l1^2 + tx^2 + ty^2 - l2^2 \
@@ -26,6 +36,15 @@ export class IKSolver {
     return Vector.setPolar(v, angleBendLocal + posEE.angle(), l1);
   }
 
+  /**
+   * @param {Vector} v
+   * @param {number} l1
+   * @param {number} l2
+   * @param {Vector} posEE
+   * @param {Vector} origin
+   * @param {number} [dirBend=1]
+   * @returns {Vector}
+   */
   static global(v, l1, l2, posEE, origin, dirBend = 1) {
     // we need to translate the whole thing to (0, 0), so subtract 'origin' from everything
     // but we only receive the end effector 'posEE'
@@ -37,6 +56,6 @@ export class IKSolver {
     IKSolver.local(v, l1, l2, IKSolver.#localPosEE, dirBend);
 
     // But now we have v in local space, so add origin to that to place back in global space
-    v.add(origin);
+    return v.add(origin);
   }
 }
