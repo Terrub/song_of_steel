@@ -143,6 +143,32 @@ export class StickFigure {
   /**
    * @returns {StickAnimation}
    */
+  #getRunningAnimation() {
+    if (Utils.isUndefined(this.#animations["running"])) {
+      const running = new StickAnimation();
+
+      const bonesLeft = {};
+      bonesLeft[StickFigure.BONE_HEAD] = new Vector(3, -1);
+      bonesLeft[StickFigure.BONE_NECK] = new Vector(5, -2);
+      bonesLeft[StickFigure.BONE_PELVIS] = new Vector(0, -6);
+
+      const bonesRight = {};
+      bonesRight[StickFigure.BONE_HEAD] = new Vector(3, -1);
+      bonesRight[StickFigure.BONE_NECK] = new Vector(5, -2);
+      bonesRight[StickFigure.BONE_PELVIS] = new Vector(0, -6);
+
+      running.setFrameAt(0, new AnimationFrame(20, bonesLeft));
+      running.setFrameAt(1, new AnimationFrame(20, bonesRight));
+
+      this.#animations["running"] = running;
+    }
+
+    return this.#animations["running"];
+  }
+
+  /**
+   * @returns {StickAnimation}
+   */
   #getIdleAnimation() {
     if (Utils.isUndefined(this.#animations["idle"])) {
       const idle = new StickAnimation();
@@ -180,27 +206,33 @@ export class StickFigure {
     return this.#animations["idle"];
   }
 
+  /**
+   * @returns {StickAnimation}
+   */
   #getAnimation() {
     // if (this.#attacking === Character.ATTACK_RIGHT) {
     //   currentSprite = this.#sprites[Character.ATTACK_RIGHT];
     //   return;
     // }
+
     // if (this.#attacking === Character.ATTACK_LEFT) {
     //   currentSprite = this.#sprites[Character.ATTACK_LEFT];
     //   return;
     // }
+
     // if (this.velocity.y <= 0 && position.y !== 0) {
     //   currentSprite = this.#sprites.fall;
     //   return;
     // }
+
     // if (this.velocity.y > 0 && position.y > 0) {
     //   currentSprite = this.#sprites.jump;
     //   return;
     // }
-    // if (this.velocity.x !== 0 && this.velocity.y === 0) {
-    //   this.#resolveRun(numTics);
-    //   return;
-    // }
+
+    if (this.velocity.x !== 0 && this.velocity.y === 0) {
+      return this.#getRunningAnimation();
+    }
 
     return this.#getIdleAnimation();
   }
