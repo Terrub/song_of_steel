@@ -1,7 +1,4 @@
-/* eslint
-    no-bitwise: ["error", { "allow": ["|", "^"] }]
- */
-
+// @ts-check
 import { ParamTypeError } from "./errors/typeErrors/paramTypeError.js";
 
 export class Utils {
@@ -35,6 +32,10 @@ export class Utils {
     return typeof value === "string";
   }
 
+  /**
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isNull(value) {
     return value === null;
   }
