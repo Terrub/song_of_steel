@@ -133,7 +133,7 @@ vectorTests.addTest(
  */
 vectorTests.addTest("has length based off of its components", () => {
   const vector = new Vector(3, 4);
-  const actual = vector.length();
+  const actual = vector.magnitude();
   const expected = 5;
 
   testRunner.assertStrictlyEquals(expected, actual);
@@ -141,7 +141,7 @@ vectorTests.addTest("has length based off of its components", () => {
 
 vectorTests.addTest("length works even with x component = 0", () => {
   const vector = new Vector(0, 5);
-  const actual = vector.length();
+  const actual = vector.magnitude();
   const expected = 5;
 
   testRunner.assertStrictlyEquals(expected, actual);
@@ -149,7 +149,7 @@ vectorTests.addTest("length works even with x component = 0", () => {
 
 vectorTests.addTest("length works even with y component = 0", () => {
   const vector = new Vector(3, 0);
-  const actual = vector.length();
+  const actual = vector.magnitude();
   const expected = 3;
 
   testRunner.assertStrictlyEquals(expected, actual);
@@ -159,7 +159,7 @@ vectorTests.addTest(
   "length gives a positive value '5' when given vector with a negative component '(-3, 4)'",
   () => {
     const vector = new Vector(-3, 4);
-    const actual = vector.length();
+    const actual = vector.magnitude();
     const expected = 5;
 
     testRunner.assertStrictlyEquals(expected, actual);
@@ -168,7 +168,7 @@ vectorTests.addTest(
 
 vectorTests.addTest("length can be 0 ≤ x < 1", () => {
   const vector = new Vector(0.3, 0.4);
-  const actual = vector.length();
+  const actual = vector.magnitude();
   const expected = 0.5;
 
   testRunner.assertStrictlyEquals(expected, actual);
@@ -243,7 +243,7 @@ vectorTests.addTest(
 vectorTests.addTest("normalise will cause its magnitude to be 1", () => {
   const vector = new Vector(5, 5);
   vector.normalise();
-  const actual = vector.length();
+  const actual = vector.magnitude();
   const expected = 1;
 
   testRunner.assertStrictlyEquals(expected, actual);
@@ -254,7 +254,7 @@ vectorTests.addTest(
   () => {
     const vector = new Vector(10, -1);
     vector.normalise();
-    const actual = vector.length();
+    const actual = vector.magnitude();
     const expected = 0.9999999999999999;
 
     testRunner.assertStrictlyEquals(expected, actual);
