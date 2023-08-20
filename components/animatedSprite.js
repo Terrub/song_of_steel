@@ -1,25 +1,46 @@
+// @ts-check
 import { Utils } from "../utils.js";
 import { Sprite } from "./sprite.js";
 import { SpriteTypeError } from "../errors/typeErrors/spriteTypeError.js";
+import { CanvasRenderer } from "./canvasRenderer.js";
+import { Vector } from "./vector.js";
 
 export class AnimatedSprite {
+  /** @type {Sprite} */
   #sprite;
+  /** @type {number} */
   #ticsPerFrame;
+  /** @type {boolean} */
   #loop;
-  #numTicsDrawn = 0;
+  /** @type {number} */
+  #numTicsDrawn;
 
+  /**
+   * @callback callWhenDone
+   */
+
+  /**
+   * @param {Sprite} sprite
+   * @param {number} framesMax
+   * @param {number} ticsPerFrame
+   * @param {boolean} loop
+   * @param {?callWhenDone} callWhenDone
+   */
   constructor(
     sprite,
     framesMax,
     ticsPerFrame,
     loop = true,
-    callWhenDone = undefined
+    callWhenDone = null
   ) {
     this.sprite = sprite;
     this.framesMax = framesMax;
     this.#ticsPerFrame = ticsPerFrame;
     this.#loop = loop;
-    if (Utils.isDefined(callWhenDone) && !Utils.isFunction(callWhenDone)) {
+    this.#numTicsDrawn = 0;
+
+    if (callWhenDone && !Utils.isFunction(callWhenDone)) {
+      // TODO Create specific error for when callback is declared but not a function
       throw new TypeError(
         "callWhenDone should be a callback function if declared"
       );
@@ -39,6 +60,9 @@ export class AnimatedSprite {
     this.#sprite = sprite;
   }
 
+  /**
+   * @returns {void}
+   */
   reset() {
     if (this.#loop) {
       console.warn("Why are we trying to reset a looping sprite?!?");
@@ -48,6 +72,12 @@ export class AnimatedSprite {
     this.#numTicsDrawn = 0;
   }
 
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Vector} position
+   * @param {number} ticsElapsed
+   * @returns {void}
+   */
   draw(renderer, position, ticsElapsed) {
     let frameNumber;
     if (this.#loop) {
@@ -57,7 +87,7 @@ export class AnimatedSprite {
       frameNumber = Math.floor(this.#numTicsDrawn / this.#ticsPerFrame);
       if (frameNumber + 1 < this.framesMax) {
         this.#numTicsDrawn += 1;
-      } else {
+      } else if (this.callWhenDone) {
         this.callWhenDone();
       }
     }
