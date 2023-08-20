@@ -2,10 +2,13 @@
 import { Utils } from "../utils.js";
 import { AnimationFrame } from "./animationFrame.js";
 import { Bone } from "./bone.js";
+import { CanvasRenderer } from "./canvasRenderer.js";
+import { IKSolver } from "./ikSolver.js";
+import { Player } from "./player.js";
 import { StickAnimation } from "./stickAnimation.js";
 import { Vector } from "./vector.js";
 
-export class StickFigure {
+export class StickFigure extends Player {
   static BONE_HEAD = "head";
   static BONE_NECK = "neck";
   static BONE_RIGHT_SHOULDER = "rightShoulder";
@@ -22,10 +25,10 @@ export class StickFigure {
   static BONE_RIGHT_FOOT = "rightFoot";
   static BONE_LEFT_FOOT = "leftFoot";
 
-  /** @type {Vector} */
-  velocity;
   /** @type {Object.<string, Bone>} */
   bones;
+  /** @type {Object.<string, Vector>} */
+  #boneVectors;
   /** @type {Object.<string, StickAnimation>} */
   #animations;
 
@@ -33,11 +36,23 @@ export class StickFigure {
    * @param {Vector} velocity
    */
   constructor(velocity) {
-    this.velocity = velocity;
+    super(velocity);
     this.bones = {};
+    this.#boneVectors = {};
     this.#animations = {};
+  }
 
-    // TODO Remove the work from the constructor
+  /**
+   * @param {number} numTics
+   * @param {Object.<string, Vector>} boneVectors
+   * @returns {void}
+   */
+  animateBoneVectors(numTics, boneVectors) {
+    const animation = this.#getAnimation();
+    animation.resolve(numTics, boneVectors);
+  }
+
+  load() {
     this.bones[StickFigure.BONE_PELVIS] = Bone.fromPos(
       0,
       42,
@@ -128,16 +143,307 @@ export class StickFigure {
       StickFigure.BONE_RIGHT_HAND,
       this.bones[StickFigure.BONE_RIGHT_ELBOW]
     );
+
+    for (const boneName in this.bones) {
+      this.#boneVectors[boneName] = new Vector(0, 0);
+    }
   }
 
   /**
-   * @param {number} numTics
+   * @param {Object.<string, Bone>} bones
    * @param {Object.<string, Vector>} boneVectors
    * @returns {void}
    */
-  animateBoneVectors(numTics, boneVectors) {
-    const animation = this.#getAnimation();
-    animation.resolve(numTics, boneVectors);
+  #resetBoneVectors(bones, boneVectors) {
+    for (const boneName in bones) {
+      boneVectors[boneName].x = bones[boneName].x;
+      boneVectors[boneName].y = bones[boneName].y;
+    }
+  }
+
+  /**
+   * @param {Bone} base
+   * @returns {void}
+   */
+  #forwardKinematics(base) {
+    for (const child of base.children) {
+      this.#boneVectors[child.name].add(this.#boneVectors[base.name]);
+
+      if (child.children.length > 0) {
+        this.#forwardKinematics(child);
+      }
+    }
+  }
+
+  /**
+   * @param {Object.<string, Bone>} bones
+   * @param {Object.<string, Vector>} boneVectors
+   * @returns {void}
+   */
+  #inverseKinematics(bones, boneVectors) {
+    const limbs = [
+      {
+        endEffector: StickFigure.BONE_LEFT_FOOT,
+        joint: StickFigure.BONE_LEFT_KNEE,
+        base: StickFigure.BONE_LEFT_HIP,
+        dir: 1,
+      },
+      {
+        endEffector: StickFigure.BONE_RIGHT_FOOT,
+        joint: StickFigure.BONE_RIGHT_KNEE,
+        base: StickFigure.BONE_RIGHT_HIP,
+        dir: 1,
+      },
+      {
+        endEffector: StickFigure.BONE_LEFT_HAND,
+        joint: StickFigure.BONE_LEFT_ELBOW,
+        base: StickFigure.BONE_LEFT_SHOULDER,
+        dir: -1,
+      },
+      {
+        endEffector: StickFigure.BONE_RIGHT_HAND,
+        joint: StickFigure.BONE_RIGHT_ELBOW,
+        base: StickFigure.BONE_RIGHT_SHOULDER,
+        dir: -1,
+      },
+    ];
+
+    for (const limb of limbs) {
+      IKSolver.global(
+        boneVectors[limb.joint],
+        bones[limb.joint].length,
+        bones[limb.endEffector].length,
+        boneVectors[limb.endEffector],
+        boneVectors[limb.base],
+        limb.dir
+      );
+    }
+  }
+
+  /**
+   * @param {string} boneName
+   * @returns {string}
+   */
+  #debugGetColorForBone(boneName) {
+    const cOffset = 360 / 14;
+    const bc = {};
+    bc[StickFigure.BONE_HEAD] = `hsl(${0 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_NECK] = `hsl(${8 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_PELVIS] = `hsl(${1 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_SHOULDER] = `hsl(${9 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_ELBOW] = `hsl(${2 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_HAND] = `hsl(${10 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_HIP] = `hsl(${3 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_KNEE] = `hsl(${11 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_RIGHT_FOOT] = `hsl(${4 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_SHOULDER] = `hsl(${12 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_ELBOW] = `hsl(${5 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_HAND] = `hsl(${13 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_HIP] = `hsl(${6 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_KNEE] = `hsl(${14 * cOffset}, 100%, 50%)`;
+    bc[StickFigure.BONE_LEFT_FOOT] = `hsl(${7 * cOffset}, 100%, 50%)`;
+
+    return bc[boneName];
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @returns {void}
+   */
+  #drawBoneVectors(renderer) {
+    const thickness = 6;
+    let color = "red";
+    for (const boneName in this.#boneVectors) {
+      /** @type {Bone} */
+      const bone = this.bones[boneName];
+
+      if (Utils.isNull(bone.parent)) {
+        continue;
+      }
+
+      /** @type {Vector} */
+      const boneVector = this.#boneVectors[boneName];
+      /** @type {Vector} */
+      // @ts-ignore We early exit if bone.parent is null
+      const parentVector = this.#boneVectors[bone.parent.name];
+
+      if (this.debug) {
+        color = this.#debugGetColorForBone(boneName);
+      }
+
+      // TODO Consider allowing bones to determine how they are rendered.
+      if (boneName === StickFigure.BONE_HEAD) {
+        renderer.drawRect(boneVector.x - 8, boneVector.y - 10, 16, 20, color);
+      }
+
+      renderer.drawLine(
+        boneVector.x,
+        boneVector.y,
+        parentVector.x,
+        parentVector.y,
+        color,
+        thickness
+      );
+    }
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Object.<string, Bone>} bones
+   * @returns {void}
+   */
+  #debugDrawBoneColours(renderer, bones) {
+    let offsetX = 10;
+    let offsetY = 10;
+
+    for (const boneName in bones) {
+      const color = this.#debugGetColorForBone(boneName);
+      renderer.drawRect(offsetX, offsetY, 10, 10, color);
+      renderer.text(offsetX + 15, offsetY + 2, boneName, "white");
+      offsetY += 15;
+    }
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Vector} position
+   * @param {number} floorHeight
+   * @returns {void}
+   */
+  #debugRenderInfo(renderer, position, floorHeight) {
+    const bones = this.bones;
+
+    this.#debugDrawBoneColours(renderer, bones);
+    this.#debugDrawPlayerPosition(renderer, position, floorHeight);
+
+    const pelvisPos = this.#boneVectors[StickFigure.BONE_PELVIS];
+    this.#debugDrawPoint(renderer, pelvisPos);
+
+    const l1 = bones[StickFigure.BONE_RIGHT_KNEE].length;
+    const l2 = bones[StickFigure.BONE_RIGHT_FOOT].length;
+    const b = pelvisPos.y - floorHeight - position.y;
+    const c = l1 + l2;
+    const s = Math.sqrt(c * c - b * b);
+
+    this.#debugDrawEstimate(renderer, position.x + s, position.y + floorHeight);
+    this.#debugDrawEstimate(renderer, position.x - s, position.y + floorHeight);
+
+    this.#drawIKEstimate(
+      renderer,
+      l1,
+      l2,
+      this.#boneVectors[StickFigure.BONE_LEFT_HIP],
+      this.#boneVectors[StickFigure.BONE_LEFT_FOOT]
+    );
+
+    this.#drawIKEstimate(
+      renderer,
+      l1,
+      l2,
+      this.#boneVectors[StickFigure.BONE_RIGHT_HIP],
+      this.#boneVectors[StickFigure.BONE_RIGHT_FOOT]
+    );
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {number} l1
+   * @param {number} l2
+   * @param {Vector} base
+   * @param {Vector} endEffector
+   * @returns {void}
+   */
+  #drawIKEstimate(renderer, l1, l2, base, endEffector) {
+    const radius = 3;
+    const color = "limegreen";
+
+    const vector = new Vector(0, 0);
+    IKSolver.global(vector, l1, l2, endEffector, base);
+    renderer.strokeCircle(vector.x, vector.y, radius, color);
+  }
+
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @returns {void}
+   */
+  #debugDrawEstimate(renderer, x, y) {
+    const radius = 3;
+    const color = "limegreen";
+
+    renderer.strokeCircle(x, y, radius, color);
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Vector} position
+   * @param {number} floorHeight
+   * @returns {void}
+   */
+  #debugDrawPlayerPosition(renderer, position, floorHeight) {
+    const radius = 3;
+    const color = "orange";
+
+    renderer.strokeCircle(position.x, floorHeight + position.y, radius, color);
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Vector} point
+   * @returns {void}
+   */
+  #debugDrawPoint(renderer, point) {
+    const radius = 5;
+    const color = "yellow";
+
+    renderer.strokeCircle(point.x, point.y, radius, color);
+  }
+
+  /**
+   * @param {CanvasRenderer} renderer
+   * @param {Vector} position
+   * @param {number} numTics
+   * @param {number} floorHeight
+   */
+  draw(renderer, position, numTics, floorHeight) {
+    /**
+     * Isn't this entire thing the classical back n forth draw cycle algorithm???
+     * 1) Something changes our current state.  -> Animation frame
+     * 2) Resolve properties (top-down)         -> Forward Kinematics
+     * 3) Resolve measurements (bottom-up)      -> Inverse Kinematics
+     * 4) Draw actuals (top-down)               -> Draw cycle
+     */
+    const bones = this.bones;
+    const boneVectors = this.#boneVectors;
+
+    // clear last buffer.
+    this.#resetBoneVectors(bones, boneVectors);
+
+    // 1) Add absolute property changes to bones based on animation
+    //     This introduces the changes and causes properties to be changed.
+    this.animateBoneVectors(numTics, boneVectors);
+
+    // 2) Forward Kinematics resolve property changes and propegate them down the node tree
+    boneVectors[StickFigure.BONE_PELVIS].add(position);
+    boneVectors[StickFigure.BONE_PELVIS].y += floorHeight;
+    this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
+
+    // NOTE That means this bit could be moved to the property update
+    // Keep yer feet on the grauwnd
+    const rightFoot = boneVectors[StickFigure.BONE_RIGHT_FOOT];
+    rightFoot.y = Math.max(floorHeight, rightFoot.y);
+    const leftFoot = boneVectors[StickFigure.BONE_LEFT_FOOT];
+    leftFoot.y = Math.max(floorHeight, leftFoot.y);
+
+    // 3) Inverse Kinematics resolve any measurements that have to happen in between
+    this.#inverseKinematics(bones, boneVectors);
+
+    // 4) Now we just draw the whole node tree
+    this.#drawBoneVectors(renderer);
+
+    if (this.debug === true) {
+      this.#debugRenderInfo(renderer, position, floorHeight);
+    }
   }
 
   /**

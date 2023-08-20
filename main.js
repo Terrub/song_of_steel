@@ -1,9 +1,9 @@
-import { Utils } from "./utils.js";
 import { CanvasRenderer } from "./components/canvasRenderer.js";
-import { World } from "./components/world.js";
 import { createMainloop } from "./components/mainloop.js";
-import { Vector } from "./components/vector.js";
 import { StickFigure } from "./components/stickFigure.js";
+import { Vector } from "./components/vector.js";
+import { World } from "./components/world.js";
+import { Utils } from "./utils.js";
 
 /**
  * What do I need to separate game from browser?
@@ -196,8 +196,7 @@ function resolveGameState() {
 
 function renderGame() {
   numTics += 1;
-  world.draw(numTics);
-  world.drawPlayer(player, playerPosition, numTics);
+  world.draw(numTics, playerPosition);
 }
 
 function gameTic() {

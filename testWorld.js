@@ -1,9 +1,8 @@
-import { Utils } from "./utils.js";
 import { CanvasRenderer } from "./components/canvasRenderer.js";
-import { World } from "./components/world.js";
 import { createMainloop } from "./components/mainloop.js";
-import { Vector } from "./components/vector.js";
 import { StickFigure } from "./components/stickFigure.js";
+import { Vector } from "./components/vector.js";
+import { World } from "./components/world.js";
 
 /**
  * What do I need to separate game from browser?
@@ -55,8 +54,8 @@ const playerPosition = new Vector(gameWidth * 0.5, 0);
 const playerInitialVelocity = new Vector(0, 0);
 
 const player = new StickFigure(playerInitialVelocity);
+player.debug = true;
 
-testWorld.debug = true;
 testWorld.setFloor(gameHeight * 0.5);
 testWorld.setup();
 testWorld.loadPlayer(player);
@@ -167,8 +166,7 @@ function resolveGameState() {
 
 function renderGame() {
   numTics += 1;
-  testWorld.draw(numTics);
-  testWorld.drawPlayer(player, playerPosition, numTics);
+  testWorld.draw(numTics, playerPosition);
 }
 
 function gameTic() {
