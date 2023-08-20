@@ -1,3 +1,4 @@
+// @ts-check
 // Thanks https://radzion.com/blog/linear-algebra/vectors
 
 export class Vector {
@@ -67,18 +68,22 @@ export class Vector {
     return Math.atan2(v.y, v.x);
   }
 
-  static length(/** @type {Vector} */ v) {
+  static magnitude(/** @type {Vector} */ v) {
     return Math.hypot(v.x, v.y);
   }
 
-  static setPolar(
-    /** @type {Vector} */ v,
-    /** @type {Number} */ angle,
-    /** @type {Number} */ mag
-  ) {
+  /**
+   * @param {Vector} v
+   * @param {number} angle
+   * @param {number} mag
+   * @returns {Vector}
+   */
+  static setPolar(v, angle, mag) {
     v.x = Math.cos(angle);
     v.y = Math.sin(angle);
     v.scale(mag);
+
+    return v;
   }
 
   static isApproximate(/** @type {Number} */ val1, /** @type {Number} */ val2) {
@@ -121,8 +126,8 @@ export class Vector {
     return this;
   }
 
-  length() {
-    return Vector.length(this);
+  magnitude() {
+    return Vector.magnitude(this);
   }
 
   angle() {
@@ -135,7 +140,7 @@ export class Vector {
       return this;
     }
 
-    return this.scale(1 / this.length());
+    return this.scale(1 / this.magnitude());
   }
 
   limit(/** @type {Number} */ value) {

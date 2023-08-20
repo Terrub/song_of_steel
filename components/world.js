@@ -172,8 +172,8 @@ export class World {
     const pelvisPos = this.#boneVectors[StickFigure.BONE_PELVIS];
     this.#debugDrawPoint(pelvisPos);
 
-    const l1 = bones[StickFigure.BONE_LEFT_KNEE].point.length();
-    const l2 = bones[StickFigure.BONE_LEFT_FOOT].point.length();
+    const l1 = bones[StickFigure.BONE_RIGHT_KNEE].point.magnitude();
+    const l2 = bones[StickFigure.BONE_RIGHT_FOOT].point.magnitude();
     const b = pelvisPos.y - this.#floorHeight - position.y;
     const c = l1 + l2;
     const s = Math.sqrt(c * c - b * b);
@@ -334,13 +334,19 @@ export class World {
         base: StickFigure.BONE_LEFT_SHOULDER,
         dir: -1,
       },
+      {
+        endEffector: StickFigure.BONE_RIGHT_HAND,
+        joint: StickFigure.BONE_RIGHT_ELBOW,
+        base: StickFigure.BONE_RIGHT_SHOULDER,
+        dir: -1,
+      },
     ];
 
     for (const limb of limbs) {
       IKSolver.global(
         boneVectors[limb.joint],
-        bones[limb.joint].point.length(),
-        bones[limb.endEffector].point.length(),
+        bones[limb.joint].point.magnitude(),
+        bones[limb.endEffector].point.magnitude(),
         boneVectors[limb.endEffector],
         boneVectors[limb.base],
         limb.dir

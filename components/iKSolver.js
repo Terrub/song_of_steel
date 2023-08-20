@@ -26,7 +26,7 @@ export class IKSolver {
      *      \  2 * l1 * √(tx^2 + ty^2)  /
      */
     const numerator = l1 * l1 + posEE.x * posEE.x + posEE.y * posEE.y - l2 * l2;
-    const denominator = 2 * l1 * posEE.length();
+    const denominator = 2 * l1 * posEE.magnitude();
 
     let angleBendLocal = dirBend * Math.acos(numerator / denominator);
     if (isNaN(angleBendLocal)) {
