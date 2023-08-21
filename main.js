@@ -20,8 +20,8 @@ import { Utils } from "./utils.js";
 const gameWidth = window.innerWidth;
 const gameHeight = Utils.floor(gameWidth * 0.5636160714285714);
 const gravity = 0.98;
-const playerRunSpeed = 10;
-const playerJumpHeight = 15;
+const playerRunSpeed = 2;
+const playerJumpHeight = 10;
 let numTics = 0;
 let ticsPerFrame = 5;
 

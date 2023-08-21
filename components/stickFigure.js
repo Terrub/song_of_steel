@@ -29,6 +29,8 @@ export class StickFigure extends Player {
   bones;
   /** @type {Object.<string, Vector>} */
   #boneVectors;
+  /** @type {Object.<string, Vector>} */
+  #feetVectors;
   /** @type {Object.<string, StickAnimation>} */
   #animations;
 
@@ -39,17 +41,8 @@ export class StickFigure extends Player {
     super(velocity);
     this.bones = {};
     this.#boneVectors = {};
+    this.#feetVectors = {};
     this.#animations = {};
-  }
-
-  /**
-   * @param {number} numTics
-   * @param {Object.<string, Vector>} boneVectors
-   * @returns {void}
-   */
-  animateBoneVectors(numTics, boneVectors) {
-    const animation = this.#getAnimation();
-    animation.resolve(numTics, boneVectors);
   }
 
   load() {
@@ -147,6 +140,11 @@ export class StickFigure extends Player {
     for (const boneName in this.bones) {
       this.#boneVectors[boneName] = new Vector(0, 0);
     }
+
+    this.#feetVectors[StickFigure.BONE_RIGHT_FOOT] = new Vector(0, 0);
+    this.#feetVectors[StickFigure.BONE_LEFT_FOOT] = new Vector(0, 0);
+    this.#feetVectors[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 0);
+    this.#feetVectors[StickFigure.BONE_LEFT_HAND] = new Vector(0, 0);
   }
 
   /**
@@ -421,19 +419,73 @@ export class StickFigure extends Player {
 
     // 1) Add absolute property changes to bones based on animation
     //     This introduces the changes and causes properties to be changed.
-    this.animateBoneVectors(numTics, boneVectors);
+
+    const animation = this.#getAnimation();
+    animation.resolve(numTics, boneVectors);
 
     // 2) Forward Kinematics resolve property changes and propegate them down the node tree
-    boneVectors[StickFigure.BONE_PELVIS].add(position);
-    boneVectors[StickFigure.BONE_PELVIS].y += floorHeight;
+    const pelvisPos = boneVectors[StickFigure.BONE_PELVIS];
+    const b = pelvisPos.y;
+    pelvisPos.add(position);
+    pelvisPos.y += floorHeight;
     this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
 
-    // NOTE That means this bit could be moved to the property update
-    // Keep yer feet on the grauwnd
+    const l1 = bones[StickFigure.BONE_RIGHT_KNEE].length;
+    const l2 = bones[StickFigure.BONE_RIGHT_FOOT].length;
+    const c = l1 + l2;
+    const s = Math.sqrt(c * c - b * b);
+
     const rightFoot = boneVectors[StickFigure.BONE_RIGHT_FOOT];
-    rightFoot.y = Math.max(floorHeight, rightFoot.y);
     const leftFoot = boneVectors[StickFigure.BONE_LEFT_FOOT];
+    const rightHand = boneVectors[StickFigure.BONE_RIGHT_HAND];
+    const leftHand = boneVectors[StickFigure.BONE_LEFT_HAND];
+    // Keep yer feet on the grauwnd
+    rightFoot.y = Math.max(floorHeight, rightFoot.y);
     leftFoot.y = Math.max(floorHeight, leftFoot.y);
+    const lastRFV = this.#feetVectors[StickFigure.BONE_RIGHT_FOOT];
+    const lastLFV = this.#feetVectors[StickFigure.BONE_LEFT_FOOT];
+    const lastRHV = this.#feetVectors[StickFigure.BONE_RIGHT_HAND];
+    const lastLHV = this.#feetVectors[StickFigure.BONE_LEFT_HAND];
+
+    if (this.velocity.x !== 0 && this.velocity.y === 0) {
+      rightFoot.x = lastRFV.x;
+      leftFoot.x = lastLFV.x;
+      rightHand.x = lastRHV.x;
+      leftHand.x = lastLHV.x;
+
+      if (0 < this.velocity.x) {
+        if (position.x - lastLHV.x >= s) {
+          leftHand.x = position.x + s;
+        }
+        if (position.x - lastRHV.x >= s) {
+          rightHand.x = position.x + s;
+        }
+        if (position.x - lastLFV.x >= s) {
+          leftFoot.x = position.x + s;
+        }
+        if (position.x - lastRFV.x >= s) {
+          rightFoot.x = position.x + s;
+        }
+      }
+      if (0 > this.velocity.x) {
+        if (lastRHV.x - position.x >= s) {
+          rightHand.x = position.x - s;
+        }
+        if (lastLHV.x - position.x >= s) {
+          leftHand.x = position.x - s;
+        }
+        if (lastRFV.x - position.x >= s) {
+          rightFoot.x = position.x - s;
+        }
+        if (lastLFV.x - position.x >= s) {
+          leftFoot.x = position.x - s;
+        }
+      }
+    }
+    lastRFV.x = rightFoot.x;
+    lastLFV.x = leftFoot.x;
+    lastRHV.x = rightHand.x;
+    lastLHV.x = leftHand.x;
 
     // 3) Inverse Kinematics resolve any measurements that have to happen in between
     this.#inverseKinematics(bones, boneVectors);
@@ -457,11 +509,15 @@ export class StickFigure extends Player {
       bonesLeft[StickFigure.BONE_HEAD] = new Vector(3, -1);
       bonesLeft[StickFigure.BONE_NECK] = new Vector(5, -2);
       bonesLeft[StickFigure.BONE_PELVIS] = new Vector(0, -6);
+      bonesLeft[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
+      bonesLeft[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
 
       const bonesRight = {};
       bonesRight[StickFigure.BONE_HEAD] = new Vector(3, -1);
       bonesRight[StickFigure.BONE_NECK] = new Vector(5, -2);
       bonesRight[StickFigure.BONE_PELVIS] = new Vector(0, -6);
+      bonesRight[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
+      bonesRight[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
 
       running.setFrameAt(0, new AnimationFrame(20, bonesLeft));
       running.setFrameAt(1, new AnimationFrame(20, bonesRight));
@@ -481,26 +537,26 @@ export class StickFigure extends Player {
 
       const brInVecs = {};
       brInVecs[StickFigure.BONE_PELVIS] = new Vector(0, -1);
-      brInVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
-      brInVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
-      brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 8);
-      brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 8);
       brInVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
       brInVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
       brInVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
       brInVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
+      brInVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+      brInVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+      brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 8);
+      brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 8);
       const breathIn = new AnimationFrame(40, brInVecs);
 
       const brOutVecs = {};
       brOutVecs[StickFigure.BONE_PELVIS] = new Vector(0, -5);
-      brOutVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
-      brOutVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
-      brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 5);
-      brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 5);
       brOutVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
       brOutVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
       brOutVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
       brOutVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
+      brOutVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+      brOutVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+      brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 5);
+      brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 5);
       const breathOut = new AnimationFrame(40, brOutVecs);
 
       idle.setFrameAt(0, breathIn);
