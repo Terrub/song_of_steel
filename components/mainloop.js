@@ -1,3 +1,4 @@
+//@ts-check
 import { Utils } from "../utils.js";
 
 // TODO See if we can turn this into a class after all.
@@ -10,6 +11,12 @@ import { Utils } from "../utils.js";
   currently this works and the complexity of this psuedo-class is minimal enough to not merrit
   the time investment.
  */
+
+/**
+ *
+ * @param {Function} fnRender
+ * @returns {Object}
+ */
 export function createMainloop(fnRender) {
   if (!Utils.isFunction(fnRender)) {
     Utils.reportUsageError("Usage: createMainloop(frameRender: function");
@@ -17,10 +24,14 @@ export function createMainloop(fnRender) {
 
   let isAnimating = false;
   let isDebugging = false;
+  let renderMethod = fnRender;
 
-  function frameRender() {
+  /**
+   * @param {number} elapsed
+   */
+  function debugRenderer(elapsed) {
     try {
-      fnRender();
+      fnRender(elapsed);
     } catch (error) {
       stop();
 
@@ -28,10 +39,13 @@ export function createMainloop(fnRender) {
     }
   }
 
-  function tic() {
+  /**
+   * @param {number} elapsed
+   */
+  function tic(elapsed) {
     if (isAnimating === true) {
       window.requestAnimationFrame(tic);
-      frameRender();
+      renderMethod(elapsed);
     }
   }
 
@@ -46,7 +60,7 @@ export function createMainloop(fnRender) {
       Utils.report("Animation started");
     }
 
-    tic();
+    tic(Utils.getTime());
   }
 
   function stop() {
@@ -65,13 +79,36 @@ export function createMainloop(fnRender) {
       return;
     }
 
-    frameRender();
+    renderMethod();
   }
 
+  /**
+   * @param {boolean} bVal
+   */
   function setDebug(bVal) {
     isDebugging = bVal;
+    if (bVal === true) {
+      renderMethod = debugRenderer;
+    } else if (bVal === false) {
+      renderMethod = fnRender;
+    } else {
+      throw new Error(
+        `Unrecognised debug value: '${bVal}', expected 'true' or 'false'`
+      );
+    }
   }
 
+  /**
+   * @typedef MainLoop
+   * @type {object}
+   * @property {Function} start
+   * @property {Function} stop
+   * @property {Function} reset
+   * @property {Function} next
+   * @property {Function} setDebug
+   */
+
+  /** @type {MainLoop} */
   const protoMainloop = {
     start: start,
     stop: stop,
