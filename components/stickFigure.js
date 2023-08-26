@@ -145,6 +145,9 @@ export class StickFigure extends Player {
       this.bones[StickFigure.BONE_RIGHT_ELBOW]
     );
 
+    this.#animations["running"] = this.#getRunningAnimation();
+    this.#animations["idle"] = this.#getIdleAnimation();
+
     const offsetX = DEBUG_BONE_COLOUR_OFFSET_X;
     let offsetY = DEBUG_BONE_COLOUR_OFFSET_Y;
     for (const boneName in this.bones) {
@@ -541,70 +544,62 @@ export class StickFigure extends Player {
    * @returns {StickAnimation}
    */
   #getRunningAnimation() {
-    if (Utils.isUndefined(this.#animations["running"])) {
-      const running = new StickAnimation();
+    const running = new StickAnimation();
 
-      const bonesLeft = {};
-      bonesLeft[StickFigure.BONE_HEAD] = new Vector(3, -1);
-      bonesLeft[StickFigure.BONE_NECK] = new Vector(5, -2);
-      bonesLeft[StickFigure.BONE_PELVIS] = new Vector(0, -6);
-      bonesLeft[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
-      bonesLeft[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
+    const bonesLeft = {};
+    bonesLeft[StickFigure.BONE_HEAD] = new Vector(3, -1);
+    bonesLeft[StickFigure.BONE_NECK] = new Vector(5, -2);
+    bonesLeft[StickFigure.BONE_PELVIS] = new Vector(0, 0);
+    bonesLeft[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
+    bonesLeft[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
 
-      const bonesRight = {};
-      bonesRight[StickFigure.BONE_HEAD] = new Vector(3, -1);
-      bonesRight[StickFigure.BONE_NECK] = new Vector(5, -2);
-      bonesRight[StickFigure.BONE_PELVIS] = new Vector(0, -6);
-      bonesRight[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
-      bonesRight[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
+    const bonesRight = {};
+    bonesRight[StickFigure.BONE_HEAD] = new Vector(3, -1);
+    bonesRight[StickFigure.BONE_NECK] = new Vector(5, -2);
+    bonesRight[StickFigure.BONE_PELVIS] = new Vector(0, 0);
+    bonesRight[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
+    bonesRight[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
 
-      running.setFrameAt(0, new AnimationFrame(20, bonesLeft));
-      running.setFrameAt(1, new AnimationFrame(20, bonesRight));
+    running.setFrameAt(0, new AnimationFrame(20, bonesLeft));
+    running.setFrameAt(1, new AnimationFrame(20, bonesRight));
 
-      this.#animations["running"] = running;
-    }
-
-    return this.#animations["running"];
+    return running;
   }
 
   /**
    * @returns {StickAnimation}
    */
   #getIdleAnimation() {
-    if (Utils.isUndefined(this.#animations["idle"])) {
-      const idle = new StickAnimation();
+    const idle = new StickAnimation();
 
-      const brInVecs = {};
-      brInVecs[StickFigure.BONE_PELVIS] = new Vector(0, -1);
-      brInVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
-      brInVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
-      brInVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
-      brInVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
-      brInVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
-      brInVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
-      brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 8);
-      brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 8);
-      const breathIn = new AnimationFrame(40, brInVecs);
+    const brInVecs = {};
+    brInVecs[StickFigure.BONE_PELVIS] = new Vector(0, -1);
+    brInVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(25, 0);
+    brInVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-25, 0);
+    brInVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
+    brInVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
+    brInVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+    brInVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+    brInVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 8);
+    brInVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 8);
+    const breathIn = new AnimationFrame(40, brInVecs);
 
-      const brOutVecs = {};
-      brOutVecs[StickFigure.BONE_PELVIS] = new Vector(0, -5);
-      brOutVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(8, 0);
-      brOutVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-5, 0);
-      brOutVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
-      brOutVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
-      brOutVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
-      brOutVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
-      brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 5);
-      brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 5);
-      const breathOut = new AnimationFrame(40, brOutVecs);
+    const brOutVecs = {};
+    brOutVecs[StickFigure.BONE_PELVIS] = new Vector(0, -5);
+    brOutVecs[StickFigure.BONE_LEFT_FOOT] = new Vector(25, 0);
+    brOutVecs[StickFigure.BONE_RIGHT_FOOT] = new Vector(-25, 0);
+    brOutVecs[StickFigure.BONE_LEFT_HIP] = new Vector(8, 0);
+    brOutVecs[StickFigure.BONE_RIGHT_HIP] = new Vector(-8, 0);
+    brOutVecs[StickFigure.BONE_LEFT_SHOULDER] = new Vector(8, 0);
+    brOutVecs[StickFigure.BONE_RIGHT_SHOULDER] = new Vector(-8, 0);
+    brOutVecs[StickFigure.BONE_LEFT_HAND] = new Vector(15, 5);
+    brOutVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 5);
+    const breathOut = new AnimationFrame(40, brOutVecs);
 
-      idle.setFrameAt(0, breathIn);
-      idle.setFrameAt(1, breathOut);
+    idle.setFrameAt(0, breathIn);
+    idle.setFrameAt(1, breathOut);
 
-      this.#animations["idle"] = idle;
-    }
-
-    return this.#animations["idle"];
+    return idle;
   }
 
   /**
@@ -632,9 +627,9 @@ export class StickFigure extends Player {
     // }
 
     if (this.velocity.x !== 0 && this.velocity.y === 0) {
-      return this.#getRunningAnimation();
+      return this.#animations["running"];
     }
 
-    return this.#getIdleAnimation();
+    return this.#animations["idle"];
   }
 }
