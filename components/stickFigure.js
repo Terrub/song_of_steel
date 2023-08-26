@@ -8,6 +8,11 @@ import { Player } from "./player.js";
 import { StickAnimation } from "./stickAnimation.js";
 import { Vector } from "./vector.js";
 
+const DEBUG_BONE_COLOUR_GAP = 5;
+const DEBUG_BONE_COLOUR_WIDTH = 10;
+const DEBUG_BONE_COLOUR_HEIGHT = 10;
+const DEBUG_BONE_COLOUR_OFFSET_X = 10;
+const DEBUG_BONE_COLOUR_OFFSET_Y = 10;
 export class StickFigure extends Player {
   static BONE_HEAD = "head";
   static BONE_NECK = "neck";
@@ -33,6 +38,8 @@ export class StickFigure extends Player {
   #feetVectors;
   /** @type {Object.<string, StickAnimation>} */
   #animations;
+  /** @type {Object.<string, Vector>} */
+  #debugBoneColourOffset;
 
   /**
    * @param {Vector} velocity
@@ -43,6 +50,7 @@ export class StickFigure extends Player {
     this.#boneVectors = {};
     this.#feetVectors = {};
     this.#animations = {};
+    this.#debugBoneColourOffset = {};
   }
 
   load() {
@@ -137,14 +145,37 @@ export class StickFigure extends Player {
       this.bones[StickFigure.BONE_RIGHT_ELBOW]
     );
 
+    const offsetX = DEBUG_BONE_COLOUR_OFFSET_X;
+    let offsetY = DEBUG_BONE_COLOUR_OFFSET_Y;
     for (const boneName in this.bones) {
       this.#boneVectors[boneName] = new Vector(0, 0);
+      this.#debugBoneColourOffset[boneName] = new Vector(offsetX, offsetY);
+      offsetY += DEBUG_BONE_COLOUR_HEIGHT + DEBUG_BONE_COLOUR_GAP;
     }
 
     this.#feetVectors[StickFigure.BONE_RIGHT_FOOT] = new Vector(0, 0);
     this.#feetVectors[StickFigure.BONE_LEFT_FOOT] = new Vector(0, 0);
     this.#feetVectors[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 0);
     this.#feetVectors[StickFigure.BONE_LEFT_HAND] = new Vector(0, 0);
+  }
+
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @returns {?string}
+   */
+  getDebugInfoAtMouse(x, y) {
+    if (DEBUG_BONE_COLOUR_OFFSET_X < x && 100 > x) {
+      for (const boneName in this.#debugBoneColourOffset) {
+        const offset = this.#debugBoneColourOffset[boneName];
+        if (offset.y < y && offset.y + DEBUG_BONE_COLOUR_HEIGHT > y) {
+          return boneName;
+        }
+      }
+    }
+
+    // We couldn't find anything at this location
+    return null;
   }
 
   /**
@@ -291,14 +322,22 @@ export class StickFigure extends Player {
    * @returns {void}
    */
   #debugDrawBoneColours(renderer, bones) {
-    let offsetX = 10;
-    let offsetY = 10;
-
     for (const boneName in bones) {
       const color = this.#debugGetColorForBone(boneName);
-      renderer.drawRect(offsetX, offsetY, 10, 10, color);
-      renderer.text(offsetX + 15, offsetY + 2, boneName, "white");
-      offsetY += 15;
+      const offset = this.#debugBoneColourOffset[boneName];
+      renderer.drawRect(
+        offset.x,
+        offset.y,
+        DEBUG_BONE_COLOUR_WIDTH,
+        DEBUG_BONE_COLOUR_HEIGHT,
+        color
+      );
+      renderer.text(
+        offset.x + DEBUG_BONE_COLOUR_WIDTH + DEBUG_BONE_COLOUR_GAP,
+        offset.y + 2,
+        boneName,
+        "white"
+      );
     }
   }
 
