@@ -472,62 +472,7 @@ export class StickFigure extends Player {
     pelvisPos.y += floorHeight;
     this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
 
-    const l1 = bones[StickFigure.BONE_RIGHT_KNEE].length;
-    const l2 = bones[StickFigure.BONE_RIGHT_FOOT].length;
-    const c = l1 + l2;
-    const s = Math.sqrt(c * c - b * b);
-
-    const rightFoot = boneVectors[StickFigure.BONE_RIGHT_FOOT];
-    const leftFoot = boneVectors[StickFigure.BONE_LEFT_FOOT];
-    const rightHand = boneVectors[StickFigure.BONE_RIGHT_HAND];
-    const leftHand = boneVectors[StickFigure.BONE_LEFT_HAND];
-    // Keep yer feet on the grauwnd
-    rightFoot.y = Math.max(floorHeight, rightFoot.y);
-    leftFoot.y = Math.max(floorHeight, leftFoot.y);
-    const lastRFV = this.#feetVectors[StickFigure.BONE_RIGHT_FOOT];
-    const lastLFV = this.#feetVectors[StickFigure.BONE_LEFT_FOOT];
-    const lastRHV = this.#feetVectors[StickFigure.BONE_RIGHT_HAND];
-    const lastLHV = this.#feetVectors[StickFigure.BONE_LEFT_HAND];
-
-    if (this.velocity.x !== 0 && this.velocity.y === 0) {
-      rightFoot.x = lastRFV.x;
-      leftFoot.x = lastLFV.x;
-      rightHand.x = lastRHV.x;
-      leftHand.x = lastLHV.x;
-
-      if (0 < this.velocity.x) {
-        if (position.x - lastLHV.x >= s) {
-          leftHand.x = position.x + s;
-        }
-        if (position.x - lastRHV.x >= s) {
-          rightHand.x = position.x + s;
-        }
-        if (position.x - lastLFV.x >= s) {
-          leftFoot.x = position.x + s;
-        }
-        if (position.x - lastRFV.x >= s) {
-          rightFoot.x = position.x + s;
-        }
-      }
-      if (0 > this.velocity.x) {
-        if (lastRHV.x - position.x >= s) {
-          rightHand.x = position.x - s;
-        }
-        if (lastLHV.x - position.x >= s) {
-          leftHand.x = position.x - s;
-        }
-        if (lastRFV.x - position.x >= s) {
-          rightFoot.x = position.x - s;
-        }
-        if (lastLFV.x - position.x >= s) {
-          leftFoot.x = position.x - s;
-        }
-      }
-    }
-    lastRFV.x = rightFoot.x;
-    lastLFV.x = leftFoot.x;
-    lastRHV.x = rightHand.x;
-    lastLHV.x = leftHand.x;
+    this.#adjustLimbs(b, floorHeight, position);
 
     // 3) Inverse Kinematics resolve any measurements that have to happen in between
     this.#inverseKinematics(bones, boneVectors);
@@ -538,6 +483,90 @@ export class StickFigure extends Player {
     if (this.debug === true) {
       this.#debugRenderInfo(renderer, position, floorHeight);
     }
+  }
+
+  /**
+   * @param {number} b
+   * @param {number} floorHeight
+   * @param {Vector} position
+   * @returns {void}
+   */
+  #adjustLimbs(b, floorHeight, position) {
+    const bones = this.bones;
+    const boneVectors = this.#boneVectors;
+
+    const l1 = bones[StickFigure.BONE_RIGHT_KNEE].length;
+    const l2 = bones[StickFigure.BONE_RIGHT_FOOT].length;
+    const c = l1 + l2;
+    const s = Math.sqrt(c * c - b * b);
+
+    const rightFoot = boneVectors[StickFigure.BONE_RIGHT_FOOT];
+    const leftFoot = boneVectors[StickFigure.BONE_LEFT_FOOT];
+    // Keep yer feet on the grauwnd
+    rightFoot.y = Math.max(floorHeight, rightFoot.y);
+    leftFoot.y = Math.max(floorHeight, leftFoot.y);
+
+    const lastRFV = this.#feetVectors[StickFigure.BONE_RIGHT_FOOT];
+    const lastLFV = this.#feetVectors[StickFigure.BONE_LEFT_FOOT];
+
+    // Not standing still and not jumping/falling either
+    if (this.velocity.x !== 0 && this.velocity.y === 0) {
+      rightFoot.x = lastRFV.x;
+      leftFoot.x = lastLFV.x;
+      if (0 < this.velocity.x) {
+        if (
+          position.x - leftFoot.x > s ||
+          (lastLFV.y > 0 && leftFoot.x - position.x < s)
+        ) {
+          leftFoot.x += this.velocity.x * 2;
+          lastLFV.y =
+            (1 + Math.cos(((position.x - leftFoot.x) / (2 * s)) * Math.PI)) * 5;
+          leftFoot.y += lastLFV.y;
+        } else {
+          lastLFV.y = 0;
+        }
+
+        if (
+          position.x - rightFoot.x > s ||
+          (lastRFV.y > 0 && rightFoot.x - position.x < s)
+        ) {
+          rightFoot.x += this.velocity.x * 2;
+          lastRFV.y =
+            (1 + Math.cos(((position.x - rightFoot.x) / (2 * s)) * Math.PI)) *
+            5;
+          rightFoot.y += lastRFV.y;
+        } else {
+          lastRFV.y = 0;
+        }
+      }
+      if (0 > this.velocity.x) {
+        if (
+          leftFoot.x - position.x > s ||
+          (lastLFV.y > 0 && position.x - leftFoot.x < s)
+        ) {
+          leftFoot.x += this.velocity.x * 2;
+          lastLFV.y =
+            (1 + Math.cos(((leftFoot.x - position.x) / (2 * s)) * Math.PI)) * 5;
+          leftFoot.y += lastLFV.y;
+        } else {
+          lastLFV.y = 0;
+        }
+        if (
+          rightFoot.x - position.x > s ||
+          (lastRFV.y > 0 && position.x - rightFoot.x < s)
+        ) {
+          rightFoot.x += this.velocity.x * 2;
+          lastRFV.y =
+            (1 + Math.cos(((rightFoot.x - position.x) / (2 * s)) * Math.PI)) *
+            5;
+          rightFoot.y += lastRFV.y;
+        } else {
+          lastRFV.y = 0;
+        }
+      }
+    }
+    lastRFV.x = rightFoot.x;
+    lastLFV.x = leftFoot.x;
   }
 
   /**
