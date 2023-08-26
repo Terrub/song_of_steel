@@ -145,7 +145,8 @@ export class StickFigure extends Player {
       this.bones[StickFigure.BONE_RIGHT_ELBOW]
     );
 
-    this.#animations["running"] = this.#getRunningAnimation();
+    this.#animations["running_left"] = this.#getRunningLeftAnimation();
+    this.#animations["running_right"] = this.#getRunningRightAnimation();
     this.#animations["idle"] = this.#getIdleAnimation();
 
     const offsetX = DEBUG_BONE_COLOUR_OFFSET_X;
@@ -218,25 +219,25 @@ export class StickFigure extends Player {
         endEffector: StickFigure.BONE_LEFT_FOOT,
         joint: StickFigure.BONE_LEFT_KNEE,
         base: StickFigure.BONE_LEFT_HIP,
-        dir: 1,
+        dir: 0 <= this.velocity.x ? 1 : -1,
       },
       {
         endEffector: StickFigure.BONE_RIGHT_FOOT,
         joint: StickFigure.BONE_RIGHT_KNEE,
         base: StickFigure.BONE_RIGHT_HIP,
-        dir: 1,
+        dir: 0 <= this.velocity.x ? 1 : -1,
       },
       {
         endEffector: StickFigure.BONE_LEFT_HAND,
         joint: StickFigure.BONE_LEFT_ELBOW,
         base: StickFigure.BONE_LEFT_SHOULDER,
-        dir: -1,
+        dir: 0 > this.velocity.x ? 1 : -1,
       },
       {
         endEffector: StickFigure.BONE_RIGHT_HAND,
         joint: StickFigure.BONE_RIGHT_ELBOW,
         base: StickFigure.BONE_RIGHT_SHOULDER,
-        dir: -1,
+        dir: 0 > this.velocity.x ? 1 : -1,
       },
     ];
 
@@ -398,7 +399,14 @@ export class StickFigure extends Player {
     const color = "limegreen";
 
     const vector = new Vector(0, 0);
-    IKSolver.global(vector, l1, l2, endEffector, base);
+    IKSolver.global(
+      vector,
+      l1,
+      l2,
+      endEffector,
+      base,
+      0 <= this.velocity.x ? 1 : -1
+    );
     renderer.strokeCircle(vector.x, vector.y, radius, color);
   }
 
@@ -572,27 +580,37 @@ export class StickFigure extends Player {
   /**
    * @returns {StickAnimation}
    */
-  #getRunningAnimation() {
-    const running = new StickAnimation();
+  #getRunningLeftAnimation() {
+    const runningLeft = new StickAnimation();
 
-    const bonesLeft = {};
-    bonesLeft[StickFigure.BONE_HEAD] = new Vector(3, -1);
-    bonesLeft[StickFigure.BONE_NECK] = new Vector(5, -2);
-    bonesLeft[StickFigure.BONE_PELVIS] = new Vector(0, 0);
-    bonesLeft[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
-    bonesLeft[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
+    const animVecs = {};
+    animVecs[StickFigure.BONE_HEAD] = new Vector(-3, -1);
+    animVecs[StickFigure.BONE_NECK] = new Vector(-5, -2);
+    animVecs[StickFigure.BONE_PELVIS] = new Vector(-15, -5);
+    animVecs[StickFigure.BONE_LEFT_HAND] = new Vector(-5, 20);
+    animVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(-5, 20);
 
-    const bonesRight = {};
-    bonesRight[StickFigure.BONE_HEAD] = new Vector(3, -1);
-    bonesRight[StickFigure.BONE_NECK] = new Vector(5, -2);
-    bonesRight[StickFigure.BONE_PELVIS] = new Vector(0, 0);
-    bonesRight[StickFigure.BONE_LEFT_HAND] = new Vector(0, 12);
-    bonesRight[StickFigure.BONE_RIGHT_HAND] = new Vector(0, 12);
+    runningLeft.setFrameAt(0, new AnimationFrame(1, animVecs));
 
-    running.setFrameAt(0, new AnimationFrame(20, bonesLeft));
-    running.setFrameAt(1, new AnimationFrame(20, bonesRight));
+    return runningLeft;
+  }
 
-    return running;
+  /**
+   * @returns {StickAnimation}
+   */
+  #getRunningRightAnimation() {
+    const runningRight = new StickAnimation();
+
+    const animVecs = {};
+    animVecs[StickFigure.BONE_HEAD] = new Vector(3, -1);
+    animVecs[StickFigure.BONE_NECK] = new Vector(5, -2);
+    animVecs[StickFigure.BONE_PELVIS] = new Vector(15, -5);
+    animVecs[StickFigure.BONE_LEFT_HAND] = new Vector(5, 20);
+    animVecs[StickFigure.BONE_RIGHT_HAND] = new Vector(5, 20);
+
+    runningRight.setFrameAt(0, new AnimationFrame(1, animVecs));
+
+    return runningRight;
   }
 
   /**
@@ -655,8 +673,12 @@ export class StickFigure extends Player {
     //   return;
     // }
 
-    if (this.velocity.x !== 0 && this.velocity.y === 0) {
-      return this.#animations["running"];
+    if (0 < this.velocity.x && 0 === this.velocity.y) {
+      return this.#animations["running_right"];
+    }
+
+    if (0 > this.velocity.x && 0 === this.velocity.y) {
+      return this.#animations["running_left"];
     }
 
     return this.#animations["idle"];
