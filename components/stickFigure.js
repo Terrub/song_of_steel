@@ -80,13 +80,13 @@ export class StickFigure extends Player {
     );
     this.bones[StickFigure.BONE_LEFT_KNEE] = Bone.fromPos(
       0,
-      -21,
+      -25,
       StickFigure.BONE_LEFT_KNEE,
       this.bones[StickFigure.BONE_LEFT_HIP]
     );
     this.bones[StickFigure.BONE_LEFT_FOOT] = Bone.fromPos(
       0,
-      -23,
+      -28,
       StickFigure.BONE_LEFT_FOOT,
       this.bones[StickFigure.BONE_LEFT_KNEE]
     );
@@ -98,13 +98,13 @@ export class StickFigure extends Player {
     );
     this.bones[StickFigure.BONE_RIGHT_KNEE] = Bone.fromPos(
       0,
-      -21,
+      -25,
       StickFigure.BONE_RIGHT_KNEE,
       this.bones[StickFigure.BONE_RIGHT_HIP]
     );
     this.bones[StickFigure.BONE_RIGHT_FOOT] = Bone.fromPos(
       0,
-      -23,
+      -28,
       StickFigure.BONE_RIGHT_FOOT,
       this.bones[StickFigure.BONE_RIGHT_KNEE]
     );
