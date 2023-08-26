@@ -281,9 +281,11 @@ export class StickFigure extends Player {
 
   /**
    * @param {CanvasRenderer} renderer
+   * @param {Vector} position
+   * @param {number} floorHeight
    * @returns {void}
    */
-  #drawBoneVectors(renderer) {
+  #drawBoneVectors(renderer, position, floorHeight) {
     const thickness = 6;
     let color = "red";
     for (const boneName in this.#boneVectors) {
@@ -306,14 +308,20 @@ export class StickFigure extends Player {
 
       // TODO Consider allowing bones to determine how they are rendered.
       if (boneName === StickFigure.BONE_HEAD) {
-        renderer.drawRect(boneVector.x - 8, boneVector.y - 10, 16, 20, color);
+        renderer.drawRect(
+          boneVector.x - 8 + position.x,
+          boneVector.y - 10 + position.y + floorHeight,
+          16,
+          20,
+          color
+        );
       }
 
       renderer.drawLine(
-        boneVector.x,
-        boneVector.y,
-        parentVector.x,
-        parentVector.y,
+        boneVector.x + position.x,
+        boneVector.y + position.y + floorHeight,
+        parentVector.x + position.x,
+        parentVector.y + position.y + floorHeight,
         color,
         thickness
       );
@@ -476,17 +484,15 @@ export class StickFigure extends Player {
     // 2) Forward Kinematics resolve property changes and propegate them down the node tree
     const pelvisPos = boneVectors[StickFigure.BONE_PELVIS];
     const b = pelvisPos.y;
-    pelvisPos.add(position);
-    pelvisPos.y += floorHeight;
     this.#forwardKinematics(bones[StickFigure.BONE_PELVIS]);
 
-    this.#adjustLimbs(b, floorHeight, position);
+    this.#adjustLimbs(b);
 
     // 3) Inverse Kinematics resolve any measurements that have to happen in between
     this.#inverseKinematics(bones, boneVectors);
 
     // 4) Now we just draw the whole node tree
-    this.#drawBoneVectors(renderer);
+    this.#drawBoneVectors(renderer, position, floorHeight);
 
     if (this.debug === true) {
       this.#debugRenderInfo(renderer, position, floorHeight);
@@ -495,11 +501,9 @@ export class StickFigure extends Player {
 
   /**
    * @param {number} b
-   * @param {number} floorHeight
-   * @param {Vector} position
    * @returns {void}
    */
-  #adjustLimbs(b, floorHeight, position) {
+  #adjustLimbs(b) {
     const bones = this.bones;
     const boneVectors = this.#boneVectors;
 
@@ -511,8 +515,8 @@ export class StickFigure extends Player {
     const rightFoot = boneVectors[StickFigure.BONE_RIGHT_FOOT];
     const leftFoot = boneVectors[StickFigure.BONE_LEFT_FOOT];
     // Keep yer feet on the grauwnd
-    rightFoot.y = Math.max(floorHeight, rightFoot.y);
-    leftFoot.y = Math.max(floorHeight, leftFoot.y);
+    rightFoot.y = 0;
+    leftFoot.y = 0;
 
     const lastRFV = this.#feetVectors[StickFigure.BONE_RIGHT_FOOT];
     const lastLFV = this.#feetVectors[StickFigure.BONE_LEFT_FOOT];
@@ -522,53 +526,41 @@ export class StickFigure extends Player {
       rightFoot.x = lastRFV.x;
       leftFoot.x = lastLFV.x;
       if (0 < this.velocity.x) {
-        if (
-          position.x - leftFoot.x > s ||
-          (lastLFV.y > 0 && leftFoot.x - position.x < s)
-        ) {
+        if (-s > leftFoot.x || (lastLFV.y > 0 && leftFoot.x < s)) {
           leftFoot.x += this.velocity.x * 2;
-          lastLFV.y =
-            (1 + Math.cos(((position.x - leftFoot.x) / (2 * s)) * Math.PI)) * 5;
+          lastLFV.y = (1 + Math.cos((leftFoot.x / (2 * s)) * Math.PI)) * 5;
           leftFoot.y += lastLFV.y;
         } else {
+          leftFoot.x -= this.velocity.x;
           lastLFV.y = 0;
         }
 
-        if (
-          position.x - rightFoot.x > s ||
-          (lastRFV.y > 0 && rightFoot.x - position.x < s)
-        ) {
+        if (-s > rightFoot.x || (lastRFV.y > 0 && rightFoot.x < s)) {
           rightFoot.x += this.velocity.x * 2;
-          lastRFV.y =
-            (1 + Math.cos(((position.x - rightFoot.x) / (2 * s)) * Math.PI)) *
-            5;
+          lastRFV.y = (1 + Math.cos((rightFoot.x / (2 * s)) * Math.PI)) * 5;
           rightFoot.y += lastRFV.y;
         } else {
+          rightFoot.x -= this.velocity.x;
           lastRFV.y = 0;
         }
       }
+
       if (0 > this.velocity.x) {
-        if (
-          leftFoot.x - position.x > s ||
-          (lastLFV.y > 0 && position.x - leftFoot.x < s)
-        ) {
+        if (s < leftFoot.x || (lastLFV.y > 0 && leftFoot.x > -s)) {
           leftFoot.x += this.velocity.x * 2;
-          lastLFV.y =
-            (1 + Math.cos(((leftFoot.x - position.x) / (2 * s)) * Math.PI)) * 5;
+          lastLFV.y = (1 + Math.cos((leftFoot.x / (2 * s)) * Math.PI)) * 5;
           leftFoot.y += lastLFV.y;
         } else {
+          leftFoot.x -= this.velocity.x;
           lastLFV.y = 0;
         }
-        if (
-          rightFoot.x - position.x > s ||
-          (lastRFV.y > 0 && position.x - rightFoot.x < s)
-        ) {
+
+        if (s < rightFoot.x || (lastRFV.y > 0 && rightFoot.x > -s)) {
           rightFoot.x += this.velocity.x * 2;
-          lastRFV.y =
-            (1 + Math.cos(((rightFoot.x - position.x) / (2 * s)) * Math.PI)) *
-            5;
+          lastRFV.y = (1 + Math.cos((rightFoot.x / (2 * s)) * Math.PI)) * 5;
           rightFoot.y += lastRFV.y;
         } else {
+          rightFoot.x -= this.velocity.x;
           lastRFV.y = 0;
         }
       }
