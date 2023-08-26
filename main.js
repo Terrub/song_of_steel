@@ -20,7 +20,7 @@ import { Utils } from "./utils.js";
 const gameWidth = window.innerWidth;
 const gameHeight = Utils.floor(gameWidth * 0.5636160714285714);
 const gravity = 0.98;
-const playerRunSpeed = 2;
+const playerRunSpeed = 6;
 const playerJumpHeight = 10;
 let numTics = 0;
 let ticsPerFrame = 5;
@@ -88,6 +88,7 @@ const playerDimensions = new Vector(50, 55);
 const playerInitialVelocity = new Vector(0, 0);
 
 const player = new StickFigure(playerInitialVelocity);
+// player.debug = true;
 
 let playerMoveLeftBtnDown = false;
 let playerMoveRightBtnDown = false;
