@@ -3,6 +3,10 @@ export class Lerp {
     return () => x;
   }
 
+  static linear2(min, max, val) {
+    return min + (max - min) * val;
+  }
+
   static squared(x) {
     return () => x * x;
   }
@@ -58,7 +62,8 @@ export class Lerp {
   }
 
   static smootheStep2(x) {
-    return () => Lerp.calc(Lerp.squared(x)(), Lerp.quadraticEaseOut(x)(), Lerp.linear(x));
+    return () =>
+      Lerp.calc(Lerp.squared(x)(), Lerp.quadraticEaseOut(x)(), Lerp.linear(x));
   }
 
   static calc(a, b, f) {

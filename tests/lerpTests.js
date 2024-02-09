@@ -14,6 +14,76 @@ lerpTests.addTest("has method calc", () => {
   testRunner.assertStrictlyEquals(true, Utils.isFunction(Lerp.calc));
 });
 
+lerpTests.addTest("has method linear2", () => {
+  testRunner.assertStrictlyEquals(true, Utils.isFunction(Lerp.linear2));
+});
+
+lerpTests.addTest("returns 0 when calling `Lerp.linear2(0, 100, 0))`", () => {
+  const expected = 0;
+
+  const actual = Lerp.linear2(0, 100, 0);
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+lerpTests.addTest("returns 50 when calling `Lerp.linear(0, 100, 0.5))`", () => {
+  const expected = 50;
+
+  const actual = Lerp.linear2(0, 100, 0.5);
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+lerpTests.addTest(
+  "returns 75 when calling `Lerp.linear(0, 100, 0.75))`",
+  () => {
+    const expected = 75;
+
+    const actual = Lerp.linear2(0, 100, 0.75);
+
+    testRunner.assertStrictlyEquals(expected, actual);
+  }
+);
+
+// Properties I want to be able to change
+// * positive
+// * integer
+// * asc order
+// [√] I want to be able to use floats not just integers
+// [√] I want to be able to use negative numbers
+// [√] I want to be able to swap the order
+lerpTests.addTest("can work with floating point numbers", () => {
+  const expected = 40.25;
+
+  const actual = Lerp.linear2(10.0, 70.5, 0.5);
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+lerpTests.addTest("can work with negative numbers", () => {
+  const expected = 10;
+
+  const actual = Lerp.linear2(-20, 20, 0.75);
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+lerpTests.addTest("can work with numbers in descending order", () => {
+  const expected = -10;
+
+  const actual = Lerp.linear2(20, -20, 0.75);
+
+  testRunner.assertStrictlyEquals(expected, actual);
+});
+
+lerpTests.addTest("can work with numbers less than 1", () => {
+  const expected = -0.12;
+  
+  const actual = Lerp.linear2(0.2, -0.2, 0.8);
+
+  testRunner.assertInRange(-0.125, actual, -0.115);
+});
+
 lerpTests.addTest("has method linear", () => {
   testRunner.assertStrictlyEquals(true, Utils.isFunction(Lerp.linear));
 });
@@ -23,16 +93,6 @@ lerpTests.addTest(
   () => {
     const expected = 0;
     const actual = Lerp.calc(0, 100, Lerp.linear(0.0));
-
-    testRunner.assertStrictlyEquals(expected, actual);
-  }
-);
-
-lerpTests.addTest(
-  "returns 50 when calling `Lerp.calc(0, 100, Lerp.linear(0.5))`",
-  () => {
-    const expected = 50;
-    const actual = Lerp.calc(0, 100, Lerp.linear(0.5));
 
     testRunner.assertStrictlyEquals(expected, actual);
   }
@@ -156,6 +216,16 @@ lerpTests.addTest(
   () => {
     const expected = 0;
     const actual = Lerp.calc(0, 100, Lerp.triangle(0.0));
+
+    testRunner.assertStrictlyEquals(expected, actual);
+  }
+);
+
+lerpTests.addTest(
+  "returns 100 when calling `Lerp.calc(0, 100, Lerp.triangle(0.5))`",
+  () => {
+    const expected = 100;
+    const actual = Lerp.calc(0, 100, Lerp.triangle(0.5));
 
     testRunner.assertStrictlyEquals(expected, actual);
   }

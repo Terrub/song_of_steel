@@ -23,7 +23,6 @@ const gravity = 0.98;
 const playerRunSpeed = 6;
 const playerJumpHeight = 10;
 let numTics = 0;
-let ticsPerFrame = 5;
 
 const EVENT_KEYDOWN = "keydown";
 const EVENT_KEYUP = "keyup";
@@ -155,7 +154,10 @@ function keyPressEventHandler(keyboardEvent) {
 document.addEventListener(EVENT_KEYDOWN, keyPressEventHandler, false);
 document.addEventListener(EVENT_KEYUP, keyPressEventHandler, false);
 
-function resolveGameState() {
+/**
+ * @param {number} elapsed
+ */
+function resolveGameState(elapsed) {
   player.velocity.x = 0;
   if (playerPosition.y > 0) {
     player.velocity.y -= gravity;
@@ -200,9 +202,12 @@ function renderGame() {
   world.draw(numTics, playerPosition);
 }
 
-function gameTic() {
-  resolveGameState();
-  renderGame();
+/**
+ * @param {number} elapsed
+ */
+function gameTic(elapsed) {
+  resolveGameState(elapsed);
+  renderGame(elapsed);
 }
 
 world.setup();

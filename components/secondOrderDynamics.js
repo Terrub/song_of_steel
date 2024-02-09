@@ -1,3 +1,4 @@
+//@ts-check
 /**
  * This mathmatical diarrhea is credit due to t3ssel8r:
  * https://youtu.be/KPoeNZZ6H4s
@@ -12,13 +13,24 @@
 
 // TODO Add tests for SecondOrderDynamics class, if we can... X_X
 export class SecondOrderDynamics {
+  /** @type {number} */
   #xp = 0; // Previous x component
+  /** @type {number} */
   #y = 0; // the to be calculated y component
+  /** @type {number} */
   #yd = 0; // Derivative of y (velocity)
+  /** @type {number} */
   #k1; // Configurable constant to influence Zeta
+  /** @type {number} */
   #k2; // Configurable constant to influence Frequency
+  /** @type {number} */
   #k3; // Configurable constant to influence Response
 
+  /**
+   * @param {number} frequency
+   * @param {number} zeta
+   * @param {number} response
+   */
   constructor(frequency, zeta, response) {
     // Compute the constants for our later update.
     this.#k1 = zeta / (Math.PI * frequency);
@@ -26,6 +38,13 @@ export class SecondOrderDynamics {
     this.#k3 = (response * zeta) / (2 * Math.PI * frequency);
   }
 
+  /**
+   *
+   * @param {number} timeElapsed
+   * @param {number} x
+   * @param {?number} xd
+   * @returns {number}
+   */
   update(timeElapsed, x, xd = null) {
     // No derivative of x (velocity), estimate it based on previous x
     if (xd === null) {
@@ -34,18 +53,31 @@ export class SecondOrderDynamics {
     }
 
     // Clamping k2 to prevent shit from flying off to friggin narnia
-    const k2Stable = Math.max(
+    const k2StableJitter = Math.max(
       this.#k2,
-      (timeElapsed * timeElapsed) / 2 + (timeElapsed * this.#k1) / 2,
+      timeElapsed * timeElapsed * 0.5 + timeElapsed * this.#k1 * 0.5,
       timeElapsed * this.#k1
     );
+
+    if (isNaN(this.#yd)) {
+      debugger;
+    }
+
     // Integrate position by velocity
-    this.#y = this.#y + timeElapsed * this.#yd;
+    this.#y += timeElapsed * this.#yd;
+
+    if (isNaN(this.#y)) {
+      debugger;
+    }
+
     // integrate velocity by acceleration
-    this.#yd =
-      this.#yd +
+    this.#yd +=
       (timeElapsed * (x + this.#k3 * xd - this.#y - this.#k1 * this.#yd)) /
-        k2Stable;
+      k2StableJitter;
+
+    if (isNaN(this.#yd)) {
+      debugger;
+    }
 
     return this.#y;
   }

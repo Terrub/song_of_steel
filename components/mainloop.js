@@ -25,6 +25,7 @@ export function createMainloop(fnRender) {
   let isAnimating = false;
   let isDebugging = false;
   let renderMethod = fnRender;
+  let prevElapsed = 0;
 
   /**
    * @param {number} elapsed
@@ -45,7 +46,10 @@ export function createMainloop(fnRender) {
   function tic(elapsed) {
     if (isAnimating === true) {
       window.requestAnimationFrame(tic);
-      renderMethod(elapsed);
+      // Send the delta time instead of the running total
+      // renderMethod((elapsed - prevElapsed) * 0.001);
+      renderMethod(elapsed - prevElapsed);
+      prevElapsed = elapsed;
     }
   }
 
@@ -60,7 +64,7 @@ export function createMainloop(fnRender) {
       Utils.report("Animation started");
     }
 
-    tic(Utils.getTime());
+    tic(prevElapsed);
   }
 
   function stop() {

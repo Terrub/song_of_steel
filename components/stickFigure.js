@@ -40,6 +40,8 @@ export class StickFigure extends Player {
   #animations;
   /** @type {Object.<string, Vector>} */
   #debugBoneColourOffset;
+  /** @type {?StickAnimation} */
+  fixedAnimation;
 
   /**
    * @param {Vector} velocity
@@ -51,6 +53,7 @@ export class StickFigure extends Player {
     this.#feetVectors = {};
     this.#animations = {};
     this.#debugBoneColourOffset = {};
+    this.fixedAnimation = null;
   }
 
   load() {
@@ -645,6 +648,10 @@ export class StickFigure extends Player {
    * @returns {StickAnimation}
    */
   #getAnimation() {
+    if (this.debug && this.fixedAnimation) {
+      return this.fixedAnimation;
+    }
+
     // if (this.#attacking === Character.ATTACK_RIGHT) {
     //   currentSprite = this.#sprites[Character.ATTACK_RIGHT];
     //   return;

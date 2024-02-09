@@ -13,8 +13,6 @@ export class PlayerSprite extends Player {
 
   /** @type {Vector} */
   #dimensions;
-  /** @type {Vector} */
-  #velocity;
   /** @type {Object.<string, AnimatedSprite>} */
   #sprites;
   /** @type {string|undefined} */
@@ -29,10 +27,9 @@ export class PlayerSprite extends Player {
    * @param {Vector} velocity
    * @param {Object.<string, AnimatedSprite>} sprites
    */
-  constructor(dimensions, velocity, sprites) {
+  constructor(velocity, dimensions, sprites) {
     super(velocity);
-    this.dimensions = dimensions;
-    this.velocity = velocity;
+    // this.dimensions = dimensions;
     this.#attacking = undefined;
 
     for (const spriteName in sprites) {

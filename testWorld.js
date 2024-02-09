@@ -69,9 +69,12 @@ const editingKeyBinds = {
 
 let keyBinds = animationKeyBinds;
 let numTics = 0;
-let ticsPerFrame = 5;
 let currentMode = ANIMATING;
+
+/** @type {Vector} */
 let selectedBone;
+/** @type {AnimationFrame} */
+let selectedFrame;
 
 let playerMoveLeftBtnDown = false;
 let playerMoveRightBtnDown = false;
@@ -120,6 +123,10 @@ function enableEditMode() {
 
   numTics = 0;
   keyBinds = editingKeyBinds;
+  const stickAnimation = new StickAnimation();
+  selectedFrame = new AnimationFrame(1);
+  stickAnimation.setFrameAt(0, selectedFrame);
+  player.fixedAnimation = stickAnimation;
 }
 
 function enableAnimateMode() {
@@ -143,7 +150,6 @@ function toggleMode(buttonDown) {
 function newFrame(buttonDown) {
   // TODO Consider adding Ctrl or Shift to keybind for new animation and without for new frame?
   if (buttonDown === false) {
-    const frame = new StickAnimation();
   }
 }
 
@@ -180,6 +186,10 @@ function keyPressEventHandler(keyboardEvent) {
  * @returns {void}
  */
 function mouseClickEventHandler(mouseEvent) {
+  if (mouseEvent.type !== EVENT_MOUSEUP) {
+    return;
+  }
+
   const mouseX = mouseEvent.clientX;
   const mouseY = mouseEvent.clientY;
   if (0 > mouseX || mouseX > gameWidth || 0 > mouseY || mouseY > gameHeight) {
@@ -195,8 +205,39 @@ function mouseClickEventHandler(mouseEvent) {
   } else {
     // TODO Make this check if a setBone button is pressed first?
     // TODO Make a keybind to deselect bone as well ... X'D
-    player.setBonePointingTo(selectedBone, new Vector(mouseX, mouseY));
+    setBonePointingTo(selectedBone, mouseX, gameHeight - mouseY);
   }
+}
+
+/**
+ * @param {string} boneName
+ * @param {number} rawX
+ * @param {number} rawY
+ */
+function setBonePointingTo(boneName, rawX, rawY) {
+  if (currentMode !== EDITING) {
+    return;
+  }
+
+  const bone = player.bones[boneName];
+  if (!bone) {
+    throw new Error(`Could not find boneVector for bone named: '${boneName}'`);
+  }
+  
+  /** @type {Vector} */
+  let boneVector = selectedFrame.bonesVectors[boneName];
+  
+  if (!boneVector) {
+    boneVector = new Vector(bone.x, bone.y);
+  }
+  
+  boneVector.x = bone.x - rawX;
+  boneVector.y = bone.y - rawY;
+  // boneVector.normalise();
+  // boneVector.scale(bone.length);
+
+  console.log(bone, boneVector);
+  selectedFrame.bonesVectors[boneName] = boneVector;
 }
 
 /**
