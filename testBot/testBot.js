@@ -1,15 +1,24 @@
-import { Utils } from "../utils.js";
-import { DivResultsRenderer } from "./resultRenderers/DivResultsRenderer.js";
+//@ts-check
+import Utils from "../utils.js";
+import DivResultsRenderer from "./resultRenderers/DivResultsRenderer.js";
 
 class Suite {
+  /** @type {String} */
   name;
-
+  /** @type {Array} */
   tests = [];
 
+  /**
+   * @param {String} suiteName
+   */
   constructor(suiteName) {
     this.name = suiteName;
   }
 
+  /**
+   * @param {String} testName
+   * @param {Function} testMethod
+   */
   addTest(testName, testMethod) {
     this.tests.push({
       name: testName,
@@ -18,35 +27,46 @@ class Suite {
   }
 }
 
-export class TestBot {
+export default class TestBot {
   static TEST_SUCCEEDED = 0;
   static TEST_FAILED = 1;
   static TEST_ERROR = 2;
   static TEST_MISSING = 3;
 
+  /** @type {Suite[]} */
   testSuites = [];
-
+  /** @type {*} */
   expected;
-
+  /** @type {Error | undefined} */
   expectedError;
-
+  /** @type {*} */
   actual;
-
+  /** @type {Number} */
   result;
 
+  /**
+   * @param {DivResultsRenderer} resultRenderer
+   */
   constructor(resultRenderer) {
     this.resultRenderer = resultRenderer;
   }
 
+  /**
+   * @param {*} container
+   * @returns {DivResultsRenderer}
+   */
   static renderResultsInDiv(container) {
     return new DivResultsRenderer(container);
   }
 
-  static createMock(targetClass) {
-    const mockedClass = {};
-
+  /**
+   * @param {*} targetClass
+   * @param {*} [sourceObject] 
+   * @returns {*}
+   */
+  static createMock(targetClass, sourceObject = {}) {
     const mockingSuccessful = Reflect.setPrototypeOf(
-      mockedClass,
+      sourceObject,
       targetClass.prototype
     );
 
@@ -55,9 +75,13 @@ export class TestBot {
       throw new Error(`CRITICAL: TestBot Failed to mock '${targetClass.name}'`);
     }
 
-    return mockedClass;
+    return sourceObject;
   }
 
+  /**
+   * @param {String} testSuiteName
+   * @returns {Suite}
+   */
   createSuite(testSuiteName) {
     const newSuite = new Suite(testSuiteName);
     this.testSuites.push(newSuite);
@@ -65,6 +89,10 @@ export class TestBot {
     return newSuite;
   }
 
+  /**
+   * @param {Suite} suite
+   * @returns {void}
+   */
   runSuite(suite) {
     const tests = suite.tests;
     tests.forEach((test) => {
@@ -85,6 +113,7 @@ export class TestBot {
           this.result = TestBot.TEST_SUCCEEDED;
         } else {
           this.result = TestBot.TEST_FAILED;
+          // @ts-ignore We already checked if expectedError is defined
           this.expected = this.expectedError.name;
           this.actual = caughtError.name;
         }
@@ -101,6 +130,7 @@ export class TestBot {
         Utils.isDefined(this.expectedError) &&
         Utils.isUndefined(caughtError)
       ) {
+        // @ts-ignore We already checked if expectedError is defined
         this.expected = this.expectedError.name;
         this.result = TestBot.TEST_FAILED;
       }
@@ -134,12 +164,19 @@ export class TestBot {
     });
   }
 
+  /**
+   * @returns {void}
+   */
   run() {
     this.testSuites.forEach((suite) => {
       this.runSuite(suite);
     });
   }
 
+  /**
+   * @param {*} expected
+   * @param {*} actual
+   */
   assertStrictlyEquals(expected, actual) {
     this.expected = expected;
     this.actual = actual;
@@ -147,6 +184,10 @@ export class TestBot {
       expected === actual ? TestBot.TEST_SUCCEEDED : TestBot.TEST_FAILED;
   }
 
+  /**
+   * @param {*} expected
+   * @param {*} actual
+   */
   assertStrictlyNotEquals(expected, actual) {
     this.expected = expected;
     this.actual = actual;
@@ -154,10 +195,17 @@ export class TestBot {
       expected !== actual ? TestBot.TEST_SUCCEEDED : TestBot.TEST_FAILED;
   }
 
+  /**
+   * @param {Error} expectedError
+   */
   assertThrowsExpectedError(expectedError) {
     this.expectedError = expectedError;
   }
 
+  /**
+   * @param {*} object1
+   * @param {*} object2
+   */
   assertDeepCompareObjects(object1, object2) {
     this.expected = object1;
     this.actual = object2;
@@ -166,6 +214,10 @@ export class TestBot {
       : TestBot.TEST_FAILED;
   }
 
+  /**
+   * @param {*} object1
+   * @param {*} object2
+   */
   assertNotDeepCompareObjects(object1, object2) {
     this.expected = object1;
     this.actual = object2;
@@ -174,6 +226,11 @@ export class TestBot {
       : TestBot.TEST_FAILED;
   }
 
+  /**
+   * @param {Number} min
+   * @param {Number} actual
+   * @param {Number} max
+   */
   assertInRange(min, actual, max) {
     if (!Utils.isNumber(actual)) {
       throw new TypeError(
@@ -201,6 +258,10 @@ export class TestBot {
         : TestBot.TEST_SUCCEEDED;
   }
 
+  /**
+   * @param {Number} expected
+   * @param {Number} actual
+   */
   assertGreaterThan(expected, actual) {
     if (!Utils.isNumber(expected)) {
       throw new TypeError(
@@ -220,6 +281,10 @@ export class TestBot {
       actual > expected ? TestBot.TEST_SUCCEEDED : TestBot.TEST_FAILED;
   }
 
+  /**
+   * @param {Number} expected
+   * @param {Number} actual
+   */
   assertLessThan(expected, actual) {
     if (!Utils.isNumber(expected)) {
       throw new TypeError(

@@ -1,19 +1,19 @@
 // @ts-check
-import { Utils } from "../utils.js";
-import { AnimationFrame } from "./animationFrame.js";
-import { Bone } from "./bone.js";
-import { CanvasRenderer } from "./canvasRenderer.js";
-import { IKSolver } from "./ikSolver.js";
-import { Player } from "./player.js";
-import { StickAnimation } from "./stickAnimation.js";
-import { Vector } from "./vector.js";
+import Utils from "../utils.js";
+import AnimationFrame from "./animationFrame.js";
+import Bone from "./bone.js";
+import CanvasRenderer from "./canvasRenderer.js";
+import IKSolver from "./ikSolver.js";
+import Player from "./player.js";
+import StickAnimation from "./stickAnimation.js";
+import Vector from "./vector.js";
 
 const DEBUG_BONE_COLOUR_GAP = 5;
 const DEBUG_BONE_COLOUR_WIDTH = 10;
 const DEBUG_BONE_COLOUR_HEIGHT = 10;
 const DEBUG_BONE_COLOUR_OFFSET_X = 10;
 const DEBUG_BONE_COLOUR_OFFSET_Y = 10;
-export class StickFigure extends Player {
+export default class StickFigure extends Player {
   static BONE_HEAD = "head";
   static BONE_NECK = "neck";
   static BONE_RIGHT_SHOULDER = "rightShoulder";
@@ -422,6 +422,7 @@ export class StickFigure extends Player {
   }
 
   /**
+   * @param {CanvasRenderer} renderer
    * @param {number} x
    * @param {number} y
    * @returns {void}

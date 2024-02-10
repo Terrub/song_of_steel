@@ -1,13 +1,13 @@
 // @ts-check
-import { AnimatedSpriteTypeError } from "../errors/typeErrors/animatedspriteTypeError.js";
-import { VectorTypeError } from "../errors/typeErrors/vectorTypeError.js";
-import { Utils } from "../utils.js";
-import { AnimatedSprite } from "./animatedSprite.js";
-import { CanvasRenderer } from "./canvasRenderer.js";
-import { Player } from "./player.js";
-import { Vector } from "./vector.js";
+import AnimatedSpriteTypeError from "../errors/typeErrors/animatedspriteTypeError.js";
+import VectorTypeError from "../errors/typeErrors/vectorTypeError.js";
+import Utils from "../utils.js";
+import AnimatedSprite from "./animatedSprite.js";
+import CanvasRenderer from "./canvasRenderer.js";
+import Player from "./player.js";
+import Vector from "./vector.js";
 
-export class PlayerSprite extends Player {
+export default class PlayerSprite extends Player {
   static ATTACK_LEFT = "attack1";
   static ATTACK_RIGHT = "attack2";
 
@@ -19,12 +19,12 @@ export class PlayerSprite extends Player {
   #attacking;
   /** @type {boolean} */
   #isDead = false;
-  /** @type {number} */
+  /** @type {Number} */
   #health = 100;
 
   /**
-   * @param {Vector} dimensions
    * @param {Vector} velocity
+   * @param {Vector} dimensions
    * @param {Object.<string, AnimatedSprite>} sprites
    */
   constructor(velocity, dimensions, sprites) {
@@ -40,10 +40,17 @@ export class PlayerSprite extends Player {
     this.#sprites = sprites;
   }
 
+  /**
+   * @returns {Vector}
+   */
   get dimensions() {
     return this.#dimensions;
   }
 
+  /**
+   * @param {Vector} vector
+   * @returns {void}
+   */
   set dimensions(vector) {
     if (!Utils.isInstanceOf(Vector, vector)) {
       throw new VectorTypeError("dimensions", vector);
@@ -55,8 +62,8 @@ export class PlayerSprite extends Player {
   /**
    * @param {CanvasRenderer} renderer
    * @param {Vector} position
-   * @param {number} framesElapsed
-   * @param {number} floorHeight
+   * @param {Number} framesElapsed
+   * @param {Number} floorHeight
    * @returns {void}
    */
   draw(renderer, position, framesElapsed, floorHeight) {

@@ -1,12 +1,12 @@
 // @ts-check
-import { CanvasRendererTypeError } from "../errors/typeErrors/canvasRendererTypeError.js";
-import { NumberTypeError } from "../errors/typeErrors/numberTypeError.js";
-import { Utils } from "../utils.js";
-import { CanvasRenderer } from "./canvasRenderer.js";
-import { Player } from "./player.js";
-import { Vector } from "./vector.js";
+import CanvasRendererTypeError from "../errors/typeErrors/canvasRendererTypeError.js";
+import NumberTypeError from "../errors/typeErrors/numberTypeError.js";
+import Utils from "../utils.js";
+import CanvasRenderer from "./canvasRenderer.js";
+import Player from "./player.js";
+import Vector from "./vector.js";
 
-export class World {
+export default class World {
   /** @type {?CanvasRenderer} */
   #backdrop;
   /** @type {?CanvasRenderer} */

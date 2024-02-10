@@ -1,10 +1,11 @@
-import { Sprite } from "../components/sprite.js";
-import { TestBot } from "../testBot/testBot.js";
-import { ImageTypeError } from "../errors/typeErrors/imageTypeError.js";
-import { VectorTypeError } from "../errors/typeErrors/vectorTypeError.js";
-import { Vector } from "../components/vector.js";
-import { NumberTypeError } from "../errors/typeErrors/numberTypeError.js";
-import { CanvasRenderer } from "../components/canvasRenderer.js";
+//@ts-check
+import Sprite from "../components/sprite.js";
+import TestBot from "../testBot/testBot.js";
+import ImageTypeError from "../errors/typeErrors/imageTypeError.js";
+import VectorTypeError from "../errors/typeErrors/vectorTypeError.js";
+import Vector from "../components/vector.js";
+import NumberTypeError from "../errors/typeErrors/numberTypeError.js";
+import CanvasRenderer from "../components/canvasRenderer.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -17,7 +18,10 @@ const spriteTests = testRunner.createSuite("Tests Sprite");
 spriteTests.addTest(
   "throws ImageTypeError when initiating without Image",
   () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(ImageTypeError);
+
+    // @ts-ignore This is supposed to be wrong to test the error thrown
     new Sprite();
   }
 );
@@ -25,8 +29,11 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without frameDimensions",
   () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
+
+    // @ts-ignore This is supposed to be wrong to test the error thrown
     new Sprite(image);
   }
 );
@@ -34,8 +41,11 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without dimensions",
   () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
+
+    // @ts-ignore This is supposed to be wrong to test the error thrown
     new Sprite(image, new Vector(0, 0));
   }
 );
@@ -43,8 +53,11 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without offset",
   () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
+
+    // @ts-ignore This is supposed to be wrong to test the error thrown
     new Sprite(image, new Vector(0, 0), new Vector(0, 0));
   }
 );
@@ -52,8 +65,11 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws NumberTypeError when instantiating with non-number scale",
   () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(NumberTypeError);
     const image = new Image();
+
+    // @ts-ignore This is supposed to be wrong to test the error thrown
     new Sprite(image, new Vector(0, 0), new Vector(0, 0), new Vector(0, 0), "");
   }
 );

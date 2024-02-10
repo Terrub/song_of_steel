@@ -1,18 +1,18 @@
 // @ts-check
-import { Utils } from "../utils.js";
-import { Sprite } from "./sprite.js";
-import { SpriteTypeError } from "../errors/typeErrors/spriteTypeError.js";
-import { CanvasRenderer } from "./canvasRenderer.js";
-import { Vector } from "./vector.js";
+import Utils from "../utils.js";
+import Sprite from "./sprite.js";
+import SpriteTypeError from "../errors/typeErrors/spriteTypeError.js";
+import CanvasRenderer from "./canvasRenderer.js";
+import Vector from "./vector.js";
 
-export class AnimatedSprite {
+export default class AnimatedSprite {
   /** @type {Sprite} */
   #sprite;
-  /** @type {number} */
+  /** @type {Number} */
   #ticsPerFrame;
-  /** @type {boolean} */
+  /** @type {Boolean} */
   #loop;
-  /** @type {number} */
+  /** @type {Number} */
   #numTicsDrawn;
 
   /**
@@ -21,9 +21,9 @@ export class AnimatedSprite {
 
   /**
    * @param {Sprite} sprite
-   * @param {number} framesMax
-   * @param {number} ticsPerFrame
-   * @param {boolean} loop
+   * @param {Number} framesMax
+   * @param {Number} ticsPerFrame
+   * @param {Boolean} loop
    * @param {?callWhenDone} callWhenDone
    */
   constructor(
@@ -48,10 +48,17 @@ export class AnimatedSprite {
     this.callWhenDone = callWhenDone;
   }
 
+  /**
+   * @returns {Sprite}
+   */
   get sprite() {
     return this.#sprite;
   }
 
+  /**
+   * @param {Sprite} sprite
+   * @returns {void}
+   */
   set sprite(sprite) {
     if (!Utils.isInstanceOf(Sprite, sprite)) {
       throw new SpriteTypeError("sprite", sprite);
@@ -75,7 +82,7 @@ export class AnimatedSprite {
   /**
    * @param {CanvasRenderer} renderer
    * @param {Vector} position
-   * @param {number} ticsElapsed
+   * @param {Number} ticsElapsed
    * @returns {void}
    */
   draw(renderer, position, ticsElapsed) {

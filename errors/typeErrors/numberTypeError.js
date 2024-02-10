@@ -1,6 +1,11 @@
-import { ParamTypeError } from "./paramTypeError.js";
+//@ts-check
+import ParamTypeError from "./paramTypeError.js";
 
-export class NumberTypeError extends ParamTypeError {
+export default class NumberTypeError extends ParamTypeError {
+  /**
+   * @param {string} paramName
+   * @param {*} value
+   */
   constructor(paramName, value) {
     super(paramName, Number, value);
     this.name = "NumberTypeError";

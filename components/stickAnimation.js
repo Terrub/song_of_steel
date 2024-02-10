@@ -1,9 +1,9 @@
 // @ts-check
-import { AnimationFrame } from "./animationFrame.js";
-import { Lerp } from "./lerp.js";
-import { Vector } from "./vector.js";
+import AnimationFrame from "./animationFrame.js";
+import Lerp from "./lerp.js";
+import Vector from "./vector.js";
 
-export class StickAnimation {
+export default class StickAnimation {
   /** @type {AnimationFrame[]} */
   #frames;
   /** @type {number} */
@@ -83,7 +83,7 @@ export class StickAnimation {
   }
 
   /**
-   * @returns {void}j
+   * @returns {void}
    */
   #calcFrames() {
     for (let i = 0; this.#frames.length > i; i += 1) {

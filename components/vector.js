@@ -1,20 +1,26 @@
 // @ts-check
 // Thanks https://radzion.com/blog/linear-algebra/vectors
 
-export class Vector {
+export default class Vector {
   static EPSILON = 0.00000001;
 
-  constructor(/** @type {Number} */ x, /** @type {Number} */ y) {
+  /**
+   * @param {Number} x
+   * @param {Number} y
+   */
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   }
 
-  static getShortestTorusDeltaVector(
-    /** @type {Vector} */ v1,
-    /** @type {Vector} */ v2,
-    /** @type {Number} */ w,
-    /** @type {Number} */ h
-  ) {
+  /**
+   * @param {Vector} v1
+   * @param {Vector} v2
+   * @param {Number} w
+   * @param {Number} h
+   * @returns {Vector}
+   */
+  static getShortestTorusDeltaVector(v1, v2, w, h) {
     const cvx = v2.x - v1.x;
     const cvy = v2.y - v1.y;
     const tvx = ((v2.x + w * 0.5) % w) - ((v1.x + w * 0.5) % w);
@@ -27,12 +33,14 @@ export class Vector {
     return new Vector(cvx, cvy);
   }
 
-  static getWrappedDistance(
-    /** @type {Vector} */ v1,
-    /** @type {Vector} */ v2,
-    /** @type {Number} */ w,
-    /** @type {Number} */ h
-  ) {
+  /**
+   * @param {Vector} v1
+   * @param {Vector} v2
+   * @param {Number} w
+   * @param {Number} h
+   * @returns {Number}
+   */
+  static getWrappedDistance(v1, v2, w, h) {
     const dX = Math.abs(v1.x - v2.x);
     const dY = Math.abs(v1.y - v2.y);
     const lH = Math.min(dX, w - dX);
@@ -41,34 +49,63 @@ export class Vector {
     return Math.hypot(lH, lV);
   }
 
-  static add(/** @type {Vector} */ v1, /** @type {Vector} */ v2) {
+  /**
+   * @param {Vector} v1
+   * @param {Vector} v2
+   * @returns {Vector}
+   */
+  static add(v1, v2) {
     return new Vector(v1.x + v2.x, v1.y + v2.y);
   }
 
-  static subtract(/** @type {Vector} */ v1, /** @type {Vector} */ v2) {
+  /**
+   * @param {Vector} v1
+   * @param {Vector} v2
+   * @returns {Vector}
+   */
+  static subtract(v1, v2) {
     return new Vector(v1.x - v2.x, v1.y - v2.y);
   }
 
-  static scale(/** @type {Vector} */ vector, /** @type {Number} */ value) {
+  /**
+   * @param {Vector} vector
+   * @param {Number} value
+   * @returns {Vector}
+   */
+  static scale(vector, value) {
     return new Vector(vector.x * value, vector.y * value);
   }
 
-  static fromPolar(
-    /** @type {Number} */ angle,
-    /** @type {Number} */ magnitude
-  ) {
+  /**
+   * @param {Number} angle
+   * @param {Number} magnitude
+   * @returns {Vector}
+   */
+  static fromPolar(angle, magnitude) {
     return new Vector(Math.cos(angle), Math.sin(angle)).scale(magnitude);
   }
 
-  static normalise(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Vector}
+   */
+  static normalise(v) {
     return new Vector(v.x, v.y).normalise();
   }
 
-  static angle(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Number}
+   */
+  static angle(v) {
     return Math.atan2(v.y, v.x);
   }
 
-  static magnitude(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Number}
+   */
+  static magnitude(v) {
     return Math.hypot(v.x, v.y);
   }
 
@@ -86,54 +123,92 @@ export class Vector {
     return v;
   }
 
-  static isApproximate(/** @type {Number} */ val1, /** @type {Number} */ val2) {
+  /**
+   * @param {Number} val1
+   * @param {Number} val2
+   * @returns {Boolean}
+   */
+  static isApproximate(val1, val2) {
     return Math.abs(val1 - val2) < Vector.EPSILON;
   }
 
-  static equal(/** @type {Vector} */ vector1, /** @type {Vector} */ vector2) {
+  /**
+   * @param {Vector} vector1
+   * @param {Vector} vector2
+   * @returns {Boolean}
+   */
+  static equal(vector1, vector2) {
     const v1Norm = Vector.normalise(vector1);
     const v2Norm = Vector.normalise(vector2);
     return Vector.isApproximate(v1Norm.dotProduct(v2Norm), 1);
   }
 
-  copyFrom(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   */
+  copyFrom(v) {
     this.x = v.x;
     this.y = v.y;
   }
 
-  add(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Vector}
+   */
+  add(v) {
     this.x += v.x;
     this.y += v.y;
 
     return this;
   }
 
-  subtract(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Vector}
+   */
+  subtract(v) {
     this.x -= v.x;
     this.y -= v.y;
 
     return this;
   }
 
-  dotProduct(/** @type {Vector} */ v) {
+  /**
+   * @param {Vector} v
+   * @returns {Number}
+   */
+  dotProduct(v) {
     return this.x * v.x + this.y * v.y;
   }
 
-  scale(/** @type {Number} */ value) {
+  /**
+   * @param {Number} value
+   * @returns {Vector}
+   */
+  scale(value) {
     this.x *= value;
     this.y *= value;
 
     return this;
   }
 
+  /**
+   * @returns {Number}
+   */
   magnitude() {
     return Vector.magnitude(this);
   }
 
+  /**
+   * @returns {Number}
+   */
   angle() {
     return Vector.angle(this);
   }
 
+  /**
+   * @returns {Vector}
+   */
   normalise() {
     // Cannot devide by 0
     if (this.x === 0 && this.y === 0) {
@@ -143,7 +218,11 @@ export class Vector {
     return this.scale(1 / this.magnitude());
   }
 
-  limit(/** @type {Number} */ value) {
+  /**
+   * @param {Number} value
+   * @returns {Vector}
+   */
+  limit(value) {
     if (value * value < this.x * this.x + this.y * this.y) {
       this.normalise().scale(value);
     }

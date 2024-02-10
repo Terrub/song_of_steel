@@ -1,8 +1,8 @@
-import { CanvasRenderer } from "./canvasRenderer.js";
-import { Vector } from "./vector.js";
+//@ts-check
+import CanvasRenderer from "./canvasRenderer.js";
+import Vector from "./vector.js";
 
-// @ts-check
-export class Player {
+export default class Player {
   /** @type {Vector} */
   velocity;
   /** @type {boolean} */

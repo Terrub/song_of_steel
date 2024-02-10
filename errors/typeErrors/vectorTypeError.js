@@ -1,7 +1,12 @@
-import { ParamTypeError } from "./paramTypeError.js";
-import { Vector } from "../../components/vector.js";
+//@ts-check
+import ParamTypeError from "./paramTypeError.js";
+import Vector from "../../components/vector.js";
 
-export class VectorTypeError extends ParamTypeError {
+export default class VectorTypeError extends ParamTypeError {
+  /**
+   * @param {String} paramName
+   * @param {*} position
+   */
   constructor(paramName, position) {
     super(paramName, Vector, position);
     this.name = "VectorTypeError";

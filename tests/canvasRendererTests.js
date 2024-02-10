@@ -1,6 +1,7 @@
-import { CanvasRenderer } from "../components/canvasRenderer.js";
-import { TestBot } from "../testBot/testBot.js";
-import { CanvasTypeError } from "../errors/typeErrors/canvasTypeError.js";
+//@ts-check
+import CanvasRenderer from "../components/canvasRenderer.js";
+import CanvasTypeError from "../errors/typeErrors/canvasTypeError.js";
+import TestBot from "../testBot/testBot.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -13,7 +14,9 @@ const canvasRendererTests = testRunner.createSuite("Tests CanvasRenderer");
 canvasRendererTests.addTest(
   "throws CanvasTypeError when instantiated without HTMLCanvasElement",
   () => {
+    // @ts-ignore This is javascript stuff, not typescript
     testRunner.assertThrowsExpectedError(CanvasTypeError);
+    // @ts-ignore We intend to cause a CanvasTypeError by providing no argument
     new CanvasRenderer();
   }
 );
@@ -22,7 +25,8 @@ canvasRendererTests.addTest(
   'drawsRect(0, 0, 100, 50, "red") draws red rectangle in context at bottom left corner',
   () => {
     let actualParams;
-    const mockGlib = {
+    /** @type {CanvasRenderingContext2D} */
+    const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
       fillStyle: "white",
       fillRect: (x, y, w, h) => {
         actualParams = {
@@ -32,14 +36,16 @@ canvasRendererTests.addTest(
           h: h,
         };
       },
-    };
+    });
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 640;
-    canvas.height = 480;
-    canvas.getContext = () => mockGlib;
+    /** @type {HTMLCanvasElement} */
+    const mockCanvas = TestBot.createMock(HTMLCanvasElement, {
+      width: 640,
+      height: 480,
+      getContext: () => mockGlib,
+    });
 
-    const canvasRenderer = new CanvasRenderer(canvas);
+    const canvasRenderer = new CanvasRenderer(mockCanvas);
     canvasRenderer.drawRect(0, 0, 100, 50, "red");
 
     const expectedParams = {

@@ -1,6 +1,11 @@
-import { ParamTypeError } from "./paramTypeError.js";
+//@ts-check
+import ParamTypeError from "./paramTypeError.js";
 
-export class FunctionTypeError extends ParamTypeError {
+export default class FunctionTypeError extends ParamTypeError {
+  /**
+   * @param {String} paramName
+   * @param {*} value
+   */
   constructor(paramName, value) {
     super(paramName, Function, value);
     this.name = "FunctionTypeError";

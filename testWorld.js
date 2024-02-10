@@ -1,10 +1,11 @@
-import { AnimationFrame } from "./components/animationFrame.js";
-import { CanvasRenderer } from "./components/canvasRenderer.js";
-import { createMainloop } from "./components/mainloop.js";
-import { StickAnimation } from "./components/stickAnimation.js";
-import { StickFigure } from "./components/stickFigure.js";
-import { Vector } from "./components/vector.js";
-import { World } from "./components/world.js";
+//@ts-check
+import AnimationFrame from "./components/animationFrame.js";
+import CanvasRenderer from "./components/canvasRenderer.js";
+import createMainloop from "./components/mainloop.js";
+import StickAnimation from "./components/stickAnimation.js";
+import StickFigure from "./components/stickFigure.js";
+import Vector from "./components/vector.js";
+import World from "./components/world.js";
 
 /**
  * What do I need to separate game from browser?
@@ -16,6 +17,11 @@ import { World } from "./components/world.js";
  *    attach keyboard event capture to the browser to read userinput but those inputs should call
  *    the game's API instead, creating yet another interface layer between user input from browser
  *    to an input the game recognises.
+ */
+
+/**
+ * @typedef KeyBinds
+ * @type {Object.<String, String>}
  */
 
 const ANIMATING = "animating";
@@ -48,6 +54,7 @@ const playerInitialVelocity = new Vector(0, 0);
 
 const player = new StickFigure(playerInitialVelocity);
 
+/** @type {KeyBinds} */
 const animationKeyBinds = {
   Space: playerJump,
   KeyA: playerMoveLeft,
@@ -59,6 +66,7 @@ const animationKeyBinds = {
   KeyE: toggleMode,
 };
 
+/** @type {KeyBinds} */
 const editingKeyBinds = {
   KeyE: toggleMode,
   KeyA: prevFrame,
@@ -67,11 +75,12 @@ const editingKeyBinds = {
   KeyX: removeFrame,
 };
 
+/** @type {KeyBinds} */
 let keyBinds = animationKeyBinds;
 let numTics = 0;
 let currentMode = ANIMATING;
 
-/** @type {Vector} */
+/** @type {String} */
 let selectedBone;
 /** @type {AnimationFrame} */
 let selectedFrame;
@@ -89,34 +98,58 @@ function setCurrentModeText(text) {
   currentModeElement.innerText = text;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerJump(buttonDown) {
   playerJumpBtnDown = buttonDown;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerMoveLeft(buttonDown) {
   playerMoveLeftBtnDown = buttonDown;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerMoveRight(buttonDown) {
   playerMoveRightBtnDown = buttonDown;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerJabLeft(buttonDown) {
   console.log("Jab Left");
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerJabRight(buttonDown) {
   console.log("Jab Right");
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerSwingLeft(buttonDown) {
   playerSwingLeftBtnDown = buttonDown;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ */
 function playerSwingRight(buttonDown) {
   playerSwingRightBtnDown = buttonDown;
 }
 
+/**
+ * @returns {void}
+ */
 function enableEditMode() {
   currentMode = EDITING;
   setCurrentModeText("EDITING");
@@ -129,6 +162,9 @@ function enableEditMode() {
   player.fixedAnimation = stickAnimation;
 }
 
+/**
+ * @returns {void}
+ */
 function enableAnimateMode() {
   currentMode = ANIMATING;
   setCurrentModeText("ANIMATING");
@@ -137,6 +173,10 @@ function enableAnimateMode() {
   keyBinds = animationKeyBinds;
 }
 
+/**
+ * @param {Boolean} buttonDown
+ * @returns {void}
+ */
 function toggleMode(buttonDown) {
   if (buttonDown === false) {
     if (currentMode === ANIMATING) {
@@ -147,16 +187,32 @@ function toggleMode(buttonDown) {
   }
 }
 
+/**
+ * @param {Boolean} buttonDown
+ * @returns {void}
+ */
 function newFrame(buttonDown) {
   // TODO Consider adding Ctrl or Shift to keybind for new animation and without for new frame?
   if (buttonDown === false) {
   }
 }
 
+/**
+ * @param {Boolean} buttonDown
+ * @returns {void}
+ */
 function removeFrame(buttonDown) {}
 
+/**
+ * @param {Boolean} buttonDown
+ * @returns {void}
+ */
 function prevFrame(buttonDown) {}
 
+/**
+ * @param {Boolean} buttonDown
+ * @returns {void}
+ */
 function nextFrame(buttonDown) {}
 
 /**
@@ -213,6 +269,7 @@ function mouseClickEventHandler(mouseEvent) {
  * @param {string} boneName
  * @param {number} rawX
  * @param {number} rawY
+ * @returns {void}
  */
 function setBonePointingTo(boneName, rawX, rawY) {
   if (currentMode !== EDITING) {
@@ -221,16 +278,17 @@ function setBonePointingTo(boneName, rawX, rawY) {
 
   const bone = player.bones[boneName];
   if (!bone) {
+    // TODO: Create custom error for unrecognised bone name
     throw new Error(`Could not find boneVector for bone named: '${boneName}'`);
   }
-  
+
   /** @type {Vector} */
   let boneVector = selectedFrame.bonesVectors[boneName];
-  
+
   if (!boneVector) {
     boneVector = new Vector(bone.x, bone.y);
   }
-  
+
   boneVector.x = bone.x - rawX;
   boneVector.y = bone.y - rawY;
   // boneVector.normalise();
@@ -242,6 +300,7 @@ function setBonePointingTo(boneName, rawX, rawY) {
 
 /**
  * @param {MouseEvent} mouseEvent
+ * @returns {void}
  */
 function mouseMoveEventHandler(mouseEvent) {
   if (currentMode !== EDITING) {
@@ -249,6 +308,9 @@ function mouseMoveEventHandler(mouseEvent) {
   }
 }
 
+/**
+ * @returns {void}
+ */
 function resolveGameState() {
   player.velocity.x = 0;
   if (playerPosition.y > 0) {
@@ -288,6 +350,9 @@ function resolveGameState() {
   }
 }
 
+/**
+ * @returns {void}
+ */
 function renderGame() {
   if (currentMode === ANIMATING) {
     numTics += 1;
@@ -295,6 +360,9 @@ function renderGame() {
   testWorld.draw(numTics, playerPosition);
 }
 
+/**
+ * @returns {void}
+ */
 function gameTic() {
   resolveGameState();
   renderGame();

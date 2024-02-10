@@ -1,5 +1,6 @@
-import { Utils } from "../utils.js";
+//@ts-check
+import Utils from "../utils.js";
 
-export class Game {
+export default class Game {
   constructor() {}
 }

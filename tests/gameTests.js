@@ -1,5 +1,6 @@
-import { TestBot } from "../testBot/testBot.js";
-import { Game } from "../components/game.js";
+//@ts-check
+import TestBot from "../testBot/testBot.js";
+import Game from "../components/game.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);

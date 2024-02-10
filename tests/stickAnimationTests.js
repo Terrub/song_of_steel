@@ -1,7 +1,9 @@
-import { TestBot } from "../testBot/testBot.js";
-import { Vector } from "../components/vector.js";
-import { AnimationFrame } from "../components/animationFrame.js";
-import { StickAnimation } from "../components/stickAnimation.js";
+//@ts-check
+
+import TestBot from "../testBot/testBot.js";
+import Vector from "../components/vector.js";
+import AnimationFrame from "../components/animationFrame.js";
+import StickAnimation from "../components/stickAnimation.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);

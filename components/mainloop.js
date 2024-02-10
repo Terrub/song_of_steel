@@ -1,5 +1,5 @@
 //@ts-check
-import { Utils } from "../utils.js";
+import Utils from "../utils.js";
 
 // TODO See if we can turn this into a class after all.
 /*
@@ -13,11 +13,21 @@ import { Utils } from "../utils.js";
  */
 
 /**
+ * @typedef MainLoop
+ * @type {object}
+ * @property {Function} start
+ * @property {Function} stop
+ * @property {Function} reset
+ * @property {Function} next
+ * @property {Function} setDebug
+ */
+
+/**
  *
  * @param {Function} fnRender
- * @returns {Object}
+ * @returns {MainLoop}
  */
-export function createMainloop(fnRender) {
+export default function createMainloop(fnRender) {
   if (!Utils.isFunction(fnRender)) {
     Utils.reportUsageError("Usage: createMainloop(frameRender: function");
   }
@@ -102,17 +112,6 @@ export function createMainloop(fnRender) {
     }
   }
 
-  /**
-   * @typedef MainLoop
-   * @type {object}
-   * @property {Function} start
-   * @property {Function} stop
-   * @property {Function} reset
-   * @property {Function} next
-   * @property {Function} setDebug
-   */
-
-  /** @type {MainLoop} */
   const protoMainloop = {
     start: start,
     stop: stop,

@@ -1,7 +1,8 @@
-import { TestBot } from "../testBot/testBot.js";
-import { StickFigure } from "../components/stickFigure.js";
-import { Vector } from "../components/vector.js";
-import { Utils } from "../utils.js";
+//@ts-check
+import TestBot from "../testBot/testBot.js";
+import StickFigure from "../components/stickFigure.js";
+import Vector from "../components/vector.js";
+import Utils from "../utils.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);

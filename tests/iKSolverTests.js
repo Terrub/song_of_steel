@@ -1,7 +1,9 @@
-import { TestBot } from "../testBot/testBot.js";
-import { Vector } from "../components/vector.js";
-import { Utils } from "../utils.js";
-import { IKSolver } from "../components/ikSolver.js";
+//@ts-check
+
+import TestBot from "../testBot/testBot.js";
+import Vector from "../components/vector.js";
+import IKSolver from "../components/ikSolver.js";
+import Utils from "../utils.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);

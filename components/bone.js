@@ -1,9 +1,9 @@
 // @ts-check
-import { Utils } from "../utils.js";
-import { Vector } from "./vector.js";
+import Utils from "../utils.js";
+import Vector from "./vector.js";
 
 // TODO Add tests for Bone class
-export class Bone {
+export default class Bone {
   /** @type {Vector} */
   #point;
   /** @type {?Bone} */

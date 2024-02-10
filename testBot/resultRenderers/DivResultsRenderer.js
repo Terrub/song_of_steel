@@ -1,15 +1,24 @@
-import { Utils } from "../../utils.js";
-import { TestBot } from "../testBot.js";
+//@ts-check
+import Utils from "../../utils.js";
+import TestBot from "../testBot.js";
 
-export class DivResultsRenderer {
+export default class DivResultsRenderer {
+  /** @type {HTMLElement} */
   container;
-
+  /** @type {HTMLElement[]} */
   suiteElements = [];
 
+  /**
+   * @param {HTMLElement} container
+   */
   constructor(container) {
     this.container = container;
   }
 
+  /**
+   * @param {String} name
+   * @returns {HTMLElement}
+   */
   getSuiteElement(name) {
     let suiteElement = this.suiteElements[name];
 
@@ -28,6 +37,14 @@ export class DivResultsRenderer {
     return suiteElement;
   }
 
+  /**
+   * @param {String} suiteName
+   * @param {String} testName
+   * @param {Number} result
+   * @param {*} expected
+   * @param {*} actual
+   * @returns {void}
+   */
   addResult(suiteName, testName, result, expected, actual) {
     const suiteElement = this.getSuiteElement(suiteName);
     const resultLine = document.createElement("li");

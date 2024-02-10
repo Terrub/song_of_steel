@@ -1,4 +1,5 @@
-import { TestBot } from "./testBot.js";
+//@ts-check
+import TestBot from "./testBot.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -138,6 +139,7 @@ const assertErrorTest = testRunner.createSuite(
   "Tests assertThrowsExpectedError"
 );
 assertErrorTest.addTest("shows green when expected error is thrown", () => {
+  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(TypeError);
 
   throw new TypeError(
@@ -146,6 +148,7 @@ assertErrorTest.addTest("shows green when expected error is thrown", () => {
 });
 
 assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
+  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(RangeError);
 
   throw new TypeError(
@@ -154,6 +157,7 @@ assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
 });
 
 assertErrorTest.addTest("shows red when no error is thrown", () => {
+  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(TypeError);
 });
 
@@ -193,6 +197,7 @@ assertRangeTest.addTest("throws error when given value is not a Number", () => {
   const expectedMin = 1.0;
   const expectedMax = 10.0;
 
+  // @ts-ignore The variable actual is meant to not be an error in this test
   testRunner.assertInRange(expectedMin, actual, expectedMax);
 });
 
@@ -224,6 +229,7 @@ assertGreaterThanTests.addTest(
 assertGreaterThanTests.addTest(
   "throws TypeError when provided expected value is not a number",
   () => {
+    // @ts-ignore String passed instead of Number to cause TypeError
     testRunner.assertGreaterThan("", 1);
   }
 );
@@ -231,6 +237,7 @@ assertGreaterThanTests.addTest(
 assertGreaterThanTests.addTest(
   "throws TypeError when given actual value is not a number",
   () => {
+    // @ts-ignore String passed instead of Number to cause TypeError
     testRunner.assertGreaterThan(1, "");
   }
 );
@@ -261,6 +268,7 @@ assertLessThanTests.addTest(
 assertLessThanTests.addTest(
   "throws TypeError when provided expected value is not a number",
   () => {
+    // @ts-ignore String passed instead of Number to cause TypeError
     testRunner.assertLessThan("", 1);
   }
 );
@@ -268,6 +276,7 @@ assertLessThanTests.addTest(
 assertLessThanTests.addTest(
   "throws TypeError when given actual value is not a number",
   () => {
+    // @ts-ignore String passed instead of Number to cause TypeError
     testRunner.assertLessThan(1, "");
   }
 );

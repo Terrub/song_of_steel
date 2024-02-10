@@ -12,7 +12,7 @@
  */
 
 // TODO Add tests for SecondOrderDynamics class, if we can... X_X
-export class SecondOrderDynamics {
+export default class SecondOrderDynamics {
   /** @type {number} */
   #xp = 0; // Previous x component
   /** @type {number} */
@@ -40,10 +40,10 @@ export class SecondOrderDynamics {
 
   /**
    *
-   * @param {number} timeElapsed
-   * @param {number} x
-   * @param {?number} xd
-   * @returns {number}
+   * @param {Number} timeElapsed
+   * @param {Number} x
+   * @param {?Number} xd
+   * @returns {Number}
    */
   update(timeElapsed, x, xd = null) {
     // No derivative of x (velocity), estimate it based on previous x

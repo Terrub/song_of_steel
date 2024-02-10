@@ -1,9 +1,10 @@
-import { CanvasRenderer } from "./components/canvasRenderer.js";
-import { createMainloop } from "./components/mainloop.js";
-import { StickFigure } from "./components/stickFigure.js";
-import { Vector } from "./components/vector.js";
-import { World } from "./components/world.js";
-import { Utils } from "./utils.js";
+//@ts-check
+import CanvasRenderer from "./components/canvasRenderer.js";
+import createMainloop from "./components/mainloop.js";
+import StickFigure from "./components/stickFigure.js";
+import Vector from "./components/vector.js";
+import World from "./components/world.js";
+import Utils from "./utils.js";
 
 /**
  * What do I need to separate game from browser?
@@ -197,7 +198,7 @@ function resolveGameState(elapsed) {
   playerPosition.y = Math.max(playerPosition.y + player.velocity.y, 0);
 }
 
-function renderGame() {
+function renderGame(elapsed) {
   numTics += 1;
   world.draw(numTics, playerPosition);
 }

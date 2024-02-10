@@ -1,6 +1,8 @@
-import { TestBot } from "../testBot/testBot.js";
-import { Lerp } from "../components/lerp.js";
-import { Utils } from "../utils.js";
+//@ts-check
+
+import TestBot from "../testBot/testBot.js";
+import Lerp from "../components/lerp.js";
+import Utils from "../utils.js";
 
 const resultsContainer = document.createElement("div");
 document.body.appendChild(resultsContainer);
@@ -78,7 +80,7 @@ lerpTests.addTest("can work with numbers in descending order", () => {
 
 lerpTests.addTest("can work with numbers less than 1", () => {
   const expected = -0.12;
-  
+
   const actual = Lerp.linear2(0.2, -0.2, 0.8);
 
   testRunner.assertInRange(-0.125, actual, -0.115);

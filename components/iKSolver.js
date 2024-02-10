@@ -1,5 +1,5 @@
 // @ts-check
-import { Vector } from "./vector.js";
+import Vector from "./vector.js";
 
 // for (let i = 0; i <= 10; i += 1) {
 //   const x = (i - 5) / 4;
@@ -7,7 +7,7 @@ import { Vector } from "./vector.js";
 //   console.log(x, v, v / Math.PI * 180);
 // }
 
-export class IKSolver {
+export default class IKSolver {
   /** @type {Vector} */
   static #localPosEE = new Vector(0, 0);
 
