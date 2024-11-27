@@ -1,11 +1,13 @@
 //@ts-check
 import AnimationFrame from "./components/animationFrame.js";
+import Bone from "./components/bone.js";
 import CanvasRenderer from "./components/canvasRenderer.js";
 import createMainloop from "./components/mainloop.js";
 import StickAnimation from "./components/stickAnimation.js";
 import StickFigure from "./components/stickFigure.js";
 import Vector from "./components/vector.js";
 import World from "./components/world.js";
+import Utils from "./utils.js";
 
 /**
  * What do I need to separate game from browser?
@@ -32,6 +34,7 @@ const gameHeight = 480;
 const gravity = 0.98;
 const playerRunSpeed = 10;
 const playerJumpHeight = 15;
+const floorHeight = gameHeight * 0.5;
 
 const EVENT_KEYDOWN = "keydown";
 const EVENT_KEYUP = "keyup";
@@ -261,8 +264,37 @@ function mouseClickEventHandler(mouseEvent) {
   } else {
     // TODO Make this check if a setBone button is pressed first?
     // TODO Make a keybind to deselect bone as well ... X'D
+    console.log(selectedBone, mouseX, gameHeight - mouseY);
     setBonePointingTo(selectedBone, mouseX, gameHeight - mouseY);
   }
+}
+
+/**
+ * Translates the boneVector to point at the raw coordinates for the provided bone.
+ * @param {Bone} bone
+ * @param {Number} rawX
+ * @param {Number} rawY
+ * @returns {Vector}
+ */
+function getTranslatedBoneVectorFromRawCoords(bone, rawX, rawY) {
+  let currentBone = bone;
+  const translatedVector = new Vector(rawX, rawY - floorHeight);
+
+  translatedVector.subtract(playerPosition);
+
+  let keepChecking = true;
+  while (keepChecking) {
+    const currBoneVector = new Vector(currentBone.x, currentBone.y);
+
+    translatedVector.subtract(currBoneVector);
+    if (currentBone.parent) {
+      currentBone = currentBone.parent;
+    } else {
+      keepChecking = false;
+    }
+  }
+
+  return translatedVector;
 }
 
 /**
@@ -282,20 +314,9 @@ function setBonePointingTo(boneName, rawX, rawY) {
     throw new Error(`Could not find boneVector for bone named: '${boneName}'`);
   }
 
-  /** @type {Vector} */
-  let boneVector = selectedFrame.bonesVectors[boneName];
+  // I kinda want to normalise the bonevector so I can scale it the bone's maximum length, but I can't due to IK...
 
-  if (!boneVector) {
-    boneVector = new Vector(bone.x, bone.y);
-  }
-
-  boneVector.x = bone.x - rawX;
-  boneVector.y = bone.y - rawY;
-  // boneVector.normalise();
-  // boneVector.scale(bone.length);
-
-  console.log(bone, boneVector);
-  selectedFrame.bonesVectors[boneName] = boneVector;
+  selectedFrame.bonesVectors[boneName] = getTranslatedBoneVectorFromRawCoords(bone, rawX, rawY);
 }
 
 /**
@@ -392,7 +413,7 @@ document.addEventListener(EVENT_MOUSEUP, mouseClickEventHandler, false);
 
 player.debug = true;
 
-testWorld.setFloor(gameHeight * 0.5);
+testWorld.setFloor(floorHeight);
 testWorld.setup();
 testWorld.loadPlayer(player);
 
