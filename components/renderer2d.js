@@ -1,9 +1,15 @@
+import ParamTypeError from "../errors/typeErrors/paramTypeError.js";
+import Utils from "../utils.js";
+import Drawable from "./drawable.js";
+import Line from "./line.js";
+import Rectangle from "./rectangle.js";
+
 //@ts-check
 export default class Renderer2d {
   /**
    * Draws the provided array of drawables onto the provided Canvas Rendering Context (2D)
    * @param {CanvasRenderingContext2D} gLib
-   * @param {Array} drawables
+   * @param {Array.<Drawable>} drawables
    */
   static render(gLib, drawables) {
     if (!drawables.length || drawables.length <= 0) {
@@ -14,21 +20,16 @@ export default class Renderer2d {
     gLib.reset();
     // TODO: Consider checking for speed increase/decrease using: gLib.clearRect(0,0,9999,9999);
 
-
     for (const drawable of drawables) {
-      // TODO: Either use constants for type definition or consider turning drawables into a class struct.
-      if (drawable.type === 'rectangle') {
-        gLib.fillRect(drawable.x, drawable.y, drawable.width, drawable.height);
-      } else if (drawable.type === 'line') {
-        gLib.lineWidth = drawable.lineWidth;
-        gLib.strokeStyle = drawable.color;
-        gLib.beginPath();
-        gLib.moveTo(drawable.x1, drawable.y1);
-        gLib.lineTo(drawable.x2, drawable.y2);
-        gLib.stroke();
-      } else if (drawable.type === "text") {
-        gLib.fillStyle = drawable.color;
-        gLib.fillText(drawable.text, drawable.x, drawable.y);
+      if (!Utils.isInstanceOf(Drawable, drawable)) {
+        throw new ParamTypeError('drawables', Drawable, drawable);
+      }
+      if (drawable.type === Drawable.RECTANGLE) {
+        Renderer2d.#drawRect(gLib, drawable);
+      } else if (drawable.type === Drawable.LINE) {
+        Renderer2d.#drawLine(gLib, drawable)
+      } else if (drawable.type === Drawable.TEXT) {
+        Renderer2d.#drawText(gLib, drawable);
       } else {
         console.error(`No render support for type: ${drawable.type}`);
       }
@@ -109,22 +110,18 @@ export default class Renderer2d {
   //   this.gLib.fillRect(x, this.height - y, 1, 1);
   // }
 
-  // /**
-  //  * @param {Number} x1
-  //  * @param {Number} y1
-  //  * @param {Number} x2
-  //  * @param {Number} y2
-  //  * @param {String|CanvasGradient|CanvasPattern} color
-  //  * @param {Number} lineWidth
-  //  */
-  // drawLine(x1, y1, x2, y2, color, lineWidth = 1) {
-  //   this.gLib.lineWidth = lineWidth;
-  //   this.gLib.strokeStyle = color;
-  //   this.gLib.beginPath();
-  //   this.gLib.moveTo(x1, this.height - y1);
-  //   this.gLib.lineTo(x2, this.height - y2);
-  //   this.gLib.stroke();
-  // }
+  /**
+   * @param {CanvasRenderingContext2D} gLib
+   * @param {Line} line
+   */
+  static #drawLine(gLib, line) {
+    gLib.lineWidth = line.lineWidth;
+    gLib.strokeStyle = line.color;
+    gLib.beginPath();
+    gLib.moveTo(line.x1, line.y1);
+    gLib.lineTo(line.x2, line.y2);
+    gLib.stroke();
+  }
 
   // /**
   //  * @param {Number} xS
@@ -154,17 +151,14 @@ export default class Renderer2d {
   //   this.gLib.stroke();
   // }
 
-  // /**
-  //  * @param {Number} x
-  //  * @param {Number} y
-  //  * @param {Number} x2
-  //  * @param {Number} y2
-  //  * @param {String|CanvasGradient|CanvasPattern} color
-  //  */
-  // drawRect(x, y, x2, y2, color) {
-  //   this.gLib.fillStyle = color;
-  //   this.gLib.fillRect(x, this.height - y, x2, -y2);
-  // }
+  /**
+   * @param {CanvasRenderingContext2D} gLib
+   * @param {Rectangle} rectangle
+   */
+  static #drawRect(gLib, rectangle) {
+    gLib.fillStyle = rectangle.color;
+    gLib.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+  }
 
   // /**
   //  * @param {Number} x
@@ -271,23 +265,20 @@ export default class Renderer2d {
   //   return result;
   // }
 
-  // /**
-  //  * @param {Number} x
-  //  * @param {Number} y
-  //  * @param {String} text
-  //  * @param {String|CanvasGradient|CanvasPattern} color
-  //  * @param {?String} font
-  //  */
-  // text(x, y, text, color, font = null) {
-  //   if (!Utils.isNull(font)) {
-  //     // @ts-ignore we check if font is null or not...
-  //     this.gLib.font = font;
-  //   }
+  /**
+   * @param {CanvasRenderingContext2D} gLib
+   * @param {DrawText} drawable
+   */
+  static #drawText(gLib, drawable) {
+    if (!Utils.isNull(drawable.font)) {
+      // @ts-ignore we check if font is null or not...
+      gLib.font = drawable.font;
+    }
 
-  //   if (Utils.isDefined(color)) {
-  //     this.gLib.fillStyle = color;
-  //   }
+    if (Utils.isDefined(drawable.color)) {
+      gLib.fillStyle = drawable.color;
+    }
 
-  //   this.gLib.fillText(text, x, this.height - y);
-  // }
+    gLib.fillText(drawable.text, drawable.x, drawable.y);
+  }
 }

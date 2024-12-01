@@ -1,5 +1,9 @@
 //@ts-check
+import DrawText from "../components/drawText.js";
+import Line from "../components/line.js";
+import Rectangle from "../components/rectangle.js";
 import Renderer2d from "../components/renderer2d.js";
+import ParamTypeError from "../errors/typeErrors/paramTypeError.js";
 import TestBot from "../testBot/testBot.js";
 import Utils from "../utils.js";
 
@@ -11,15 +15,6 @@ const testRunner = new TestBot(resultRenderer);
 
 const renderer2dTests = testRunner.createSuite("Tests Renderer2d");
 
-// renderer2dTests.addTest(
-//   "throws CanvasTypeError when instantiated without HTMLCanvasElement",
-//   () => {
-//     // @ts-ignore This is javascript stuff, not typescript
-//     testRunner.assertThrowsExpectedError(CanvasTypeError);
-//     // @ts-ignore We intend to cause a CanvasTypeError by providing no argument
-//     new CanvasRenderer();
-//   }
-// );
 
 renderer2dTests.addTest(
   "has method 'render'",
@@ -42,12 +37,50 @@ renderer2dTests.addTest(
 )
 
 renderer2dTests.addTest(
+  "yells when provided drawables contain a non-drawable",
+  () => {
+    const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
+      reset: () => { },
+    });
+
+    // Given an array with an empty object instead of an actual drawable
+    const invalidDrawables = [{}];
+
+    // Then we expect a paramater type error
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
+    testRunner.assertThrowsExpectedError(ParamTypeError);
+
+    // When we try to render
+    Renderer2d.render(mockGlib, invalidDrawables);
+  }
+)
+
+renderer2dTests.addTest(
+  "yells when a param for drawing rectangle is wrong",
+  () => {
+    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
+    testRunner.assertThrowsExpectedError(ParamTypeError);
+
+    const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
+      reset: () => { },
+    });
+    const nonDrawableRectangle = {
+      type: 'rectangle',
+      x: undefined, y: undefined,
+      width: undefined, height: undefined,
+      color: undefined,
+    }
+    Renderer2d.render(mockGlib, [nonDrawableRectangle]);
+  }
+)
+
+renderer2dTests.addTest(
   "something something attempts to draw rectangle when given rectangle drawable",
   () => {
     let actual;
     /** @type {CanvasRenderingContext2D} */
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
-      reset: () => {},
+      reset: () => { },
       fillStyle: "white",
       fillRect: (x, y, w, h) => {
         actual = {
@@ -59,17 +92,7 @@ renderer2dTests.addTest(
       },
     });
 
-    const drawables = [];
-    const rectangle = {
-      type: 'rectangle',
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      color: 'black',
-    };
-
-    drawables.push(rectangle);
+    const drawables = [new Rectangle(0, 0, 1, 1, 'black')];
     Renderer2d.render(mockGlib, drawables);
 
     const expected = {
@@ -93,7 +116,7 @@ renderer2dTests.addTest(
     };
 
     const testContext = {
-      reset: () => {},
+      reset: () => { },
       strokeStyle: "white",
       lineWidth: 0,
       beginPath: () => {
@@ -116,17 +139,7 @@ renderer2dTests.addTest(
     /** @type {CanvasRenderingContext2D} */
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, testContext);
 
-    const drawables = [];
-    const drawableLine = {
-      type: 'line',
-      x1: 10,
-      y1: 10,
-      x2: 20,
-      y2: 20,
-      color: 'red',
-      lineWidth: 2,
-    };
-    drawables.push(drawableLine);
+    const drawables = [new Line(10, 10, 20, 20, 'red', 2)];
     Renderer2d.render(mockGlib, drawables);
 
     const expected = {
@@ -150,7 +163,7 @@ renderer2dTests.addTest(
     };
 
     const testContext = {
-      reset: () => {},
+      reset: () => { },
       fillStyle: "white",
       fillText: (text, x, y) => {
         actual.fillTextParams.text = text;
@@ -162,16 +175,9 @@ renderer2dTests.addTest(
     /** @type {CanvasRenderingContext2D} */
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, testContext);
 
-    const drawables = [];
-    const drawableText = {
-      type: 'text',
-      text: 'test text',
-      lineWidth: 2,
-      x: 10,
-      y: 10,
-      color: 'green',
-    };
-    drawables.push(drawableText);
+    const drawables = [
+      new DrawText('test text', 10, 10, 'green')
+    ];
     Renderer2d.render(mockGlib, drawables);
 
     const expected = {
