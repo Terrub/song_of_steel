@@ -16,6 +16,7 @@ export default class Renderer2d {
 
 
     for (const drawable of drawables) {
+      // TODO: Either use constants for type definition or consider turning drawables into a class struct.
       if (drawable.type === 'rectangle') {
         gLib.fillRect(drawable.x, drawable.y, drawable.width, drawable.height);
       } else if (drawable.type === 'line') {
