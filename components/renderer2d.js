@@ -1,7 +1,5 @@
 //@ts-check
-import Utils from "../utils.js";
-
-export default class CanvasRenderer {  
+export default class Renderer2d {
   /**
    * Draws the provided array of drawables onto the provided Canvas Rendering Context (2D)
    * @param {CanvasRenderingContext2D} gLib
