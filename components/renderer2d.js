@@ -11,6 +11,10 @@ export default class Renderer2d {
       throw new Error("Drawables is empty");
     }
 
+    gLib.reset();
+    // TODO: Consider checking for speed increase/decrease using: gLib.clearRect(0,0,9999,9999);
+
+
     for (const drawable of drawables) {
       if (drawable.type === 'rectangle') {
         gLib.fillRect(drawable.x, drawable.y, drawable.width, drawable.height);

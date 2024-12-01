@@ -48,6 +48,7 @@ renderer2dTests.addTest(
     let actual;
     /** @type {CanvasRenderingContext2D} */
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
+      reset: () => {},
       fillStyle: "white",
       fillRect: (x, y, w, h) => {
         actual = {
@@ -93,6 +94,7 @@ renderer2dTests.addTest(
     };
 
     const testContext = {
+      reset: () => {},
       strokeStyle: "white",
       lineWidth: 0,
       beginPath: () => {
