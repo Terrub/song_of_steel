@@ -142,4 +142,45 @@ renderer2dTests.addTest(
   }
 );
 
+renderer2dTests.addTest(
+  "something something attempts to draw text when given text drawable",
+  () => {
+    let actual = {
+      fillStyle: '',
+      fillTextParams: { text: '', x: 0, y: 0 },
+    };
+
+    const testContext = {
+      reset: () => {},
+      fillStyle: "white",
+      fillText: (text, x, y) => {
+        actual.fillTextParams.text = text;
+        actual.fillTextParams.x = x;
+        actual.fillTextParams.y = y;
+        actual.fillStyle = testContext.fillStyle;
+      },
+    };
+    /** @type {CanvasRenderingContext2D} */
+    const mockGlib = TestBot.createMock(CanvasRenderingContext2D, testContext);
+
+    const drawables = [];
+    const drawableText = {
+      type: 'text',
+      text: 'test text',
+      lineWidth: 2,
+      x: 10,
+      y: 10,
+      color: 'green',
+    };
+    drawables.push(drawableText);
+    Renderer2d.render(mockGlib, drawables);
+
+    const expected = {
+      fillStyle: 'green',
+      fillTextParams: { text: 'test text', x: 10, y: 10 },
+    };
+    testRunner.assertDeepCompareObjects(expected, actual);
+  }
+);
+
 testRunner.run();

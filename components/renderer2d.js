@@ -26,6 +26,9 @@ export default class Renderer2d {
         gLib.moveTo(drawable.x1, drawable.y1);
         gLib.lineTo(drawable.x2, drawable.y2);
         gLib.stroke();
+      } else if (drawable.type === "text") {
+        gLib.fillStyle = drawable.color;
+        gLib.fillText(drawable.text, drawable.x, drawable.y);
       } else {
         console.error(`No render support for type: ${drawable.type}`);
       }
