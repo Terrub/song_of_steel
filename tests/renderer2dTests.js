@@ -1,6 +1,5 @@
 //@ts-check
 import Renderer2d from "../components/renderer2d.js";
-import CanvasTypeError from "../errors/typeErrors/canvasTypeError.js";
 import TestBot from "../testBot/testBot.js";
 import Utils from "../utils.js";
 
@@ -34,7 +33,7 @@ renderer2dTests.addTest(
   () => {
     // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(Error);
-    
+
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {});
     const emptyArray = [];
 
