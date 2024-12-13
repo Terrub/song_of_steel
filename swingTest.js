@@ -367,7 +367,7 @@ const canvasWidth = 800 * scale;
 const canvasHeight = 600 * scale;
 const gl = canvas.getContext("2d");
 const playerPosition = new Vector(60, 82);
-const sword = new Line(5, -15, -6, 4, "red", 1);
+const sword = new Line(8, -16, 8, 0, "red", 1);
 const animatedSword = new Line(sword.x1, sword.y1, sword.x2, sword.y2, sword.color, sword.lineWidth);
 const camPos = new Vector(0, 0);
 const stateManager = new StateManager();
@@ -380,15 +380,15 @@ const idleingState = new State('idleing', 1, true);
 const animations = {
     idleing: [
         {
-            xStart: (t) => 0,
-            yStart: (t) => Lerp.calc(0, -1, Lerp.parabola(t)),
-            xEnd: (t) => 0,
-            yEnd: (t) => Lerp.calc(0, -1, Lerp.parabola(t)),
+            xStart: (t) => -4,
+            yStart: (t) => Lerp.calc(2, 1, Lerp.parabola(t)),
+            xEnd: (t) => -24,
+            yEnd: (t) => Lerp.calc(2, 1, Lerp.parabola(t)),
         },
     ],
     swinging: [
         {
-            xStart: (t) => Lerp.calc(6, -6, Lerp.sin(t)),
+            xStart: (t) => Lerp.calc(-6, 0, Lerp.sin(t)),
             yStart: (t) => Lerp.calc(-6, 0, Lerp.linear(t)),
             xEnd: (t) => Lerp.calc(-24, 31, Lerp.sin(t)),
             yEnd: (t) => Lerp.calc(0, -41, Lerp.linear(t)),
@@ -396,7 +396,7 @@ const animations = {
     ],
     swingingBack: [
         {
-            xStart: (t) => Lerp.calc(-6, 6, Lerp.sin(t)),
+            xStart: (t) => Lerp.calc(-6, 0, Lerp.sin(t)),
             yStart: (t) => Lerp.calc(-6, 0, Lerp.linear(t)),
             xEnd: (t) => Lerp.calc(-30, 37, Lerp.sin(t)),
             yEnd: (t) => Lerp.calc(-45, 0, Lerp.linear(t)),
