@@ -55,6 +55,7 @@ export default function createMainloop(fnRender) {
    */
   function tic(elapsed) {
     if (isAnimating === true) {
+      // console.log(elapsed);
       window.requestAnimationFrame(tic);
       // Send the delta time instead of the running total
       // renderMethod((elapsed - prevElapsed) * 0.001);

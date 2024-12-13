@@ -8,7 +8,7 @@ export default class Line extends Drawable{
      * @param {Number} x2
      * @param {Number} y2
      * @param {String|CanvasGradient|CanvasPattern} color
-     * @param {?Number} lineWidth
+     * @param {Number} [lineWidth=1] 
      */
     constructor(x1, y1, x2, y2, color, lineWidth = 1) {
         super();

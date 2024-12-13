@@ -11,19 +11,23 @@ export default class Renderer2d {
    * @param {CanvasRenderingContext2D} gLib
    * @param {Array.<Drawable>} drawables
    */
-  static render(gLib, drawables) {
+  static render(gLib, cameraPos, drawables) {
     if (!drawables.length || drawables.length <= 0) {
       // TODO: create custom error for attempt to render empty array
       throw new Error("Drawables is empty");
     }
 
     gLib.reset();
-    // TODO: Consider checking for speed increase/decrease using: gLib.clearRect(0,0,9999,9999);
+    // TODO: Consider using: gLib.clearRect(0,0,9999,9999); for optimisations
+
+    gLib.translate(-cameraPos.x, -cameraPos.y);
 
     for (const drawable of drawables) {
       if (!Utils.isInstanceOf(Drawable, drawable)) {
         throw new ParamTypeError('drawables', Drawable, drawable);
       }
+
+      // TODO: Consider using a map to map type to render method?
       if (drawable.type === Drawable.RECTANGLE) {
         Renderer2d.#drawRect(gLib, drawable);
       } else if (drawable.type === Drawable.LINE) {
@@ -157,6 +161,9 @@ export default class Renderer2d {
    */
   static #drawRect(gLib, rectangle) {
     gLib.fillStyle = rectangle.color;
+    // if (rectangle.color === "red") {
+    //   console.log(rectangle);
+    // }
     gLib.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
   }
 

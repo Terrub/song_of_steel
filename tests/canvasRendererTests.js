@@ -14,9 +14,9 @@ const canvasRendererTests = testRunner.createSuite("Tests CanvasRenderer");
 canvasRendererTests.addTest(
   "throws CanvasTypeError when instantiated without HTMLCanvasElement",
   () => {
-    // @ts-ignore This is javascript stuff, not typescript
     testRunner.assertThrowsExpectedError(CanvasTypeError);
-    // @ts-ignore We intend to cause a CanvasTypeError by providing no argument
+    
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new CanvasRenderer();
   }
 );

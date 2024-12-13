@@ -4,7 +4,9 @@ import AnimationFrame from "./animationFrame.js";
 import Bone from "./bone.js";
 import CanvasRenderer from "./canvasRenderer.js";
 import IKSolver from "./ikSolver.js";
+import Line from "./line.js";
 import Player from "./player.js";
+import Rectangle from "./rectangle.js";
 import StickAnimation from "./stickAnimation.js";
 import Vector from "./vector.js";
 
@@ -291,6 +293,7 @@ export default class StickFigure extends Player {
   #drawBoneVectors(renderer, position, floorHeight) {
     const thickness = 6;
     let color = "red";
+    const drawables = {};
     for (const boneName in this.#boneVectors) {
       /** @type {Bone} */
       const bone = this.bones[boneName];
@@ -318,6 +321,7 @@ export default class StickFigure extends Player {
           20,
           color
         );
+        drawables[boneName + "Rect"] = new Rectangle(boneVector.x - 8, boneVector.y - 10, 16, 20, 'red');
       }
 
       renderer.drawLine(
@@ -328,7 +332,10 @@ export default class StickFigure extends Player {
         color,
         thickness
       );
+
+      drawables[boneName] = new Line(parentVector.x, parentVector.y, boneVector.x, boneVector.y, 'red');
     }
+    console.log('drawables:', drawables);
   }
 
   /**

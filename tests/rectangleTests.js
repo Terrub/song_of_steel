@@ -10,7 +10,7 @@ document.body.appendChild(resultsContainer);
 const resultRenderer = TestBot.renderResultsInDiv(resultsContainer);
 const testRunner = new TestBot(resultRenderer);
 
-const rectangleTests = testRunner.createSuite("Tests rectangle");
+const rectangleTests = testRunner.createSuite("Tests Rectangle");
 
 rectangleTests.addTest(
     "has recognisable drawable type: rectangle",

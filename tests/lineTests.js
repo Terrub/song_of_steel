@@ -10,7 +10,7 @@ document.body.appendChild(resultsContainer);
 const resultRenderer = TestBot.renderResultsInDiv(resultsContainer);
 const testRunner = new TestBot(resultRenderer);
 
-const lineTests = testRunner.createSuite("Tests line");
+const lineTests = testRunner.createSuite("Tests Line");
 
 lineTests.addTest(
     "has recognisable drawable type: line",

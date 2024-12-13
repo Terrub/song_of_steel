@@ -420,8 +420,9 @@ testWorld.loadPlayer(player);
 const mainLoop = createMainloop(gameTic);
 mainLoop.setDebug(true);
 
-// /*
+/*
 mainLoop.start();
 /*/
+mainLoop.next();
 mainLoop.next();
 // */

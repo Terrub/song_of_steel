@@ -61,7 +61,7 @@ export default class StickAnimation {
     }
 
     if (!this.#nextFrame) {
-      // TODO Add specific error for when  nextFrame is null
+      // TODO Add specific error for when nextFrame is null
       throw new Error("StickAnimation could not resolve nextFrame");
     }
 

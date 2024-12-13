@@ -3,6 +3,7 @@ import DrawText from "../components/drawText.js";
 import Line from "../components/line.js";
 import Rectangle from "../components/rectangle.js";
 import Renderer2d from "../components/renderer2d.js";
+import Vector from "../components/vector.js";
 import ParamTypeError from "../errors/typeErrors/paramTypeError.js";
 import TestBot from "../testBot/testBot.js";
 import Utils from "../utils.js";
@@ -14,6 +15,7 @@ const resultRenderer = TestBot.renderResultsInDiv(resultsContainer);
 const testRunner = new TestBot(resultRenderer);
 
 const renderer2dTests = testRunner.createSuite("Tests Renderer2d");
+const mockScreen = new Vector(0, 0);
 
 
 renderer2dTests.addTest(
@@ -26,13 +28,12 @@ renderer2dTests.addTest(
 renderer2dTests.addTest(
   "yells when provided drawables array is empty",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(Error);
 
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {});
     const emptyArray = [];
 
-    Renderer2d.render(mockGlib, emptyArray);
+    Renderer2d.render(mockGlib, mockScreen, emptyArray);
   }
 )
 
@@ -41,28 +42,28 @@ renderer2dTests.addTest(
   () => {
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
       reset: () => { },
+      translate: () => { },
     });
 
     // Given an array with an empty object instead of an actual drawable
     const invalidDrawables = [{}];
 
     // Then we expect a paramater type error
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(ParamTypeError);
 
     // When we try to render
-    Renderer2d.render(mockGlib, invalidDrawables);
+    Renderer2d.render(mockGlib, mockScreen, invalidDrawables);
   }
 )
 
 renderer2dTests.addTest(
   "yells when a param for drawing rectangle is wrong",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(ParamTypeError);
 
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
       reset: () => { },
+      translate: () => { },
     });
     const nonDrawableRectangle = {
       type: 'rectangle',
@@ -70,7 +71,7 @@ renderer2dTests.addTest(
       width: undefined, height: undefined,
       color: undefined,
     }
-    Renderer2d.render(mockGlib, [nonDrawableRectangle]);
+    Renderer2d.render(mockGlib, mockScreen, [nonDrawableRectangle]);
   }
 )
 
@@ -81,6 +82,7 @@ renderer2dTests.addTest(
     /** @type {CanvasRenderingContext2D} */
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, {
       reset: () => { },
+      translate: () => { },
       fillStyle: "white",
       fillRect: (x, y, w, h) => {
         actual = {
@@ -93,7 +95,7 @@ renderer2dTests.addTest(
     });
 
     const drawables = [new Rectangle(0, 0, 1, 1, 'black')];
-    Renderer2d.render(mockGlib, drawables);
+    Renderer2d.render(mockGlib, mockScreen, drawables);
 
     const expected = {
       x: 0, y: 0,
@@ -117,6 +119,7 @@ renderer2dTests.addTest(
 
     const testContext = {
       reset: () => { },
+      translate: () => { },
       strokeStyle: "white",
       lineWidth: 0,
       beginPath: () => {
@@ -140,7 +143,7 @@ renderer2dTests.addTest(
     const mockGlib = TestBot.createMock(CanvasRenderingContext2D, testContext);
 
     const drawables = [new Line(10, 10, 20, 20, 'red', 2)];
-    Renderer2d.render(mockGlib, drawables);
+    Renderer2d.render(mockGlib, mockScreen, drawables);
 
     const expected = {
       beginPathCalled: true,
@@ -164,6 +167,7 @@ renderer2dTests.addTest(
 
     const testContext = {
       reset: () => { },
+      translate: () => { },
       fillStyle: "white",
       fillText: (text, x, y) => {
         actual.fillTextParams.text = text;
@@ -178,7 +182,7 @@ renderer2dTests.addTest(
     const drawables = [
       new DrawText('test text', 10, 10, 'green')
     ];
-    Renderer2d.render(mockGlib, drawables);
+    Renderer2d.render(mockGlib, mockScreen, drawables);
 
     const expected = {
       fillStyle: 'green',

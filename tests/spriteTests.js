@@ -18,10 +18,9 @@ const spriteTests = testRunner.createSuite("Tests Sprite");
 spriteTests.addTest(
   "throws ImageTypeError when initiating without Image",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(ImageTypeError);
 
-    // @ts-ignore This is supposed to be wrong to test the error thrown
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new Sprite();
   }
 );
@@ -29,11 +28,10 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without frameDimensions",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
 
-    // @ts-ignore This is supposed to be wrong to test the error thrown
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new Sprite(image);
   }
 );
@@ -41,11 +39,10 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without dimensions",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
 
-    // @ts-ignore This is supposed to be wrong to test the error thrown
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new Sprite(image, new Vector(0, 0));
   }
 );
@@ -53,11 +50,10 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws VectorTyperError when instantiating without offset",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(VectorTypeError);
     const image = new Image();
 
-    // @ts-ignore This is supposed to be wrong to test the error thrown
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new Sprite(image, new Vector(0, 0), new Vector(0, 0));
   }
 );
@@ -65,11 +61,10 @@ spriteTests.addTest(
 spriteTests.addTest(
   "throws NumberTypeError when instantiating with non-number scale",
   () => {
-    // @ts-ignore TypeScript specific errors, we're using ts-check for javascript
     testRunner.assertThrowsExpectedError(NumberTypeError);
     const image = new Image();
 
-    // @ts-ignore This is supposed to be wrong to test the error thrown
+    // @ts-ignore TS knows this is wrong but JS will 'certaintly try'
     new Sprite(image, new Vector(0, 0), new Vector(0, 0), new Vector(0, 0), "");
   }
 );

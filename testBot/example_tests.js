@@ -139,7 +139,6 @@ const assertErrorTest = testRunner.createSuite(
   "Tests assertThrowsExpectedError"
 );
 assertErrorTest.addTest("shows green when expected error is thrown", () => {
-  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(TypeError);
 
   throw new TypeError(
@@ -148,7 +147,6 @@ assertErrorTest.addTest("shows green when expected error is thrown", () => {
 });
 
 assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
-  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(RangeError);
 
   throw new TypeError(
@@ -157,7 +155,6 @@ assertErrorTest.addTest("shows red when unexpected error is thrown", () => {
 });
 
 assertErrorTest.addTest("shows red when no error is thrown", () => {
-  // @ts-ignore This is javascript stuff, not typescript
   testRunner.assertThrowsExpectedError(TypeError);
 });
 

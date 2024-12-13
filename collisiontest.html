@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Meta data stuff -->
+    <meta charset="utf-8" />
+    <title>collision test</title>
+    <link rel="stylesheet" href="default-theme.css">
+</head>
+
+<body>
+    <script>
+        class Vector {
+            /**
+             * @param {Number} x
+             * @param {Number} y
+             */
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        class Rect {
+            /**
+             * @param {Vector} pos
+             * @param {Vector} size
+             * @param {string} c
+             */
+            constructor(pos, size, color) {
+                this.pos = pos;
+                this.size = size;
+                this.c = color;
+            }
+        }
+
+        class Line {
+            /**
+             * @param {Vector} start
+             * @param {Vector} end
+             * @param {String} color
+             * @param {Number} lw
+             */
+            constructor(start, end, color, lw) {
+                this.lw = lw ? lw : 1;
+                this.start = start;
+                this.end = end;
+                this.c = color;
+            }
+        }
+
+        let animating = true;
+        const content = document.createElement("div");
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 500;
+        const gl = canvas.getContext("2d");
+        document.body.append(content);
+        content.append(canvas);
+
+        const origin = new Vector(0, 0);
+        const rectangle = new Rect(new Vector(200, 200), new Vector(100, 100), '#ccc');
+        const colLine = new Line(new Vector(360, 360), new Vector(180, 230), "#fff", 3);
+        let xMouse = 0;
+        let yMouse = 0;
+        let mouseDown = false;
+        let cNorm = new Vector(0, 0);
+        let t = 0;
+
+        // window.addEventListener("mousemove", (mouseEvent) => {
+        //     xMouse = mouseEvent.layerX;
+        //     yMouse = mouseEvent.layerY;
+        //     colLine.end.x = xMouse;
+        //     colLine.end.y = yMouse;
+        //     render();
+        // });
+        window.addEventListener("mousedown", (mouseEvent) => {
+            mouseDown = true;
+        });
+        window.addEventListener("mouseup", (mouseEvent) => {
+            mouseDown = false;
+        });
+        window.addEventListener("blur", (focusEvent) => {
+            animating = false;
+        });
+        window.addEventListener("focus", (focusEvent) => {
+            animating = true;
+            animationLoop();
+        });
+
+        function clearCanvas() {
+            gl.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawBackground() {
+            gl.fillStyle = "#111";
+            gl.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        /**
+         * @param {Rect} rect
+         */
+        function drawRectangle(rect) {
+            gl.fillStyle = rect.c;
+            gl.fillRect(rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
+        }
+
+        /**
+         * @param {Line} line
+         */
+        function drawLine(line) {
+            gl.lineWidth = line.lw ? line.lw : 1;
+            gl.strokeStyle = line.c;
+            gl.beginPath();
+            gl.moveTo(line.start.x, line.start.y);
+            gl.lineTo(line.end.x, line.end.y);
+            gl.stroke();
+        }
+
+        /**
+         * @param {Rect} rect
+         */
+        function drawRectGrid(rect) {
+            const leftEdge = new Line(
+                new Vector(rect.pos.x, 0),
+                new Vector(rect.pos.x, canvas.height),
+                "#060"
+            );
+            drawLine(leftEdge);
+
+            const rightEdge = new Line(
+                new Vector(rect.pos.x + rect.size.x, 0),
+                new Vector(rect.pos.x + rect.size.x, canvas.height),
+                "#060"
+            );
+            drawLine(rightEdge);
+
+            const topEdge = new Line(
+                new Vector(0, rect.pos.y),
+                new Vector(canvas.width, rect.pos.y),
+                "#060"
+            );
+            drawLine(topEdge);
+
+            const bottomEdge = new Line(
+                new Vector(0, rect.pos.y + rect.size.y),
+                new Vector(canvas.width, rect.pos.y + rect.size.y),
+                "#060"
+            );
+            drawLine(bottomEdge);
+        }
+
+        /**
+         * @param {Line} line
+         * @param {Rect} rect
+         */
+        function calcCollision(line, rect) {
+            const contactPointNear = new Vector();
+            const contactPointFar = new Vector();
+            if (rayVsRect(line.start, line.end, rect, contactPointNear, contactPointFar)) {
+                const contactLine = new Line(line.start, contactPointNear, "#0f0", 3);
+                drawLine(contactLine);
+
+                const intersection = new Line(contactPointNear, contactPointFar, "#f00", 3);
+                drawLine(intersection);
+
+                const exitLine = new Line(contactPointFar, line.end, "#00f", 3);
+                drawLine(exitLine);
+            }
+        }
+
+        // function rayVsRect(intent, target, contactPointNear, contactPointFar) {
+        //     const rayOrigin = intent.start;
+        //     const rayDir = Vector.sub(intent.end, intent.start);
+        //     const tNear = Vector.sub(target.pos, rayOrigin).div(rayDir);
+        //     const tFar = Vector.add(target.pos, target.size).sub(rayOrigin).div(rayDir);
+
+        //     if (tNear.x > tFar.x) {
+        //         const tmp = tFar.x;
+        //         tFar.x = tNear.x;
+        //         tNear.x = tmp;
+        //     }
+        //     if (tNear.y > tFar.y) {
+        //         const tmp = tFar.y;
+        //         tFar.y = tNear.y;
+        //         tNear.y = tmp;
+        //     }
+
+        //     if (tNear.x > tFar.y || tNear.y > tFar.x) {
+        //         return false;
+        //     }
+
+        //     const tHitNear = Math.max(tNear.x, tNear.y);
+        //     const tHitFar = Math.min(tFar.x, tFar.y);
+
+        //     if (tHitFar < 0 || tHitNear > 1) {
+        //         return false;
+        //     }
+
+        //     contactPointNear.copyFrom(Vector.add(rayOrigin, Vector.scale(rayDir, tHitNear)));
+        //     contactPointFar.copyFrom(Vector.add(rayOrigin, Vector.scale(rayDir, tHitFar)));
+
+        //     return true;
+        // }
+
+        /**
+         * @param {Vector} origin Starting point vector of object
+         * @param {Vector} object velocity
+         * @param {Rect} target Rectangle to calculate collision against
+         * @param {Vector} cpNear Reference for nearest Contact Point
+         * @param {Vector} cpFar Reference for furthest Contact Point
+         * @returns {Bool}
+         */
+        function rayVsRect(origin, velocity, target, cpNear, cpFar) {
+            // drawRectGrid(target);
+            // const xDir = (velocity.x - origin.x);
+            // const yDir = (velocity.y - origin.y);
+            const xDir = velocity.x;
+            const yDir = velocity.y;
+            let xTnear = (target.pos.x - origin.x) / xDir;
+            let yTnear = (target.pos.y - origin.y) / yDir;
+            let xTfar = (target.pos.x + target.size.x - origin.x) / xDir;
+            let yTfar = (target.pos.y + target.size.y - origin.y) / yDir;
+
+            if (xTnear > xTfar) {
+                const tmp = xTfar;
+                xTfar = xTnear;
+                xTnear = tmp;
+            }
+            if (yTnear > yTfar) {
+                const tmp = yTfar;
+                yTfar = yTnear;
+                yTnear = tmp;
+            }
+
+            if (xTnear > yTfar || yTnear > xTfar) {
+                return false;
+            }
+
+            const tHitNear = Math.max(xTnear, yTnear);
+            const tHitFar = Math.min(xTfar, yTfar);
+
+            if (tHitFar < 0 || tHitNear > 1) {
+                return false;
+            }
+
+            cpNear.x = origin.x + xDir * tHitNear;
+            cpNear.y = origin.y + yDir * tHitNear;
+            cpFar.x = origin.x + xDir * tHitFar;
+            cpFar.y = origin.y + yDir * tHitFar;
+
+            t = tHitNear;
+            if (xTnear > yTnear) {
+                if (xDir < 0) {
+                    cNorm.x = 1;
+                    cNorm.y = 0;
+                } else {
+                    cNorm.x = -1;
+                    cNorm.y = 0;
+                }
+            } else if (xTnear < yTnear) {
+                if (yDir < 0) {
+                    cNorm.x = 0
+                    cNorm.y = 1;
+                } else {
+                    cNorm.x = 0
+                    cNorm.y = -1;
+                }
+            }
+
+            return true;
+        }
+
+        function rectVsRect(object, velocity, obstacle) {
+            const xObjOffset = object.size.x * 0.5;
+            const yObjOffset = object.size.y * 0.5;
+            const origin = new Vector(object.pos.x + xObjOffset, object.pos.y + yObjOffset);
+
+            const target = new Rect(
+                new Vector(obstacle.pos.x - xObjOffset, obstacle.pos.y - yObjOffset),
+                new Vector(obstacle.size.x + object.size.x, obstacle.size.y + object.size.y),
+                "rgba(99, 255, 71, 0.5)"
+            );
+
+            const cpNear = new Vector();
+            const cpFar = new Vector();
+
+            // drawRectangle(target);
+            drawRectangle(obstacle);
+
+            let endPosition;
+            const velEnd = new Vector(origin.x + velocity.x, origin.y + velocity.y);
+
+            if (rayVsRect(origin, velocity, target, cpNear, cpFar)) {
+                endPosition = new Rect(
+                    new Vector(cpNear.x - xObjOffset, cpNear.y - yObjOffset),
+                    object.size,
+                    "rgba(255, 99, 71, 0.5)"
+                );
+                const contactLine = new Line(origin, cpNear, "#0f0", 3);
+                drawLine(contactLine);
+
+                const intersection = new Line(cpNear, cpFar, "#f00", 3);
+                drawLine(intersection);
+
+                const exitLine = new Line(cpFar, velEnd, "#00f", 3);
+                drawLine(exitLine);
+
+                velocity.x = cNorm.x * Math.abs(velocity.x) * (1-t);
+                velocity.y = cNorm.y * Math.abs(velocity.y) * (1-t);
+            } else {
+                endPosition = new Rect(
+                    new Vector(origin.x + velocity.x - xObjOffset, origin.y + velocity.y - yObjOffset),
+                    object.size,
+                    "rgba(255, 99, 71, 0.5)"
+                );
+                drawLine(new Line(origin, velEnd, "#fff"));
+            }
+
+            // drawRectangle(endPosition);
+            object.x += velocity.x;
+            object.y += velocity.y;
+            drawRectangle(object);
+        }
+
+        function render() {
+            clearCanvas();
+            drawBackground();
+            drawRectangle(rectangle);
+            // drawLine(colLine);
+            // calcCollision(colLine, rectangle);
+            player = new Rect(colLine.start, new Vector(40, 100), "#f00");
+            velocity = new Vector(
+                xMouse - player.pos.x - (player.size.x * 0.5),
+                yMouse - player.pos.y - (player.size.y * 0.5)
+            );
+            rectVsRect(player, velocity, rectangle);
+        }
+
+        function animationLoop(elapsed) {
+            render();
+            if (animating) {
+                window.requestAnimationFrame(animationLoop);
+            }
+        }
+
+        // animationLoop();
+    </script>
+</body>
+
+</html>

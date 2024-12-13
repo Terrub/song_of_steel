@@ -1,0 +1,198 @@
+{
+    "levelName": "Level 1",
+    "dimensions": {
+        "width": 2000,
+        "height": 600
+    },
+    "skybox": {
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 600,
+        "color": "#888"
+    },
+    "background": {
+        "x": 0,
+        "y": 400,
+        "width": 2000,
+        "height": 200,
+        "color": "#555"
+    },
+    "backWall": [
+        {
+            "type": "rectangle",
+            "x": 0,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 191,
+            "Y": 350,
+            "width": 5,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 382,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 573,
+            "Y": 350,
+            "width": 5,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 764,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 955,
+            "Y": 350,
+            "width": 5,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 1146,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 1337,
+            "Y": 350,
+            "width": 5,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 1528,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 1719,
+            "Y": 350,
+            "width": 5,
+            "height": 250,
+            "color": "#222"
+        },
+        {
+            "type": "rectangle",
+            "x": 1910,
+            "Y": 350,
+            "width": 10,
+            "height": 250,
+            "color": "#222"
+        }
+    ],
+    "levelData": [
+        {
+            "type": "rectangle",
+            "x": 0,
+            "y": 600,
+            "width": 2000,
+            "height": -70,
+            "color": "#111",
+            "collidable": true
+        },
+        {
+            "type": "rectangle",
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 600,
+            "color": "#222",
+            "collidable": true
+        },
+        {
+            "type": "rectangle",
+            "x": 1990,
+            "y": 0,
+            "width": 10,
+            "height": 600,
+            "color": "#222",
+            "collidable": true
+        }
+    ],
+    "forground": [
+        {
+            "type": "rectangle",
+            "x": 0,
+            "Y": 200,
+            "width": 45,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 291,
+            "Y": 200,
+            "width": 20,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 582,
+            "Y": 200,
+            "width": 45,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 873,
+            "Y": 200,
+            "width": 20,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 1164,
+            "Y": 200,
+            "width": 45,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 1455,
+            "Y": 200,
+            "width": 20,
+            "height": 400,
+            "color": "#000"
+        },
+        {
+            "type": "rectangle",
+            "x": 1746,
+            "Y": 200,
+            "width": 45,
+            "height": 400,
+            "color": "#000"
+        }
+    ]
+}

@@ -1,6 +1,6 @@
+//@ts-check
 import Drawable from "./drawable.js";
 
-//@ts-check
 export default class Rectangle extends Drawable{
     /**
      * @param {Number} x

@@ -196,7 +196,7 @@ export default class TestBot {
   }
 
   /**
-   * @param {Error} expectedError
+   * @param {*} expectedError
    */
   assertThrowsExpectedError(expectedError) {
     this.expectedError = expectedError;

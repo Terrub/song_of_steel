@@ -106,7 +106,7 @@ export default class Vector {
    * @returns {Number}
    */
   static magnitude(v) {
-    return Math.hypot(v.x, v.y);
+    return Math.sqrt(v.x*v.x + v.y*v.y);
   }
 
   /**
