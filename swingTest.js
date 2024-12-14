@@ -338,27 +338,29 @@ function animationLoop(elapsed) {
     addPlayer(drawables, animatedSword);
     drawables.push(animatedSword);
 
-    // const halfScreenWidth = canvasWidth * 0.5;
-    // const halfScreenHeight = canvasHeight * 0.5;
-    // drawables.push(new Line(
-    //     0 + halfScreenWidth,
-    //     0 + halfScreenHeight,
-    //     animatedSword.x1 + halfScreenWidth,
-    //     animatedSword.y1 + halfScreenHeight,
-    //     'green'
-    // ));
-    // drawables.push(new Line(
-    //     0 + halfScreenWidth,
-    //     0 + halfScreenHeight,
-    //     animatedSword.x2 + halfScreenWidth,
-    //     animatedSword.y2 + halfScreenHeight,
-    //     'green'
-    // ));
-
     if (gl) {
         Renderer2d.render(gl, camPos, drawables);
     }
 }
+
+const stickFigure = {
+    "headRect": new Rectangle(-2, -25, 4, 5, "red"),
+    "neck": new Line(0, -11, 0, -18, "red", 1),
+    "head": new Line(0, -18, 0, -22, "red", 1),
+    "leftHip": new Line(0, -11, 2, -11, "red", 1),
+    "leftKnee": new Line(2, -11, 6, -7, "red", 1),
+    "leftFoot": new Line(6, -7, 8, 0, "red", 1),
+    "rightHip": new Line(0, -11, -2, -11, "red", 1),
+    "rightKnee": new Line(2, -11, -3, -5, "red", 1),
+    "rightFoot": new Line(3, -5, -9, 0, "red", 1),
+    "leftShoulder": new Line(0, -18, 2, -18, "red", 1),
+    "leftElbow": new Line(2, -18, 1, -14, "red", 1),
+    "leftHand": new Line(1, -14, 5, -11, "red", 1),
+    "rightShoulder": new Line(0, -18, -2, -18, "red", 1),
+    "rightElbow": new Line(2, -18, -6, -15, "red", 1),
+    "rightHand": new Line(6, -15, -4, -11, "red", 1),
+    "sword": new Line(8, -16, 8, 0, "red", 1),
+};
 
 const content = document.createElement("div");
 const canvas = document.createElement('canvas');
@@ -366,10 +368,11 @@ const scale = 1 / 4;
 const canvasWidth = 800 * scale;
 const canvasHeight = 600 * scale;
 const gl = canvas.getContext("2d");
+
 const playerPosition = new Vector(60, 82);
-const sword = new Line(8, -16, 8, 0, "red", 1);
-const animatedSword = new Line(sword.x1, sword.y1, sword.x2, sword.y2, sword.color, sword.lineWidth);
 const camPos = new Vector(0, 0);
+const animatedSword = new Line(0, 0, 0, 0, "white");
+
 const stateManager = new StateManager();
 const entity = new Entity("foo");
 const swinging = new Intent("swinging");
@@ -377,6 +380,7 @@ const swingingState = new State('swinging', 0.5);
 const swingingBackState = new State('swingingBack', 0.3);
 const jabForwardState = new State('jabForward', 0.3);
 const idleingState = new State('idleing', 1, true);
+
 const animations = {
     idleing: [
         {
