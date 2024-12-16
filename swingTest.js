@@ -351,8 +351,18 @@ window.addEventListener("mousemove", (mouseEvent) => {
 function mouseClickHandler(mouseEvent) {
     mouseDown = (mouseEvent.type === 'mousedown');
 }
+
+/**
+ * @param {TouchEvent} touchEvent
+ */
+function touchClickHandler(touchEvent) {
+    mouseDown = (touchEvent.type === 'touchstart');
+}
+
 document.addEventListener("mousedown", mouseClickHandler);
 document.addEventListener("mouseup", mouseClickHandler);
+document.addEventListener("touchstart", touchClickHandler);
+document.addEventListener("touchend", touchClickHandler);
 
 window.addEventListener("blur", (focusEvent) => {
     ml.stop();
