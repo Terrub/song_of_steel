@@ -10,7 +10,7 @@ import createMainloop from "./components/mainloop.js";
 import Renderer2d from "./components/renderer2d.js";
 import Line from "./components/line.js";
 import Rectangle from "./components/rectangle.js";
-import IKSolver from "./components/ikSolver.js";
+import IKSolver from "./components/iKSolver.js";
 import Utils from "./utils.js";
 import Drawable from "./components/drawable.js";
 
@@ -23,9 +23,11 @@ function updateBones(original, bones, animations, progress, elapsed) {
     for (const animation of animations) {
         for (const boneName in animation) {
             for (const point in animation[boneName]) {
+                // TODO: Consider making this value affected by stamina to portrait tiredness
+                const decayRate = 30;
+
                 const newVal = original[boneName][point] + (animation[boneName][point](progress) * 4);
-                // bones[boneName][point] += animation[boneName][point](progress) * 4;
-                bones[boneName][point] = Lerp.expDecay(bones[boneName][point], newVal, 30, elapsed);
+                bones[boneName][point] = Lerp.expDecay(bones[boneName][point], newVal, decayRate, elapsed);
             }
         }
     }
@@ -79,8 +81,9 @@ function adjustHandToSword(bone, sword, pos) {
 /**
  * @param {Line} hand
  * @param {Line} elbow
+ * @param {Number} dir
  */
-function adjustElbowIK(hand, elbow) {
+function adjustElbowIK(hand, elbow, dir) {
     const elbowVector = new Vector(0, 0);
     const length1 = 20;
     const length2 = 20;
@@ -92,7 +95,7 @@ function adjustElbowIK(hand, elbow) {
         elbow.x1,
         elbow.y1
     );
-    IKSolver.global(elbowVector, length1, length2, handVector, shoulderVector, 1);
+    IKSolver.global(elbowVector, length1, length2, handVector, shoulderVector, dir);
     elbow.x2 = elbowVector.x;
     elbow.y2 = elbowVector.y;
     hand.x1 = elbowVector.x;
@@ -107,8 +110,8 @@ function addPlayer(arr, original, elapsed) {
 
     adjustHandToSword(localBones.rightHand, localBones.sword, 0.1);
     adjustHandToSword(localBones.leftHand, localBones.sword, 0);
-    adjustElbowIK(localBones.leftHand, localBones.leftElbow);
-    adjustElbowIK(localBones.rightHand, localBones.rightElbow);
+    adjustElbowIK(localBones.leftHand, localBones.leftElbow, -1);
+    adjustElbowIK(localBones.rightHand, localBones.rightElbow, 1);
 
     for (const boneName in localBones) {
         const bone = localBones[boneName];
@@ -156,17 +159,17 @@ const stickFigure = {
     "headRect": new Rectangle(-2, -25, 4, 5, "red"),
     "neck": new Line(0, -11, 0, -18, "red", 1),
     "head": new Line(0, -18, 0, -22, "red", 1),
-    "leftHip": new Line(0, -11, 2, -11, "red", 1),
-    "leftKnee": new Line(2, -11, 6, -7, "red", 1),
+    "leftHip": new Line(0, -11, 3, -12, "red", 1),
+    "leftKnee": new Line(3, -12, 6, -7, "red", 1),
     "leftFoot": new Line(6, -7, 8, 0, "red", 1),
-    "rightHip": new Line(0, -11, -2, -11, "red", 1),
-    "rightKnee": new Line(-2, -11, -3, -5, "red", 1),
+    "rightHip": new Line(0, -11, -3, -12, "red", 1),
+    "rightKnee": new Line(-3, -12, -3, -5, "red", 1),
     "rightFoot": new Line(-3, -5, -9, 0, "red", 1),
-    "leftShoulder": new Line(0, -18, 2, -18, "red", 1),
-    "leftElbow": new Line(2, -18, 1, -14, "red", 1),
+    "leftShoulder": new Line(0, -18, 3, -18, "red", 1),
+    "leftElbow": new Line(3, -18, 1, -14, "red", 1),
     "leftHand": new Line(1, -14, 5, -11, "red", 1),
-    "rightShoulder": new Line(0, -18, -2, -18, "red", 1),
-    "rightElbow": new Line(-2, -18, -6, -15, "red", 1),
+    "rightShoulder": new Line(0, -18, -3, -18, "red", 1),
+    "rightElbow": new Line(-3, -18, -6, -15, "red", 1),
     "rightHand": new Line(-6, -15, -4, -11, "red", 1),
     "sword": new Line(8, -16, 8, 0, "red", 1),
 };
@@ -252,31 +255,51 @@ const animations = {
             },
             // rightFoot: {},
             leftShoulder: {
+                x1: (t) => 0,
                 y1: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t)),
+                x2: (t) => 0,
                 y2: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t))
             },
             leftElbow: {
+                x1: (t) => 0,
                 y1: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t)),
             },
             // leftHand: {},
             rightShoulder: {
+                x1: (t) => 0,
                 y1: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t)),
+                x2: (t) => 0,
                 y2: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t))
             },
             rightElbow: {
+                x1: (t) => 0,
                 y1: (t) => Lerp.calc(0.5, 0, Lerp.parabola(t)),
             },
             // rightHand: {},
             sword: {
-                x1: (t) => -4,
-                y1: (t) => Lerp.calc(0, 1, Lerp.parabola(t)),
-                x2: (t) => -24,
+                x1: (t) => -7,
+                y1: (t) => Lerp.calc(3, 4, Lerp.parabola(t)),
+                x2: (t) => -27,
                 y2: (t) => Lerp.calc(0, 1, Lerp.parabola(t)),
             },
         },
     ],
     swinging: [
         {
+            leftShoulder: {
+                x2: (t) => Lerp.calc(0, -6, Lerp.sqrt(t)),
+            },
+            leftElbow: {
+                x1: (t) => Lerp.calc(0, -6, Lerp.sqrt(t)),
+            },
+            rightShoulder: {
+                x2: (t) => Lerp.calc(0, 6, Lerp.sqrt(t)),
+                y2: (t) => Lerp.calc(0, 1, Lerp.parabola(t)),
+            },
+            rightElbow: {
+                x1: (t) => Lerp.calc(0, 6, Lerp.sqrt(t)),
+                y1: (t) => Lerp.calc(0, 1, Lerp.parabola(t)),
+            },
             sword: {
                 x1: (t) => Lerp.calc(-6, 0, Lerp.sin(t)),
                 y1: (t) => Lerp.calc(-6, 0, Lerp.linear(t)),
@@ -299,9 +322,9 @@ const animations = {
         {
             sword: {
                 x1: (t) => Lerp.calc(-12, 18, Lerp.parabola(t)),
-                y1: (t) => Lerp.calc(-6, 0, Lerp.linear(t)),
+                y1: (t) => Lerp.calc(-3, 3, Lerp.linear(t)),
                 x2: (t) => Lerp.calc(13, 43, Lerp.parabola(t)),
-                y2: (t) => Lerp.calc(-23, -17, Lerp.linear(t)),
+                y2: (t) => Lerp.calc(-20, -12, Lerp.linear(t)),
             }
         }
     ]
@@ -309,7 +332,7 @@ const animations = {
 
 idleingState.addIntent(swinging, swingingState, { min1: 0, min2: 0, max2: 1, max1: 1 });
 swingingState.addIntent(swinging, swingingBackState, { min1: 0.7, min2: 0.8, max2: 1, max1: 1 });
-swingingBackState.addIntent(swinging, jabForwardState, { min1: 0.4, min2: 0.45, max2: 0.55, max1: 0.6 });
+swingingBackState.addIntent(swinging, jabForwardState, { min1: 0.5, min2: 0.55, max2: 0.65, max1: 0.7 });
 stateManager.addEntity(entity, idleingState);
 
 let mouseDown = false;
